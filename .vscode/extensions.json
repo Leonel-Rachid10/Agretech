@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot-tools",
+        "vscjava.vscode-spring-initializr",
+        "cweijan.vscode-mysql-client2",
+        "ritwickdey.liveserver"
+    ]
+}

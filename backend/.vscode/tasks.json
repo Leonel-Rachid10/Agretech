@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "1. Iniciar Spring Boot (Dev / Maven)",
+            "type": "shell",
+            "command": "mvn spring-boot:run",
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "2. Iniciar Servidor (JAR)",
+            "type": "shell",
+            "command": "java -jar target/agritech-dondo-1.0.0.jar",
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "3. Compilar e Empacotar (mvn clean package)",
+            "type": "shell",
+            "command": "mvn clean package -DskipTests",
+            "options": {
+                "cwd": "${workspaceFolder}/backend"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "4. Abrir Catálogo no Navegador (http://localhost:8080)",
+            "type": "shell",
+            "command": "Start-Process http://localhost:8080",
+            "problemMatcher": []
+        },
+        {
+            "label": "5. Abrir Documentação Swagger UI (http://localhost:8080/swagger-ui.html)",
+            "type": "shell",
+            "command": "Start-Process http://localhost:8080/swagger-ui.html",
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="#1F6F4A">
+    <title>AgriTech Dondo — Entrar</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <main class="login-shell">
+            <section class="login-panel" aria-label="AgriTech Dondo">
+                <div class="login-brand">
+                    <span class="brand-mark">Ag</span>
+                    <div>
+                        <h1>AgriTech Dondo</h1>
+                        <p>Plataforma Agrícola do Distrito do Dondo</p>
+                    </div>
+                </div>
+
+                <div class="login-panel-copy">
+                    <span class="eyebrow">Painel seguro</span>
+                    <h2>Gestão profissional da produção local</h2>
+                    <p>Organize produtores, associações, lotes e contactos comerciais num ambiente simples e confiável.</p>
+                </div>
+
+                <div class="login-metrics" aria-label="Resumo da plataforma">
+                    <div>
+                        <strong>Dondo</strong>
+                        <span>Distrito agrícola</span>
+                    </div>
+                    <div>
+                        <strong>Online</strong>
+                        <span>Catálogo ativo</span>
+                    </div>
+                    <div>
+                        <strong>Offline</strong>
+                        <span>Sincronização local</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="login-box" aria-label="Acesso ao sistema">
+                <div class="login-box-header">
+                    <span class="eyebrow">Acesso ao sistema</span>
+                    <h2>Entrar na conta</h2>
+                    <p>Use as credenciais oficiais atribuídas ao seu perfil.</p>
+                </div>
+
+            <div id="erro-msg" class="erro-msg"></div>
+
+            <!-- FORMULÁRIO DE LOGIN -->
+            <div id="form-login-section">
+                <form id="form-login" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>Número de telemóvel</label>
+                        <input type="tel" name="telemovel" placeholder="Ex: 841234567" autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" name="senha" placeholder="A sua senha" autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primario btn-block btn-lg">Entrar</button>
+                </form>
+                <p class="auth-switch">
+                    Não tem conta? <a href="#" onclick="mostrarRegisto()">Criar conta</a>
+                </p>
+            </div>
+
+            <!-- FORMULÁRIO DE REGISTO -->
+            <div id="form-registo-section" class="is-hidden">
+                <form id="form-registo" onsubmit="handleRegisto(event)">
+                    <div class="form-group">
+                        <label>Nome completo</label>
+                        <input type="text" name="nome" placeholder="Ex: João Silva" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Telemóvel</label>
+                        <input type="tel" name="telemovel" placeholder="Ex: 841234567" autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" name="senha" placeholder="Mínimo 4 caracteres" autocomplete="new-password" required minlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de conta</label>
+                        <select name="perfil" required>
+                            <option value="COMPRADOR">Comprador (Hotel, Restaurante, Grossista)</option>
+                            <option value="PRODUTOR">Produtor Agrícola</option>
+                            <option value="GESTOR_ASSOCIACAO">Gestor de Associação</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primario btn-block btn-lg">Criar conta</button>
+                </form>
+                <p class="auth-switch">
+                    Já tem conta? <a href="#" onclick="mostrarLogin()">Entrar</a>
+                </p>
+            </div>
+
+            <p class="auth-link">
+                <a href="/index.html">Ver catálogo sem conta</a>
+            </p>
+            </section>
+        </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        // Redirecionar se já estiver logado
+        if (Api.isLoggedIn()) window.location.href = '/dashboard.html';
+
+        function mostrarRegisto() {
+            document.getElementById('form-login-section').classList.add('is-hidden');
+            document.getElementById('form-registo-section').classList.remove('is-hidden');
+            esconderErro();
+        }
+        function mostrarLogin() {
+            document.getElementById('form-login-section').classList.remove('is-hidden');
+            document.getElementById('form-registo-section').classList.add('is-hidden');
+            esconderErro();
+        }
+        function mostrarErro(msg) {
+            const el = document.getElementById('erro-msg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+        function esconderErro() {
+            document.getElementById('erro-msg').style.display = 'none';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            esconderErro();
+            const form = e.target;
+            try {
+                const res = await Api.login(form.telemovel.value, form.senha.value);
+                Api.setAuth(res);
+                window.location.href = '/dashboard.html';
+            } catch (err) {
+                mostrarErro('Telemóvel ou senha incorretos. Tente novamente.');
+            }
+        }
+
+        async function handleRegisto(e) {
+            e.preventDefault();
+            esconderErro();
+            const form = e.target;
+            try {
+                const res = await Api.registar({
+                    nome: form.nome.value,
+                    telemovel: form.telemovel.value,
+                    senha: form.senha.value,
+                    perfil: form.perfil.value
+                });
+                Api.setAuth(res);
+                window.location.href = '/dashboard.html';
+            } catch (err) {
+                mostrarErro(err.message || 'Erro ao criar conta. Verifique os dados e tente novamente.');
+            }
+        }
+    </script>
+</body>
+</html>

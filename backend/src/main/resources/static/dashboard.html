@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTech Dondo — Painel de Gestão</title>
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="logo"><span>🌱</span> AgriTech Dondo</div>
+        <nav aria-label="Navegação principal">
+            <a href="/index.html">Catálogo</a>
+            <a href="/dashboard.html">Gestão</a>
+            <button class="btn-sair" onclick="Api.logout()">Sair</button>
+        </nav>
+    </header>
+
+    <!-- BARRA DE SINCRONIZAÇÃO -->
+    <div id="sync-bar" class="sync-bar"></div>
+
+    <main class="container">
+        <!-- CABEÇALHO DO DASHBOARD -->
+        <div class="dashboard-header">
+            <div>
+                <h1 id="dash-titulo">Painel de Gestão</h1>
+                <p id="dash-subtitulo">Gerir associações, produtores e lotes de produção do Dondo</p>
+            </div>
+            <div class="action-row">
+                <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-pdf">📄 Relatório PDF</a>
+            </div>
+        </div>
+
+        <!-- TABS DE NAVEGAÇÃO -->
+        <div class="tabs" role="tablist">
+            <button class="btn btn-primario tab-btn active" role="tab" aria-selected="true" onclick="mudarTab('lotes', this)">📦 Lotes de Produção</button>
+            <button class="btn btn-secundario tab-btn" role="tab" aria-selected="false" onclick="mudarTab('associacoes', this)">🏘️ Associações</button>
+            <button class="btn btn-secundario tab-btn" role="tab" aria-selected="false" onclick="mudarTab('produtores', this)">👨‍🌾 Produtores</button>
+        </div>
+
+        <!-- TAB: LOTES DE PRODUÇÃO -->
+        <div id="tab-lotes" class="tab-content" role="tabpanel">
+            <div class="section-actions">
+                <button class="btn btn-primario" onclick="abrirModal('modal-novo-lote'); App.preencherFormLote();">➕ Novo Lote</button>
+            </div>
+            <div id="lotes-lista">
+                <div class="empty-state"><div class="icone">⏳</div><p>Carregando lotes...</p></div>
+            </div>
+        </div>
+
+        <!-- TAB: ASSOCIAÇÕES -->
+        <div id="tab-associacoes" class="tab-content is-hidden" role="tabpanel">
+            <div class="section-actions">
+                <button class="btn btn-primario" onclick="abrirModal('modal-nova-assoc');">➕ Nova Associação</button>
+            </div>
+            <div id="associacoes-lista">
+                <div class="empty-state"><div class="icone">⏳</div><p>Carregando associações...</p></div>
+            </div>
+        </div>
+
+        <!-- TAB: PRODUTORES -->
+        <div id="tab-produtores" class="tab-content is-hidden" role="tabpanel">
+            <div class="section-actions">
+                <button class="btn btn-primario" onclick="abrirModal('modal-novo-produtor'); preencherSelectAssociacoes();">➕ Novo Produtor</button>
+            </div>
+            <div id="produtores-lista">
+                <div class="empty-state"><div class="icone">⏳</div><p>Carregando produtores...</p></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL: NOVO LOTE -->
+    <div id="modal-novo-lote" class="modal-overlay" aria-labelledby="titulo-novo-lote">
+        <div class="modal">
+            <button class="btn-fechar" aria-label="Fechar" onclick="fecharModal('modal-novo-lote')">✕</button>
+            <h2 id="titulo-novo-lote">📦 Registar Novo Lote de Produção</h2>
+            <form id="form-novo-lote" onsubmit="event.preventDefault(); App.submeterNovoLote(this);">
+                <div class="form-group">
+                    <label for="lote-produtor">Produtor</label>
+                    <select name="produtorId" id="lote-produtor" title="Selecione o Produtor" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="lote-cultura">Cultura</label>
+                    <select name="culturaId" id="lote-cultura" title="Selecione a Cultura" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="lote-quantidade">Quantidade Estimada (KG)</label>
+                    <input type="number" id="lote-quantidade" name="quantidadeEstimada" step="0.01" placeholder="Ex: 1500" required>
+                </div>
+                <div class="form-group">
+                    <label for="lote-data-sementeira">Data de Sementeira</label>
+                    <input type="date" id="lote-data-sementeira" name="dataSementeira" title="Data de Sementeira">
+                </div>
+                <div class="form-group">
+                    <label for="lote-data-colheita">Data de Colheita Prevista</label>
+                    <input type="date" id="lote-data-colheita" name="dataColheitaPrevista" title="Data de Colheita Prevista" required>
+                </div>
+                <div class="form-group">
+                    <label for="lote-preco">Preço por KG (MZN) — Opcional</label>
+                    <input type="number" id="lote-preco" name="precoPorUnidade" step="0.01" placeholder="Ex: 45.00">
+                </div>
+                <div class="form-group">
+                    <label for="lote-observacoes">Observações</label>
+                    <textarea id="lote-observacoes" name="observacoes" rows="2" placeholder="Detalhes sobre o lote..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primario btn-block">💾 Registar Lote</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVA ASSOCIAÇÃO -->
+    <div id="modal-nova-assoc" class="modal-overlay" aria-labelledby="titulo-nova-assoc">
+        <div class="modal">
+            <button class="btn-fechar" aria-label="Fechar" onclick="fecharModal('modal-nova-assoc')">✕</button>
+            <h2 id="titulo-nova-assoc">🏘️ Registar Nova Associação</h2>
+            <form onsubmit="event.preventDefault(); submeterNovaAssociacao(this);">
+                <div class="form-group">
+                    <label for="assoc-nome">Nome da Associação</label>
+                    <input type="text" id="assoc-nome" name="nome" placeholder="Ex: Associação dos Camponeses de Mafambisse" required>
+                </div>
+                <div class="form-group">
+                    <label for="assoc-localidade">Localidade</label>
+                    <input type="text" id="assoc-localidade" name="localidade" placeholder="Ex: Mafambisse" required>
+                </div>
+                <div class="form-group">
+                    <label for="assoc-povoado">Povoado</label>
+                    <input type="text" id="assoc-povoado" name="povoado" placeholder="Ex: Bloco 3, Zona Baixa">
+                </div>
+                <div class="form-group">
+                    <label for="assoc-contacto">Contacto Principal</label>
+                    <input type="tel" id="assoc-contacto" name="contactoPrincipal" placeholder="Ex: +258849876543">
+                </div>
+                <div class="form-group">
+                    <label for="assoc-ponto-nome">Nome do Ponto Focal</label>
+                    <input type="text" id="assoc-ponto-nome" name="pontoFocalNome" placeholder="Nome do responsável local">
+                </div>
+                <div class="form-group">
+                    <label for="assoc-ponto-tel">Telemóvel do Ponto Focal</label>
+                    <input type="tel" id="assoc-ponto-tel" name="pontoFocalTelemovel" placeholder="Ex: +258849876543">
+                </div>
+                <button type="submit" class="btn btn-primario btn-block">💾 Registar Associação</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO PRODUTOR -->
+    <div id="modal-novo-produtor" class="modal-overlay" aria-labelledby="titulo-novo-produtor">
+        <div class="modal">
+            <button class="btn-fechar" aria-label="Fechar" onclick="fecharModal('modal-novo-produtor')">✕</button>
+            <h2 id="titulo-novo-produtor">👨‍🌾 Registar Novo Produtor</h2>
+            <form onsubmit="event.preventDefault(); submeterNovoProdutor(this);">
+                <div class="form-group">
+                    <label for="produtor-nome">Nome do Produtor</label>
+                    <input type="text" id="produtor-nome" name="nome" placeholder="Ex: António Macamo" required>
+                </div>
+                <div class="form-group">
+                    <label for="produtor-telemovel">Telemóvel</label>
+                    <input type="tel" id="produtor-telemovel" name="telemovel" placeholder="Ex: +258841112233" required>
+                </div>
+                <div class="form-group">
+                    <label for="produtor-associacao">Associação</label>
+                    <select name="associacaoId" id="produtor-associacao" title="Selecione a Associação" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="produtor-localizacao">Localização Detalhada</label>
+                    <textarea id="produtor-localizacao" name="localizacaoDetalhada" rows="2" placeholder="Ex: Parcela 14, Regadio de Mafambisse"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primario btn-block">💾 Registar Produtor</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/db.js"></script>
+    <script src="/js/sync.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        // Redirecionar se não estiver logado
+        if (!Api.isLoggedIn()) window.location.href = '/login.html';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW erro:', err));
+            }
+            await App.init();
+
+            // Saudação personalizada
+            const titulo = document.getElementById('dash-titulo');
+            if (titulo && Api.user) titulo.textContent = 'Olá, ' + Api.user.nome.split(' ')[0] + '!';
+
+            App.carregarLotesDashboard();
+            App.carregarAssociacoes();
+            App.carregarProdutoresDashboard();
+        });
+
+        function mudarTab(tab, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('is-hidden'));
+            
+            // SonarLint S7778: métodos com argumentos múltiplos
+            document.querySelectorAll('.tab-btn').forEach(el => { 
+                el.classList.remove('active', 'btn-primario'); 
+                el.classList.add('btn-secundario'); 
+                el.setAttribute('aria-selected', 'false');
+            });
+            
+            document.getElementById('tab-' + tab).classList.remove('is-hidden');
+            btn.classList.remove('btn-secundario');
+            btn.classList.add('active', 'btn-primario');
+            btn.setAttribute('aria-selected', 'true');
+        }
+
+        async function preencherSelectAssociacoes() {
+            const sel = document.getElementById('produtor-associacao');
+            if (!sel) return;
+            let assocs;
+            try { assocs = await Api.getAssociacoes(); } catch(e) { assocs = App.associacoes || []; }
+            sel.innerHTML = '<option value="">Selecione a associação</option>' +
+                assocs.map(a => '<option value="' + a.id + '">' + a.nome + ' (' + a.localidade + ')</option>').join('');
+        }
+
+        async function submeterNovaAssociacao(form) {
+            try {
+                await Api.criarAssociacao({
+                    nome: form.nome.value,
+                    localidade: form.localidade.value,
+                    povoado: form.povoado.value || null,
+                    contactoPrincipal: form.contactoPrincipal.value || null,
+                    pontoFocalNome: form.pontoFocalNome.value || null,
+                    pontoFocalTelemovel: form.pontoFocalTelemovel.value || null
+                });
+                alert('✅ Associação registada com sucesso!');
+                fecharModal('modal-nova-assoc');
+                App.carregarAssociacoes();
+            } catch(e) { alert('Erro: ' + e.message); }
+        }
+
+        async function submeterNovoProdutor(form) {
+            // SonarLint S7773: Number.parseInt com base 10 explícita
+            const data = {
+                nome: form.nome.value,
+                telemovel: form.telemovel.value,
+                associacaoId: Number.parseInt(form.associacaoId.value, 10),
+                localizacaoDetalhada: form.localizacaoDetalhada.value || null
+            };
+
+            if (!navigator.onLine) {
+                await AgriDB.addToSyncQueue('novo_produtor', data);
+                alert('✅ Produtor guardado offline! Será sincronizado quando houver rede.');
+                SyncManager.updateBar();
+                fecharModal('modal-novo-produtor');
+                return;
+            }
+
+            try {
+                await Api.criarProdutor(data);
+                alert('✅ Produtor registado com sucesso!');
+                fecharModal('modal-novo-produtor');
+                App.carregarProdutoresDashboard();
+            } catch(e) { alert('Erro: ' + e.message); }
+        }
+    </script>
+</body>
+</html>
