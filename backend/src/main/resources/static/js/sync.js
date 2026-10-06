@@ -28,10 +28,10 @@ const SyncManager = {
 
         if (!navigator.onLine) {
             bar.className = 'sync-bar active';
-            bar.textContent = '📡 Modo Offline — ' + (count > 0 ? count + ' registo(s) pendente(s) de sincronização' : 'Dados serão sincronizados quando houver rede');
+            bar.textContent = ' Modo Offline — ' + (count > 0 ? count + ' registo(s) pendente(s) de sincronização' : 'Dados serão sincronizados quando houver rede');
         } else if (count > 0) {
             bar.className = 'sync-bar active online';
-            bar.textContent = '🔄 Sincronizando ' + count + ' registo(s) pendente(s)...';
+            bar.textContent = ' Sincronizando ' + count + ' registo(s) pendente(s)...';
         } else {
             bar.className = 'sync-bar';
             bar.textContent = '';

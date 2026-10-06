@@ -28,12 +28,14 @@ C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\model\LotePro
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\model\Perfil.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\model\Produtor.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\model\ReservaContacto.java
+C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\model\SincronizacaoLog.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\model\Utilizador.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\AssociacaoRepository.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\CulturaRepository.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\LoteProducaoRepository.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\ProdutorRepository.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\ReservaContactoRepository.java
+C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\SincronizacaoLogRepository.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\repository\UtilizadorRepository.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\service\AssociacaoService.java
 C:\leonel rachid\Agretech\backend\src\main\java\com\agritech\dondo\service\AuthService.java

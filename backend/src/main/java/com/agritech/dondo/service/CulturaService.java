@@ -29,4 +29,9 @@ public class CulturaService {
     public Cultura criar(Cultura cultura) {
         return culturaRepository.save(cultura);
     }
+
+    @Transactional
+    public void remover(Long id) {
+        culturaRepository.deleteById(id);
+    }
 }

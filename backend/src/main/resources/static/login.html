@@ -20,26 +20,6 @@
                     </div>
                 </div>
 
-                <div class="login-panel-copy">
-                    <span class="eyebrow">Painel seguro</span>
-                    <h2>Gestão profissional da produção local</h2>
-                    <p>Organize produtores, associações, lotes e contactos comerciais num ambiente simples e confiável.</p>
-                </div>
-
-                <div class="login-metrics" aria-label="Resumo da plataforma">
-                    <div>
-                        <strong>Dondo</strong>
-                        <span>Distrito agrícola</span>
-                    </div>
-                    <div>
-                        <strong>Online</strong>
-                        <span>Catálogo ativo</span>
-                    </div>
-                    <div>
-                        <strong>Offline</strong>
-                        <span>Sincronização local</span>
-                    </div>
-                </div>
             </section>
 
             <section class="login-box" aria-label="Acesso ao sistema">
@@ -55,11 +35,11 @@
             <div id="form-login-section">
                 <form id="form-login" onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label>Número de telemóvel</label>
-                        <input type="tel" name="telemovel" placeholder="Ex: 841234567" autocomplete="username" required>
+                        <label>👤 Nome de utilizador</label>
+                        <input type="text" name="nome" placeholder="Seu nome" autocomplete="username" required>
                     </div>
                     <div class="form-group">
-                        <label>Senha</label>
+                        <label>🔒 Senha</label>
                         <input type="password" name="senha" placeholder="A sua senha" autocomplete="current-password" required>
                     </div>
                     <button type="submit" class="btn btn-primario btn-block btn-lg">Entrar</button>
@@ -73,7 +53,7 @@
             <div id="form-registo-section" class="is-hidden">
                 <form id="form-registo" onsubmit="handleRegisto(event)">
                     <div class="form-group">
-                        <label>Nome completo</label>
+                        <label>👤 Nome completo</label>
                         <input type="text" name="nome" placeholder="Ex: João Silva" required>
                     </div>
                     <div class="form-group">
@@ -81,15 +61,14 @@
                         <input type="tel" name="telemovel" placeholder="Ex: 841234567" autocomplete="username" required>
                     </div>
                     <div class="form-group">
-                        <label>Senha</label>
+                        <label>🔒 Senha</label>
                         <input type="password" name="senha" placeholder="Mínimo 4 caracteres" autocomplete="new-password" required minlength="4">
                     </div>
                     <div class="form-group">
-                        <label>Tipo de conta</label>
+                        <label>👥 Tipo de conta</label>
                         <select name="perfil" required>
                             <option value="COMPRADOR">Comprador (Hotel, Restaurante, Grossista)</option>
-                            <option value="PRODUTOR">Produtor Agrícola</option>
-                            <option value="GESTOR_ASSOCIACAO">Gestor de Associação</option>
+                            <option value="PRODUTOR">Produtor Agricola</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primario btn-block btn-lg">Criar conta</button>
@@ -135,11 +114,11 @@
             esconderErro();
             const form = e.target;
             try {
-                const res = await Api.login(form.telemovel.value, form.senha.value);
+                const res = await Api.login(form.nome.value, form.senha.value);
                 Api.setAuth(res);
                 window.location.href = '/dashboard.html';
             } catch (err) {
-                mostrarErro('Telemóvel ou senha incorretos. Tente novamente.');
+                mostrarErro('Nome ou senha incorretos. Tente novamente.');
             }
         }
 

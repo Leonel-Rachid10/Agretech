@@ -21,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String telemovel) throws UsernameNotFoundException {
-        Utilizador utilizador = utilizadorRepository.findByTelemovel(telemovel)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilizador não encontrado com telemóvel: " + telemovel));
+    public UserDetails loadUserByUsername(String nome) throws UsernameNotFoundException {
+        Utilizador utilizador = utilizadorRepository.findByNome(nome)
+                .orElseThrow(() -> new UsernameNotFoundException("Utilizador não encontrado com nome: " + nome));
 
         return new User(
-                utilizador.getTelemovel(),
+                utilizador.getNome(),
                 utilizador.getSenhaHash(),
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + utilizador.getPerfil().name()))
         );

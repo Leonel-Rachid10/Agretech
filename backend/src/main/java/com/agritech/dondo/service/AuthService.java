@@ -26,7 +26,7 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        Utilizador utilizador = utilizadorRepository.findByTelemovel(request.getTelemovel())
+        Utilizador utilizador = utilizadorRepository.findByNome(request.getNome())
                 .orElseThrow(() -> new IllegalArgumentException("Telemóvel ou senha incorretos"));
 
         if (!passwordEncoder.matches(request.getSenha(), utilizador.getSenhaHash())) {
@@ -34,7 +34,7 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(
-                utilizador.getTelemovel(),
+                utilizador.getNome(),
                 utilizador.getPerfil().name(),
                 utilizador.getNome(),
                 utilizador.getId()
@@ -51,7 +51,7 @@ public class AuthService {
 
     @Transactional
     public LoginResponse registar(RegistoUtilizadorDTO dto) {
-        if (utilizadorRepository.existsByTelemovel(dto.getTelemovel())) {
+        if (utilizadorRepository.existsByNome(dto.getNome())) {
             throw new IllegalArgumentException("Já existe um utilizador registado com este número de telemóvel");
         }
 
@@ -65,7 +65,7 @@ public class AuthService {
         Utilizador salvo = utilizadorRepository.save(novo);
 
         String token = jwtUtil.generateToken(
-                salvo.getTelemovel(),
+                salvo.getNome(),
                 salvo.getPerfil().name(),
                 salvo.getNome(),
                 salvo.getId()
@@ -80,8 +80,8 @@ public class AuthService {
         );
     }
 
-    public Utilizador obterPorTelemovel(String telemovel) {
-        return utilizadorRepository.findByTelemovel(telemovel)
+    public Utilizador obterPorNome(String nome) {
+        return utilizadorRepository.findByNome(nome)
                 .orElseThrow(() -> new IllegalArgumentException("Utilizador não encontrado"));
     }
 }

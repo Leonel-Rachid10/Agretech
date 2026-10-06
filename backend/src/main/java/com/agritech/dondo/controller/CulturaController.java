@@ -33,4 +33,21 @@ public class CulturaController {
     public ResponseEntity<Cultura> criar(@RequestBody Cultura cultura) {
         return ResponseEntity.ok(culturaService.criar(cultura));
     }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Cultura> atualizar(@PathVariable Long id, @RequestBody Cultura cultura) {
+        Cultura existente = culturaService.buscarPorId(id);
+        existente.setNome(cultura.getNome());
+        existente.setCategoria(cultura.getCategoria());
+        existente.setUnidadeMedida(cultura.getUnidadeMedida());
+        return ResponseEntity.ok(culturaService.criar(existente));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> remover(@PathVariable Long id) {
+        culturaService.remover(id);
+        return ResponseEntity.noContent().build();
+    }
 }

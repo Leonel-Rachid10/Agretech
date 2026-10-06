@@ -5,12 +5,15 @@ import com.agritech.dondo.dto.ProdutorDTO;
 import com.agritech.dondo.dto.SyncBatchDTO;
 import com.agritech.dondo.dto.SyncResultDTO;
 import com.agritech.dondo.model.Produtor;
+import com.agritech.dondo.model.SincronizacaoLog;
 import com.agritech.dondo.repository.ProdutorRepository;
+import com.agritech.dondo.repository.SincronizacaoLogRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,13 +24,16 @@ public class SincronizacaoService {
     private final ProdutorService produtorService;
     private final ProdutorRepository produtorRepository;
     private final LoteProducaoService loteProducaoService;
+    private final SincronizacaoLogRepository sincronizacaoLogRepository;
 
     public SincronizacaoService(ProdutorService produtorService,
                                 ProdutorRepository produtorRepository,
-                                LoteProducaoService loteProducaoService) {
+                                LoteProducaoService loteProducaoService,
+                                SincronizacaoLogRepository sincronizacaoLogRepository) {
         this.produtorService = produtorService;
         this.produtorRepository = produtorRepository;
         this.loteProducaoService = loteProducaoService;
+        this.sincronizacaoLogRepository = sincronizacaoLogRepository;
     }
 
     @Transactional
@@ -36,7 +42,7 @@ public class SincronizacaoService {
         int produtoresSalvos = 0;
         int lotesSalvos = 0;
 
-        log.info("Recebida sincronização offline do ponto focal/telemóvel: {} às {}",
+        log.info("Recebida sincronizacao offline do ponto focal: {} as {}",
                 batch.getPontoFocalTelemovel(), batch.getClientTimestamp());
 
         // 1. Processar novos produtores criados offline
@@ -52,7 +58,6 @@ public class SincronizacaoService {
                         produtorId = criado.getId();
                         produtoresSalvos++;
                     }
-
                     if (pDto.getId() != null) {
                         resultado.getIdMappings().put("produtor_" + pDto.getId(), produtorId);
                     }
@@ -62,23 +67,20 @@ public class SincronizacaoService {
             }
         }
 
-        // 2. Processar novos lotes de produção criados offline
+        // 2. Processar novos lotes de producao criados offline
         if (batch.getLotesNovos() != null) {
             for (LoteProducaoDTO lDto : batch.getLotesNovos()) {
                 try {
-                    // Mapear ID do produtor se tiver sido criado offline
                     if (lDto.getProdutorId() != null && resultado.getIdMappings().containsKey("produtor_" + lDto.getProdutorId())) {
                         lDto.setProdutorId(resultado.getIdMappings().get("produtor_" + lDto.getProdutorId()));
                     }
-
                     LoteProducaoDTO salvo = loteProducaoService.criar(lDto);
                     lotesSalvos++;
-
                     if (lDto.getClientUuid() != null) {
                         resultado.getIdMappings().put(lDto.getClientUuid(), salvo.getId());
                     }
                 } catch (Exception e) {
-                    resultado.getErros().add("Erro ao sincronizar novo lote de cultura ID " + lDto.getCulturaId() + ": " + e.getMessage());
+                    resultado.getErros().add("Erro ao sincronizar lote de cultura ID " + lDto.getCulturaId() + ": " + e.getMessage());
                 }
             }
         }
@@ -101,6 +103,24 @@ public class SincronizacaoService {
         resultado.setLotesSincronizados(lotesSalvos);
         resultado.setSucesso(resultado.getErros().isEmpty());
 
+        // RF08: Persistir log de sincronizacao para painel de supervisao
+        String errosStr = resultado.getErros().isEmpty() ? null : String.join("; ", resultado.getErros());
+        SincronizacaoLog logEntry = new SincronizacaoLog(
+                batch.getPontoFocalTelemovel(),
+                batch.getClientTimestamp(),
+                produtoresSalvos,
+                lotesSalvos,
+                resultado.isSucesso(),
+                errosStr
+        );
+        sincronizacaoLogRepository.save(logEntry);
+        log.info("Sync concluido: {} produtores, {} lotes, sucesso={}", produtoresSalvos, lotesSalvos, resultado.isSucesso());
+
         return resultado;
+    }
+
+    // RF08: Historico de sincronizacoes para o painel de supervisao (ADMIN)
+    public List<SincronizacaoLog> listarHistorico() {
+        return sincronizacaoLogRepository.findAllByOrderByDataRecepcaoDesc();
     }
 }

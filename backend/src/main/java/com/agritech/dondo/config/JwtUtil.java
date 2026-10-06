@@ -26,7 +26,7 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String telemovel, String perfil, String nome, Long id) {
+    public String generateToken(String subjectNome, String perfil, String nome, Long id) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("perfil", perfil);
         claims.put("nome", nome);
@@ -34,14 +34,14 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .claims(claims)
-                .subject(telemovel)
+                .subject(nome)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey())
                 .compact();
     }
 
-    public String extractTelemovel(String token) {
+    public String extractNome(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -80,8 +80,8 @@ public class JwtUtil {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public boolean validateToken(String token, String telemovel) {
-        final String tokenTelemovel = extractTelemovel(token);
-        return (tokenTelemovel.equals(telemovel) && !isTokenExpired(token));
+    public boolean validateToken(String token, String nome) {
+        final String tokenNome = extractNome(token);
+        return (tokenNome.equals(nome) && !isTokenExpired(token));
     }
 }

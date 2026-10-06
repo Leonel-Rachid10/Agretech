@@ -60,7 +60,7 @@ const Api = {
     del(path) { return this.request('DELETE', path); },
 
     // Auth
-    login(telemovel, senha) { return this.post('/auth/login', { telemovel, senha }); },
+    login(nome, senha) { return this.post('/auth/login', { nome, senha }); },
     registar(data) { return this.post('/auth/registo', data); },
 
     // Culturas
@@ -89,6 +89,7 @@ const Api = {
     criarLote(data) { return this.post('/lotes', data); },
     atualizarLote(id, data) { return this.put('/lotes/' + id, data); },
     atualizarEstadoLote(id, estado) { return this.patch('/lotes/' + id + '/estado?novoEstado=' + estado); },
+    removerLote(id) { return this.del('/lotes/' + id); },
 
     // Reservas
     registarContacto(data) { return this.post('/reservas', data); },

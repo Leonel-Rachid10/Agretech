@@ -36,6 +36,6 @@ public class AuthController {
         if (userDetails == null) {
             return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.ok(authService.obterPorTelemovel(userDetails.getUsername()));
+        return ResponseEntity.ok(authService.obterPorNome(userDetails.getUsername()));
     }
 }

@@ -35,19 +35,19 @@ public class ProdutorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO', 'PRODUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
     public ResponseEntity<ProdutorDTO> criar(@Valid @RequestBody ProdutorDTO dto) {
         return ResponseEntity.ok(produtorService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO', 'PRODUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
     public ResponseEntity<ProdutorDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutorDTO dto) {
         return ResponseEntity.ok(produtorService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         produtorService.remover(id);
         return ResponseEntity.noContent().build();

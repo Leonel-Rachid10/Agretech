@@ -14,12 +14,14 @@ const App = {
             this.culturas = await Api.getCulturas();
             if (this.culturas) await AgriDB.cacheList('culturas', this.culturas);
         } catch (e) {
+            console.warn('Falha ao carregar culturas online, a usar cache offline:', e);
             this.culturas = await AgriDB.getCachedList('culturas');
         }
         try {
             this.associacoes = await Api.getAssociacoes();
             if (this.associacoes) await AgriDB.cacheList('associacoes', this.associacoes);
         } catch (e) {
+            console.warn('Falha ao carregar associações online, a usar cache offline:', e);
             this.associacoes = await AgriDB.getCachedList('associacoes');
         }
     },
@@ -49,11 +51,12 @@ const App = {
             lotes = await Api.getCatalogo(filtros);
             if (lotes) await AgriDB.cacheList('lotes_cache', lotes);
         } catch (e) {
+            console.warn('Falha ao carregar catálogo online, a usar cache offline:', e);
             lotes = await AgriDB.getCachedList('lotes_cache');
         }
 
         if (!lotes || lotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone">🌱</div><p>Nenhum lote encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum lote encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
             if (kpiTotal) kpiTotal.textContent = '0';
             if (kpiVolume) kpiVolume.textContent = '0 KG';
             if (kpiProntos) kpiProntos.textContent = '0';
@@ -63,7 +66,7 @@ const App = {
         // KPIs
         if (kpiTotal) kpiTotal.textContent = lotes.length;
         if (kpiVolume) {
-            const vol = lotes.reduce((s, l) => s + parseFloat(l.quantidadeEstimada || 0), 0);
+            const vol = lotes.reduce((s, l) => s + Number.parseFloat(l.quantidadeEstimada || 0), 0);
             kpiVolume.textContent = vol.toLocaleString('pt-MZ') + ' KG';
         }
         if (kpiProntos) kpiProntos.textContent = lotes.filter(l => l.estado === 'PRONTO_PARA_COLHEITA').length;
@@ -74,25 +77,28 @@ const App = {
     renderLoteCard(l) {
         const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
         const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto p/ Colheita', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
-        const tel = (l.produtorTelemovel || '').replace(/\+/g, '');
+        
+        // SonarLint S7781: replaceAll em vez de replace com regex
+        const tel = (l.produtorTelemovel || '').replaceAll('+', '');
         const msgWa = encodeURIComponent('Olá, vi o lote de ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgriTech Dondo e tenho interesse. Podemos negociar?');
 
+        // SonarLint S7773: Number.parseFloat
         return `<div class="card">
             <div class="card-header">
-                <h3>🌿 ${l.culturaNome} — ${l.culturaCategoria || ''}</h3>
+                <h3> ${l.culturaNome}</h3>
                 <span class="badge ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
             </div>
             <div class="card-body">
-                <p class="destaque">${parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida || 'KG'}</p>
-                ${l.precoPorUnidade ? '<p>💰 Preço: <strong>' + parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (l.unidadeMedida||'KG') + '</strong></p>' : ''}
-                <p>👤 Produtor: <strong>${l.produtorNome || 'N/D'}</strong></p>
-                <p>🏘️ ${l.associacaoNome || ''} — ${l.associacaoLocalidade || ''}</p>
-                <p>📅 Colheita prevista: <strong>${l.dataColheitaPrevista || 'N/D'}</strong></p>
-                ${l.observacoes ? '<p>📝 ' + l.observacoes + '</p>' : ''}
+                <p class="destaque">${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida || 'KG'}</p>
+                ${l.precoPorUnidade ? '<p> Preço: <strong>' + Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (l.unidadeMedida||'KG') + '</strong></p>' : ''}
+                <p> Produtor: <strong>${l.produtorNome || 'N/D'}</strong></p>
+                <p> ${l.associacaoNome || ''} — ${l.associacaoLocalidade || ''}</p>
+                <p> Colheita prevista: <strong>${l.dataColheitaPrevista || 'N/D'}</strong></p>
+                ${l.observacoes ? '<p> ' + l.observacoes + '</p>' : ''}
             </div>
             <div class="botoes-contacto">
-                ${tel ? '<a href="https://wa.me/' + tel + '?text=' + msgWa + '" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>' : ''}
-                ${l.produtorTelemovel ? '<a href="tel:' + l.produtorTelemovel + '" class="btn btn-chamada">📞 Ligar</a>' : ''}
+                ${tel ? '<a href="https://wa.me/' + tel + '?text=' + msgWa + '" target="_blank" class="btn btn-whatsapp"> WhatsApp</a>' : ''}
+                ${l.produtorTelemovel ? '<a href="tel:' + l.produtorTelemovel + '" class="btn btn-chamada"> Ligar</a>' : ''}
             </div>
         </div>`;
     },
@@ -101,7 +107,7 @@ const App = {
         const selCultura = document.getElementById('filtro-cultura');
         if (selCultura && this.culturas) {
             selCultura.innerHTML = '<option value="">Todas as Culturas</option>' +
-                this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + ' (' + c.categoria + ')</option>').join('');
+                this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + '</option>').join('');
         }
     },
 
@@ -114,12 +120,13 @@ const App = {
         try {
             lotes = await Api.getLotes();
         } catch (e) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone">📡</div><p>Sem conexão. Os lotes offline serão mostrados após sincronização.</p></div>';
+            console.warn('Falha ao carregar lotes do dashboard:', e);
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Sem conexão. Os lotes offline serão mostrados após sincronização.</p></div>';
             return;
         }
 
         if (!lotes || lotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone">📦</div><p>Nenhum lote registado. Clique em "Novo Lote" para começar.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum lote registado. Clique em "Novo Lote" para começar.</p></div>';
             return;
         }
 
@@ -130,7 +137,7 @@ const App = {
                 return `<tr>
                     <td>${l.culturaNome}</td>
                     <td>${l.produtorNome}<br><small>${l.associacaoLocalidade || ''}</small></td>
-                    <td>${parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida||'KG'}</td>
+                    <td>${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida||'KG'}</td>
                     <td>${l.dataColheitaPrevista || '-'}</td>
                     <td><span class="badge ${badgeClass[l.estado]||''}">${badgeLabel[l.estado]||l.estado}</span></td>
                     <td>
@@ -166,27 +173,33 @@ const App = {
         }
         if (selProdutor) {
             let produtores;
-            try { produtores = await Api.getProdutores(); } catch (e) { produtores = []; }
+            try { 
+                produtores = await Api.getProdutores(); 
+            } catch (e) { 
+                console.warn('Falha ao obter produtores:', e);
+                produtores = []; 
+            }
             selProdutor.innerHTML = '<option value="">Selecione o produtor</option>' +
                 produtores.map(p => '<option value="' + p.id + '">' + p.nome + ' — ' + (p.associacaoLocalidade || '') + '</option>').join('');
         }
     },
 
     async submeterNovoLote(form) {
+        // SonarLint S7773: Number.parseInt com base 10 e Number.parseFloat
         const data = {
-            produtorId: parseInt(form.produtorId.value),
-            culturaId: parseInt(form.culturaId.value),
-            quantidadeEstimada: parseFloat(form.quantidadeEstimada.value),
+            produtorId: Number.parseInt(form.produtorId.value, 10),
+            culturaId: Number.parseInt(form.culturaId.value, 10),
+            quantidadeEstimada: Number.parseFloat(form.quantidadeEstimada.value),
             dataColheitaPrevista: form.dataColheitaPrevista.value,
             dataSementeira: form.dataSementeira.value || null,
-            precoPorUnidade: form.precoPorUnidade.value ? parseFloat(form.precoPorUnidade.value) : null,
+            precoPorUnidade: form.precoPorUnidade.value ? Number.parseFloat(form.precoPorUnidade.value) : null,
             observacoes: form.observacoes.value || null,
             estado: 'EM_CRESCIMENTO'
         };
 
         if (!navigator.onLine) {
             await AgriDB.addToSyncQueue('novo_lote', data);
-            alert('✅ Lote guardado offline! Será sincronizado quando houver rede.');
+            alert(' Lote guardado offline! Será sincronizado quando houver rede.');
             SyncManager.updateBar();
             fecharModal('modal-novo-lote');
             return;
@@ -194,7 +207,7 @@ const App = {
 
         try {
             await Api.criarLote(data);
-            alert('✅ Lote registado com sucesso!');
+            alert(' Lote registado com sucesso!');
             fecharModal('modal-novo-lote');
             this.carregarLotesDashboard();
         } catch (e) {
@@ -207,19 +220,24 @@ const App = {
         if (!lista) return;
 
         let assocs;
-        try { assocs = await Api.getAssociacoes(); } catch(e) { assocs = this.associacoes || []; }
+        try { 
+            assocs = await Api.getAssociacoes(); 
+        } catch(e) { 
+            console.warn('Falha ao carregar associações online, a usar cache:', e);
+            assocs = this.associacoes || []; 
+        }
 
         if (!assocs || assocs.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone">🏘️</div><p>Nenhuma associação registada.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhuma associação registada.</p></div>';
             return;
         }
 
         lista.innerHTML = assocs.map(a => `<div class="card">
-            <div class="card-header"><h3>🏘️ ${a.nome}</h3></div>
+            <div class="card-header"><h3> ${a.nome}</h3></div>
             <div class="card-body">
-                <p>📍 Localidade: <strong>${a.localidade}</strong>${a.povoado ? ' — ' + a.povoado : ''}</p>
-                ${a.pontoFocalNome ? '<p>👤 Ponto Focal: <strong>' + a.pontoFocalNome + '</strong> (' + (a.pontoFocalTelemovel||'') + ')</p>' : ''}
-                ${a.contactoPrincipal ? '<p>📞 Contacto: ' + a.contactoPrincipal + '</p>' : ''}
+                <p> Localidade: <strong>${a.localidade}</strong>${a.povoado ? ' — ' + a.povoado : ''}</p>
+                ${a.pontoFocalNome ? '<p> Ponto Focal: <strong>' + a.pontoFocalNome + '</strong> (' + (a.pontoFocalTelemovel||'') + ')</p>' : ''}
+                ${a.contactoPrincipal ? '<p> Contacto: ' + a.contactoPrincipal + '</p>' : ''}
             </div>
         </div>`).join('');
     },
@@ -229,19 +247,24 @@ const App = {
         if (!lista) return;
 
         let produtores;
-        try { produtores = await Api.getProdutores(); } catch(e) { produtores = []; }
+        try { 
+            produtores = await Api.getProdutores(); 
+        } catch(e) { 
+            console.warn('Falha ao carregar produtores online:', e);
+            produtores = []; 
+        }
 
         if (!produtores || produtores.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone">👨‍🌾</div><p>Nenhum produtor registado.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produtor registado.</p></div>';
             return;
         }
 
         lista.innerHTML = produtores.map(p => `<div class="card">
-            <div class="card-header"><h3>👨‍🌾 ${p.nome}</h3></div>
+            <div class="card-header"><h3> ${p.nome}</h3></div>
             <div class="card-body">
-                <p>📞 ${p.telemovel}</p>
-                <p>🏘️ ${p.associacaoNome || ''} — ${p.associacaoLocalidade || ''}</p>
-                ${p.localizacaoDetalhada ? '<p>📍 ' + p.localizacaoDetalhada + '</p>' : ''}
+                <p> ${p.telemovel}</p>
+                <p> ${p.associacaoNome || ''} — ${p.associacaoLocalidade || ''}</p>
+                ${p.localizacaoDetalhada ? '<p> ' + p.localizacaoDetalhada + '</p>' : ''}
             </div>
         </div>`).join('');
     }

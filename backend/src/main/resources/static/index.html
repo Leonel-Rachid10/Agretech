@@ -12,7 +12,7 @@
 <body>
     <!-- NAVBAR -->
     <header class="navbar">
-        <div class="logo"><span>🌱</span> AgriTech Dondo</div>
+        <div class="logo"><span></span> AgriTech Dondo</div>
         <nav>
             <a href="/index.html">Catálogo</a>
             <a href="/dashboard.html">Gestão</a>
@@ -27,7 +27,7 @@
         <!-- TÍTULO -->
         <div class="page-intro">
             <div>
-                <h1>🛒 Catálogo Agrícola do Dondo</h1>
+                <h1> Catálogo Agrícola do Dondo</h1>
                 <p>Produtos frescos das associações de Mafambisse, Chinamacondo e Dondo Sede. Contacte directamente o produtor.</p>
             </div>
         </div>
@@ -50,7 +50,7 @@
 
         <!-- FILTROS (RF04) -->
         <div class="filtros">
-            <h2>🔍 Filtrar Catálogo</h2>
+            <h2> Filtrar Catálogo</h2>
             <div class="filtros-grid">
                 <div>
                     <label>Cultura</label>
@@ -82,14 +82,20 @@
                 </div>
             </div>
             <div class="action-row">
-                <button class="btn btn-primario" onclick="App.carregarCatalogo()">🔍 Pesquisar</button>
-                <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-pdf">📄 Relatório PDF</a>
+                <button class="btn btn-primario" onclick="App.carregarCatalogo()"> Pesquisar</button>
+                <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-pdf"> Relatório PDF</a>
             </div>
         </div>
 
         <!-- LISTA DE LOTES (CATÁLOGO) -->
+        <div style="position:relative;margin-bottom:16px;">
+            <input type="text" id="pesquisa-catalogo" placeholder="Pesquisar por cultura, produtor ou localidade..."
+                oninput="filtrarCatalogo(this.value)"
+                style="width:100%;padding:11px 12px 11px 38px;border:1px solid #E0E0E0;border-radius:6px;font-size:0.95rem;color:#212121;background:#fff;transition:border-color 0.2s,box-shadow 0.2s;">
+            <i style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9E9E9E;font-size:1rem;" class="bi bi-search"></i>
+        </div>
         <div id="catalogo-lista">
-            <div class="empty-state"><div class="icone">⏳</div><p>Carregando catálogo...</p></div>
+            <div class="empty-state"><div class="icone"></div><p>Carregando catalogo...</p></div>
         </div>
     </main>
 
@@ -113,6 +119,14 @@
                 if (navLogin) { navLogin.textContent = Api.user.nome.split(' ')[0]; navLogin.href = '/dashboard.html'; }
             }
         });
+
+        function filtrarCatalogo(termo) {
+            const cards = document.querySelectorAll('#catalogo-lista .produto-card');
+            const t = termo.toLowerCase().trim();
+            cards.forEach(card => {
+                card.style.display = !t || card.textContent.toLowerCase().includes(t) ? '' : 'none';
+            });
+        }
     </script>
 </body>
 </html>

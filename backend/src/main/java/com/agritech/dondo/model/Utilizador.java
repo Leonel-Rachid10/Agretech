@@ -1,5 +1,5 @@
 package com.agritech.dondo.model;
-
+import java.time.ZoneId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ public class Utilizador {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String nome;
 
     @Column(nullable = false, unique = true, length = 20)
@@ -29,10 +29,10 @@ public class Utilizador {
     @Column(name = "data_criacao", updatable = false)
     private LocalDateTime dataCriacao;
 
-    @PrePersist
+   @PrePersist
     public void prePersist() {
         if (this.dataCriacao == null) {
-            this.dataCriacao = LocalDateTime.now();
+            this.dataCriacao = LocalDateTime.now(ZoneId.of("Africa/Maputo"));
         }
     }
 

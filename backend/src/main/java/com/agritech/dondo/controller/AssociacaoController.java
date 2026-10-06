@@ -30,13 +30,13 @@ public class AssociacaoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AssociacaoDTO> criar(@Valid @RequestBody AssociacaoDTO dto) {
         return ResponseEntity.ok(associacaoService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AssociacaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AssociacaoDTO dto) {
         return ResponseEntity.ok(associacaoService.atualizar(id, dto));
     }

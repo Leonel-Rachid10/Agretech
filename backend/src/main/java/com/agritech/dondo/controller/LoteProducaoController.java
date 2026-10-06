@@ -57,19 +57,19 @@ public class LoteProducaoController {
      * RF03: Registo de lotes de produção (Oferta)
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO', 'PRODUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
     public ResponseEntity<LoteProducaoDTO> criar(@Valid @RequestBody LoteProducaoDTO dto) {
         return ResponseEntity.ok(loteProducaoService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO', 'PRODUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
     public ResponseEntity<LoteProducaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody LoteProducaoDTO dto) {
         return ResponseEntity.ok(loteProducaoService.atualizar(id, dto));
     }
 
     @PatchMapping("/{id}/estado")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO', 'PRODUTOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
     public ResponseEntity<LoteProducaoDTO> atualizarEstado(
             @PathVariable Long id,
             @RequestParam EstadoLote novoEstado) {
@@ -77,7 +77,7 @@ public class LoteProducaoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR_ASSOCIACAO')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         loteProducaoService.remover(id);
         return ResponseEntity.noContent().build();

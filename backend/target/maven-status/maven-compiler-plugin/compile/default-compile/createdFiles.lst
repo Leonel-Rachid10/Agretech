@@ -12,6 +12,7 @@ com\agritech\dondo\model\Utilizador.class
 com\agritech\dondo\controller\AuthController.class
 com\agritech\dondo\controller\ReservaContactoController.class
 com\agritech\dondo\repository\ReservaContactoRepository.class
+com\agritech\dondo\repository\SincronizacaoLogRepository.class
 com\agritech\dondo\controller\ProdutorController.class
 com\agritech\dondo\dto\ProdutorDTO.class
 com\agritech\dondo\service\ReservaContactoService.class
@@ -36,6 +37,7 @@ com\agritech\dondo\AgriTechApplication.class
 com\agritech\dondo\repository\LoteProducaoRepository.class
 com\agritech\dondo\model\Perfil.class
 com\agritech\dondo\model\EstadoLote.class
+com\agritech\dondo\model\SincronizacaoLog.class
 com\agritech\dondo\service\SincronizacaoService.class
 com\agritech\dondo\controller\SincronizacaoController.class
 com\agritech\dondo\controller\LoteProducaoController.class
