@@ -4,3 +4,10 @@ services:
     name: agritech-dondo-api
     env: docker
     plan: free
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: "jdbc:h2:file:/app/data/agritech;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDER=HIGH;DB_CLOSE_DELAY=-1"
+      - key: SPRING_DATASOURCE_USERNAME
+        value: "sa"
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: "admin"
