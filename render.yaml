@@ -1,6 +1,6 @@
 services:
   # Servico Web: API Spring Boot e Frontend PWA (100% Gratuito - Plano Free, Sem Cartao)
   - type: web
-    name: agritech-dondo-api
+    name: agretech
     env: docker
     plan: free
