@@ -12,9 +12,9 @@ RUN mkdir -p /app/data
 COPY --from=build /app/target/agritech-dondo-1.0.0.jar app.jar
 
 # Fallback para banco de dados H2 interno caso não seja fornecido MySQL externo (100% gratuito, sem cartão)
-ENV SPRING_DATASOURCE_URL="jdbc:h2:file:/app/data/agritech;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDER=HIGH;DB_CLOSE_DELAY=-1"
-ENV SPRING_DATASOURCE_USERNAME="sa"
-ENV SPRING_DATASOURCE_PASSWORD=""
+ENV DB_URL="jdbc:h2:file:/app/data/agritech;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDER=HIGH;DB_CLOSE_DELAY=-1"
+ENV DB_USER="sa"
+ENV DB_PASS=""
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
