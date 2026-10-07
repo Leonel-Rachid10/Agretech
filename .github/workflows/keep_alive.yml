@@ -1,0 +1,23 @@
+name: Manter AgreTech Ativo (Anti-Sleep Cron Job)
+
+on:
+  schedule:
+    # Corre a cada 14 minutos (O Render desliga apos 15 minutos sem visitas)
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Permite disparar manualmente pelo painel do GitHub
+
+jobs:
+  ping-servico:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pingar aplicacao AgreTech no Render
+        run: |
+          echo "Disparando ping para manter o AgreTech ativo..."
+          # Tenta pingar a URL principal e o endpoint de saude
+          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 "${{ secrets.RENDER_APP_URL || 'https://agretech.onrender.com' }}/")
+          echo "Codigo de resposta recebido: $RESPONSE_CODE"
+          if [ "$RESPONSE_CODE" -ge 200 ] && [ "$RESPONSE_CODE" -lt 400 ]; then
+            echo "AgreTech esta acordado e operacional!"
+          else
+            echo "Aviso: Servidor retornou $RESPONSE_CODE ou demorou a acordar."
+          fi
