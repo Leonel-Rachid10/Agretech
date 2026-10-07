@@ -364,12 +364,29 @@
                         </div>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Localidade <span class="text-danger">*</span></label>
-                                <input type="text" name="localidade" class="form-control form-control-sm" required>
+                                <label class="form-label fw-semibold small">Distrito (Localidade) <span class="text-danger">*</span></label>
+                                <select name="localidade" class="form-select form-select-sm" required onchange="atualizarBairros(this.value, 'povoado-assoc')">
+                                    <option value="">Selecione o Distrito...</option>
+                                    <option value="Beira">Beira</option>
+                                    <option value="Búzi">Búzi</option>
+                                    <option value="Caia">Caia</option>
+                                    <option value="Chemba">Chemba</option>
+                                    <option value="Cheringoma">Cheringoma</option>
+                                    <option value="Chibabava">Chibabava</option>
+                                    <option value="Dondo">Dondo</option>
+                                    <option value="Gorongosa">Gorongosa</option>
+                                    <option value="Machanga">Machanga</option>
+                                    <option value="Maringué">Maringué</option>
+                                    <option value="Marromeu">Marromeu</option>
+                                    <option value="Muanza">Muanza</option>
+                                    <option value="Nhamatanda">Nhamatanda</option>
+                                </select>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Povoado</label>
-                                <input type="text" name="povoado" class="form-control form-control-sm">
+                                <label class="form-label fw-semibold small">Bairro / Zona</label>
+                                <select name="povoado" id="povoado-assoc" class="form-select form-select-sm">
+                                    <option value="">Selecione o distrito primeiro...</option>
+                                </select>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -669,6 +686,25 @@
                 App.carregarProdutoresDashboard();
                 atualizarKPIs();
             } catch(e) { alert('Erro: ' + e.message); }
+        }
+        const zonasPorDistrito = {
+            'Dondo': ['Bairro Central', 'Consito', 'Mafarinha', 'Canhandula', 'Nhamaiabwe', 'Chinamacondo', 'Savana', 'Mafambisse', 'Mútua'],
+            'Beira': ['Alto da Manga', 'Chaimite', 'Chingussura', 'Chipangara', 'Chota', 'Esturro', 'Inhamízua', 'Macurungo', 'Macuti', 'Mananga', 'Manga Mascarenhas', 'Maraza', 'Matacuane', 'Matadouro', 'Muave', 'Mungassa', 'Munhava-Central', 'Ndunda', 'Nhaconjo', 'Nhangau', 'Nhangoma', 'Pioneiros', 'Ponta-Gêa', 'Tchonja', 'Vaz', 'Vila Massane']
+        };
+
+        function atualizarBairros(distrito, targetId) {
+            const sel = document.getElementById(targetId);
+            if (!sel) return;
+            sel.innerHTML = '';
+            const zonas = zonasPorDistrito[distrito];
+            if (zonas) {
+                sel.innerHTML = '<option value="">Selecione o bairro / zona...</option>' + 
+                                zonas.map(z => `<option value="${z}">${z}</option>`).join('');
+            } else if (distrito) {
+                sel.innerHTML = '<option value="Sede">(Sede / Sem zonas listadas)</option>';
+            } else {
+                sel.innerHTML = '<option value="">Selecione o distrito primeiro...</option>';
+            }
         }
     </script>
 </body>
