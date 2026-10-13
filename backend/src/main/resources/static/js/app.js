@@ -80,7 +80,7 @@ const App = {
         
         // SonarLint S7781: replaceAll em vez de replace com regex
         const tel = (l.produtorTelemovel || '').replaceAll('+', '');
-        const msgWa = encodeURIComponent('Olá, vi o lote de ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgriTech Dondo e tenho interesse. Podemos negociar?');
+        const msgWa = encodeURIComponent('Olá, vi o lote de ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgreTech e tenho interesse. Podemos negociar?');
 
         // SonarLint S7773: Number.parseFloat
         return `<div class="card">
@@ -92,7 +92,7 @@ const App = {
                 <p class="destaque">${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida || 'KG'}</p>
                 ${l.precoPorUnidade ? '<p> Preço: <strong>' + Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (l.unidadeMedida||'KG') + '</strong></p>' : ''}
                 <p> Produtor: <strong>${l.produtorNome || 'N/D'}</strong></p>
-                <p> ${l.associacaoNome || ''} — ${l.associacaoLocalidade || ''}</p>
+                <p> ${l.associacaoNome || ''} ${l.associacaoLocalidade ? '(' + l.associacaoLocalidade + ')' : ''}</p>
                 <p> Colheita prevista: <strong>${l.dataColheitaPrevista || 'N/D'}</strong></p>
                 ${l.observacoes ? '<p> ' + l.observacoes + '</p>' : ''}
             </div>
@@ -180,7 +180,7 @@ const App = {
                 produtores = []; 
             }
             selProdutor.innerHTML = '<option value="">Selecione o produtor</option>' +
-                produtores.map(p => '<option value="' + p.id + '">' + p.nome + ' — ' + (p.associacaoLocalidade || '') + '</option>').join('');
+                produtores.map(p => '<option value="' + p.id + '">' + p.nome + (p.associacaoLocalidade ? ' (' + p.associacaoLocalidade + ')' : '') + '</option>').join('');
         }
     },
 
@@ -235,7 +235,7 @@ const App = {
         lista.innerHTML = assocs.map(a => `<div class="card">
             <div class="card-header"><h3> ${a.nome}</h3></div>
             <div class="card-body">
-                <p> Localidade: <strong>${a.localidade}</strong>${a.povoado ? ' — ' + a.povoado : ''}</p>
+                <p> Localidade: <strong>${a.localidade}</strong>${a.povoado ? ' (' + a.povoado + ')' : ''}</p>
                 ${a.pontoFocalNome ? '<p> Ponto Focal: <strong>' + a.pontoFocalNome + '</strong> (' + (a.pontoFocalTelemovel||'') + ')</p>' : ''}
                 ${a.contactoPrincipal ? '<p> Contacto: ' + a.contactoPrincipal + '</p>' : ''}
             </div>
@@ -263,7 +263,7 @@ const App = {
             <div class="card-header"><h3> ${p.nome}</h3></div>
             <div class="card-body">
                 <p> ${p.telemovel}</p>
-                <p> ${p.associacaoNome || ''} — ${p.associacaoLocalidade || ''}</p>
+                <p> ${p.associacaoNome || ''} ${p.associacaoLocalidade ? '(' + p.associacaoLocalidade + ')' : ''}</p>
                 ${p.localizacaoDetalhada ? '<p> ' + p.localizacaoDetalhada + '</p>' : ''}
             </div>
         </div>`).join('');

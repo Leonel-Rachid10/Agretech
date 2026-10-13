@@ -71,15 +71,15 @@ public class DataInitializer implements CommandLineRunner {
                 {"Milho", "Cereal", "KG"},
                 {"Arroz", "Cereal", "KG"},
                 {"Feijao", "Leguminosa", "KG"},
-                {"Feijao-Nhemba", "Leguminosa", "KG"},
+                {"Feijao Nhemba", "Leguminosa", "KG"},
                 {"Amendoim", "Leguminosa", "KG"},
                 {"Gergelim", "Cereal", "KG"},
                 {"Mapira", "Cereal", "KG"},
                 {"Mexoeira", "Cereal", "KG"},
                 // Raizes e Tuberculos
                 {"Mandioca", "Raiz", "KG"},
-                {"Batata-Doce", "Raiz", "KG"},
-                {"Batata-Reno", "Raiz", "KG"},
+                {"Batata Doce", "Raiz", "KG"},
+                {"Batata Reno", "Raiz", "KG"},
                 // Frutas
                 {"Banana", "Fruta", "KG"},
                 {"Manga", "Fruta", "KG"},
@@ -89,7 +89,7 @@ public class DataInitializer implements CommandLineRunner {
                 {"Laranja", "Fruta", "KG"},
                 {"Limao", "Fruta", "KG"},
                 // Outros
-                {"Cana-de-Acucar", "Industrial", "TON"},
+                {"Cana de Acucar", "Industrial", "TON"},
                 {"Algodao", "Industrial", "KG"},
         };
 

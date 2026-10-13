@@ -1,7 +1,7 @@
 {
-  "name": "AgriTech Dondo",
-  "short_name": "AgriTech",
-  "description": "Plataforma digital para conexão de produtores agrícolas e compradores no Distrito do Dondo, Sofala",
+  "name": "AgreTech",
+  "short_name": "AgreTech",
+  "description": "Plataforma digital para conexão de produtores agrícolas e compradores na Província de Sofala",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
