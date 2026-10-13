@@ -64,7 +64,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/index.html">
                 <i class="bi bi-tree-fill fs-4"></i>
-                <span>AgreTech <span class="fw-light opacity-75">Dondo</span></span>
+                <span>AgreTech</span>
             </a>
             <!-- BARRA DE PESQUISA GLOBAL -->
             <div class="search-bar mx-auto d-none d-lg-block" style="width:320px">
@@ -107,7 +107,7 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <h4 class="fw-bold mb-1" id="dash-titulo">Painel de Gestao</h4>
-                <p class="text-muted mb-0 small">Gestao integrada do Distrito do Dondo</p>
+                <p class="text-muted mb-0 small">Gestao integrada da Provincia de Sofala</p>
             </div>
             <div class="d-flex gap-2 admin-only">
                 <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 rounded-pill">
@@ -146,7 +146,7 @@
                 <div class="kpi-card kpi-teal">
                     <div class="d-flex align-items-center gap-3">
                         <div class="kpi-icon bg-info bg-opacity-10 text-info"><i class="bi bi-flower1"></i></div>
-                        <div><div class="kpi-valor" id="kpi-culturas">-</div><div class="kpi-label">Culturas</div></div>
+                        <div><div class="kpi-valor" id="kpi-culturas">-</div><div class="kpi-label">Produtos</div></div>
                     </div>
                 </div>
             </div>
@@ -273,7 +273,7 @@
                             <select name="produtorId" id="lote-produtor" class="form-select form-select-sm" required></select>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Cultura / Produto <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold small">Produto Agricola <span class="text-danger">*</span></label>
                             <select name="culturaId" id="lote-cultura" class="form-select form-select-sm" required></select>
                         </div>
                         <div class="row g-2 mb-3">
@@ -470,7 +470,7 @@
                 document.getElementById('user-nome-nav').textContent = Api.user.nome;
                 document.getElementById('user-avatar').textContent = firstName.charAt(0).toUpperCase();
                 document.getElementById('dash-titulo').textContent = 'Ola, ' + firstName + '!';
-                const perfilLabels = { ADMIN: 'Administrador', PRODUTOR: 'Produtor', COMPRADOR: 'Comprador' };
+                const perfilLabels = { ADMIN: 'Administrador', PRODUTOR: 'Agricultor', COMPRADOR: 'Comprador' };
                 document.getElementById('user-perfil-badge').textContent = perfilLabels[Api.user.perfil] || Api.user.perfil;
             }
 
