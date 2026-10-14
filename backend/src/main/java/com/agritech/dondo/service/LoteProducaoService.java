@@ -146,6 +146,12 @@ public class LoteProducaoService {
         if (entity.getProdutor().getAssociacao() != null) {
             dto.setAssociacaoNome(entity.getProdutor().getAssociacao().getNome());
             dto.setAssociacaoLocalidade(entity.getProdutor().getAssociacao().getLocalidade());
+        } else if (entity.getProdutor().getDistrito() != null) {
+            String loc = entity.getProdutor().getDistrito();
+            if (entity.getProdutor().getBairro() != null && !entity.getProdutor().getBairro().isBlank()) {
+                loc += " (" + entity.getProdutor().getBairro() + ")";
+            }
+            dto.setAssociacaoLocalidade(loc);
         }
 
         dto.setCulturaId(entity.getCultura().getId());

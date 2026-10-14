@@ -43,8 +43,10 @@ public class ProdutorService {
 
     @Transactional
     public ProdutorDTO criar(ProdutorDTO dto) {
-        Associacao associacao = associacaoRepository.findById(dto.getAssociacaoId())
-                .orElseThrow(() -> new IllegalArgumentException("Associação não encontrada com ID: " + dto.getAssociacaoId()));
+        Associacao associacao = null;
+        if (dto.getAssociacaoId() != null) {
+            associacao = associacaoRepository.findById(dto.getAssociacaoId()).orElse(null);
+        }
 
         Produtor produtor = new Produtor(
                 dto.getNome(),
@@ -52,6 +54,8 @@ public class ProdutorService {
                 associacao,
                 dto.getLocalizacaoDetalhada()
         );
+        produtor.setDistrito(dto.getDistrito());
+        produtor.setBairro(dto.getBairro());
 
         return toDTO(produtorRepository.save(produtor));
     }
@@ -61,12 +65,14 @@ public class ProdutorService {
         Produtor produtor = produtorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produtor não encontrado com ID: " + id));
 
-        Associacao associacao = associacaoRepository.findById(dto.getAssociacaoId())
-                .orElseThrow(() -> new IllegalArgumentException("Associação não encontrada com ID: " + dto.getAssociacaoId()));
+        if (dto.getAssociacaoId() != null) {
+            associacaoRepository.findById(dto.getAssociacaoId()).ifPresent(produtor::setAssociacao);
+        }
 
         produtor.setNome(dto.getNome());
         produtor.setTelemovel(dto.getTelemovel());
-        produtor.setAssociacao(associacao);
+        if (dto.getDistrito() != null) produtor.setDistrito(dto.getDistrito());
+        if (dto.getBairro() != null) produtor.setBairro(dto.getBairro());
         produtor.setLocalizacaoDetalhada(dto.getLocalizacaoDetalhada());
 
         return toDTO(produtorRepository.save(produtor));
@@ -85,9 +91,13 @@ public class ProdutorService {
         dto.setId(entity.getId());
         dto.setNome(entity.getNome());
         dto.setTelemovel(entity.getTelemovel());
-        dto.setAssociacaoId(entity.getAssociacao().getId());
-        dto.setAssociacaoNome(entity.getAssociacao().getNome());
-        dto.setAssociacaoLocalidade(entity.getAssociacao().getLocalidade());
+        if (entity.getAssociacao() != null) {
+            dto.setAssociacaoId(entity.getAssociacao().getId());
+            dto.setAssociacaoNome(entity.getAssociacao().getNome());
+            dto.setAssociacaoLocalidade(entity.getAssociacao().getLocalidade());
+        }
+        dto.setDistrito(entity.getDistrito());
+        dto.setBairro(entity.getBairro());
         dto.setLocalizacaoDetalhada(entity.getLocalizacaoDetalhada());
         return dto;
     }

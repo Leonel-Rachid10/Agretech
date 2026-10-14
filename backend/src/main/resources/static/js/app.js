@@ -1,7 +1,6 @@
-// === AgriTech Dondo — Lógica de Interface ===
+// === AgreTech: Lógica de Interface ===
 const App = {
     culturas: [],
-    associacoes: [],
 
     async init() {
         await AgriDB.open();
@@ -14,15 +13,8 @@ const App = {
             this.culturas = await Api.getCulturas();
             if (this.culturas) await AgriDB.cacheList('culturas', this.culturas);
         } catch (e) {
-            console.warn('Falha ao carregar culturas online, a usar cache offline:', e);
+            console.warn('Falha ao carregar produtos agricolas online, a usar cache offline:', e);
             this.culturas = await AgriDB.getCachedList('culturas');
-        }
-        try {
-            this.associacoes = await Api.getAssociacoes();
-            if (this.associacoes) await AgriDB.cacheList('associacoes', this.associacoes);
-        } catch (e) {
-            console.warn('Falha ao carregar associações online, a usar cache offline:', e);
-            this.associacoes = await AgriDB.getCachedList('associacoes');
         }
     },
 
@@ -62,7 +54,7 @@ const App = {
         }
 
         if (!lotes || lotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum lote encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
             if (kpiTotal) kpiTotal.textContent = '0';
             if (kpiVolume) kpiVolume.textContent = '0 KG';
             if (kpiProntos) kpiProntos.textContent = '0';
@@ -86,7 +78,7 @@ const App = {
         
         // SonarLint S7781: replaceAll em vez de replace com regex
         const tel = (l.produtorTelemovel || '').replaceAll('+', '');
-        const msgWa = encodeURIComponent('Olá, vi o lote de ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgreTech e tenho interesse. Podemos negociar?');
+        const msgWa = encodeURIComponent('Olá, vi o produto ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgreTech e tenho interesse. Podemos negociar?');
 
         // SonarLint S7773: Number.parseFloat
         return `<div class="card">
@@ -97,8 +89,8 @@ const App = {
             <div class="card-body">
                 <p class="destaque">${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida || 'KG'}</p>
                 ${l.precoPorUnidade ? '<p> Preço: <strong>' + Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (l.unidadeMedida||'KG') + '</strong></p>' : ''}
-                <p> Produtor: <strong>${l.produtorNome || 'N/D'}</strong></p>
-                <p> ${l.associacaoNome || ''} ${l.associacaoLocalidade ? '(' + l.associacaoLocalidade + ')' : ''}</p>
+                <p> Agricultor: <strong>${l.produtorNome || 'N/D'}</strong></p>
+                ${l.associacaoLocalidade ? '<p> Localidade: <strong>' + l.associacaoLocalidade + '</strong></p>' : ''}
                 <p> Colheita prevista: <strong>${l.dataColheitaPrevista || 'N/D'}</strong></p>
                 ${l.observacoes ? '<p> ' + l.observacoes + '</p>' : ''}
             </div>
@@ -112,7 +104,7 @@ const App = {
     preencherFiltros() {
         const selCultura = document.getElementById('filtro-cultura');
         if (selCultura && this.culturas) {
-            selCultura.innerHTML = '<option value="">Todas as Culturas</option>' +
+            selCultura.innerHTML = '<option value="">Todos os Produtos Agricolas</option>' +
                 this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + '</option>').join('');
         }
     },
@@ -126,17 +118,17 @@ const App = {
         try {
             lotes = await Api.getLotes();
         } catch (e) {
-            console.warn('Falha ao carregar lotes do dashboard:', e);
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Sem conexão. Os lotes offline serão mostrados após sincronização.</p></div>';
+            console.warn('Falha ao carregar produtos do dashboard:', e);
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Sem conexão. Os produtos offline serão mostrados após sincronização.</p></div>';
             return;
         }
 
         if (!lotes || lotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum lote registado. Clique em "Novo Lote" para começar.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto registado. Clique em "Novo Produto" para começar.</p></div>';
             return;
         }
 
-        lista.innerHTML = '<div class="tabela-wrapper"><table><thead><tr><th>Cultura</th><th>Produtor</th><th>Quantidade</th><th>Colheita</th><th>Estado</th><th>Acções</th></tr></thead><tbody>' +
+        lista.innerHTML = '<div class="tabela-wrapper"><table><thead><tr><th>Produto Agricola</th><th>Agricultor</th><th>Quantidade</th><th>Colheita</th><th>Estado</th><th>Acções</th></tr></thead><tbody>' +
             lotes.map(l => {
                 const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
                 const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
@@ -174,7 +166,7 @@ const App = {
         const selCultura = document.getElementById('lote-cultura');
         const selProdutor = document.getElementById('lote-produtor');
         if (selCultura && this.culturas) {
-            selCultura.innerHTML = '<option value="">Selecione a cultura</option>' +
+            selCultura.innerHTML = '<option value="">Selecione o produto agricola</option>' +
                 this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + '</option>').join('');
         }
         if (selProdutor) {
@@ -182,11 +174,14 @@ const App = {
             try { 
                 produtores = await Api.getProdutores(); 
             } catch (e) { 
-                console.warn('Falha ao obter produtores:', e);
+                console.warn('Falha ao obter agricultores:', e);
                 produtores = []; 
             }
-            selProdutor.innerHTML = '<option value="">Selecione o produtor</option>' +
-                produtores.map(p => '<option value="' + p.id + '">' + p.nome + (p.associacaoLocalidade ? ' (' + p.associacaoLocalidade + ')' : '') + '</option>').join('');
+            selProdutor.innerHTML = '<option value="">Selecione o agricultor</option>' +
+                produtores.map(p => {
+                    const loc = p.distrito ? p.distrito + (p.bairro ? ' - ' + p.bairro : '') : (p.associacaoLocalidade || '');
+                    return '<option value="' + p.id + '">' + p.nome + (loc ? ' (' + loc + ')' : '') + '</option>';
+                }).join('');
         }
     },
 
@@ -205,7 +200,7 @@ const App = {
 
         if (!navigator.onLine) {
             await AgriDB.addToSyncQueue('novo_lote', data);
-            alert(' Lote guardado offline! Será sincronizado quando houver rede.');
+            alert(' Produto guardado offline! Será sincronizado quando houver rede.');
             SyncManager.updateBar();
             fecharModal('modal-novo-lote');
             return;
@@ -213,39 +208,12 @@ const App = {
 
         try {
             await Api.criarLote(data);
-            alert(' Lote registado com sucesso!');
+            alert(' Produto registado com sucesso!');
             fecharModal('modal-novo-lote');
             this.carregarLotesDashboard();
         } catch (e) {
             alert('Erro: ' + e.message);
         }
-    },
-
-    async carregarAssociacoes() {
-        const lista = document.getElementById('associacoes-lista');
-        if (!lista) return;
-
-        let assocs;
-        try { 
-            assocs = await Api.getAssociacoes(); 
-        } catch(e) { 
-            console.warn('Falha ao carregar associações online, a usar cache:', e);
-            assocs = this.associacoes || []; 
-        }
-
-        if (!assocs || assocs.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhuma associação registada.</p></div>';
-            return;
-        }
-
-        lista.innerHTML = assocs.map(a => `<div class="card">
-            <div class="card-header"><h3> ${a.nome}</h3></div>
-            <div class="card-body">
-                <p> Localidade: <strong>${a.localidade}</strong>${a.povoado ? ' (' + a.povoado + ')' : ''}</p>
-                ${a.pontoFocalNome ? '<p> Ponto Focal: <strong>' + a.pontoFocalNome + '</strong> (' + (a.pontoFocalTelemovel||'') + ')</p>' : ''}
-                ${a.contactoPrincipal ? '<p> Contacto: ' + a.contactoPrincipal + '</p>' : ''}
-            </div>
-        </div>`).join('');
     },
 
     async carregarProdutoresDashboard() {
@@ -256,23 +224,26 @@ const App = {
         try { 
             produtores = await Api.getProdutores(); 
         } catch(e) { 
-            console.warn('Falha ao carregar produtores online:', e);
+            console.warn('Falha ao carregar agricultores online:', e);
             produtores = []; 
         }
 
         if (!produtores || produtores.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produtor registado.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum agricultor registado.</p></div>';
             return;
         }
 
-        lista.innerHTML = produtores.map(p => `<div class="card">
-            <div class="card-header"><h3> ${p.nome}</h3></div>
-            <div class="card-body">
-                <p> ${p.telemovel}</p>
-                <p> ${p.associacaoNome || ''} ${p.associacaoLocalidade ? '(' + p.associacaoLocalidade + ')' : ''}</p>
-                ${p.localizacaoDetalhada ? '<p> ' + p.localizacaoDetalhada + '</p>' : ''}
-            </div>
-        </div>`).join('');
+        lista.innerHTML = produtores.map(p => {
+            const loc = p.distrito ? p.distrito + (p.bairro ? ' (' + p.bairro + ')' : '') : (p.associacaoLocalidade || '');
+            return `<div class="card">
+                <div class="card-header"><h3> ${p.nome}</h3></div>
+                <div class="card-body">
+                    <p> ${p.telemovel}</p>
+                    ${loc ? '<p> Localidade: <strong>' + loc + '</strong></p>' : ''}
+                    ${p.localizacaoDetalhada ? '<p> ' + p.localizacaoDetalhada + '</p>' : ''}
+                </div>
+            </div>`;
+        }).join('');
     }
 };
 

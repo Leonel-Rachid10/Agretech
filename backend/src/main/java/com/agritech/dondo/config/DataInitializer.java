@@ -80,6 +80,7 @@ public class DataInitializer implements CommandLineRunner {
                 {"Mandioca", "Raiz", "KG"},
                 {"Batata Doce", "Raiz", "KG"},
                 {"Batata Reno", "Raiz", "KG"},
+                {"Inhame", "Raiz", "KG"},
                 // Frutas
                 {"Banana", "Fruta", "KG"},
                 {"Manga", "Fruta", "KG"},

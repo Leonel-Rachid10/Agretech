@@ -18,8 +18,14 @@ public class Produtor {
     private String telemovel;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "associacao_id", nullable = false)
+    @JoinColumn(name = "associacao_id", nullable = true)
     private Associacao associacao;
+
+    @Column(length = 100)
+    private String distrito;
+
+    @Column(length = 100)
+    private String bairro;
 
     @Column(name = "localizacao_detalhada", columnDefinition = "TEXT")
     private String localizacaoDetalhada;
@@ -58,6 +64,12 @@ public class Produtor {
 
     public String getLocalizacaoDetalhada() { return localizacaoDetalhada; }
     public void setLocalizacaoDetalhada(String localizacaoDetalhada) { this.localizacaoDetalhada = localizacaoDetalhada; }
+
+    public String getDistrito() { return distrito; }
+    public void setDistrito(String distrito) { this.distrito = distrito; }
+
+    public String getBairro() { return bairro; }
+    public void setBairro(String bairro) { this.bairro = bairro; }
 
     public LocalDateTime getDataRegisto() { return dataRegisto; }
     public void setDataRegisto(LocalDateTime dataRegisto) { this.dataRegisto = dataRegisto; }

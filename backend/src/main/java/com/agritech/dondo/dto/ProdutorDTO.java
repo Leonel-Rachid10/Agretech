@@ -13,11 +13,11 @@ public class ProdutorDTO {
     @NotBlank(message = "O telemóvel do produtor é obrigatório")
     private String telemovel;
 
-    @NotNull(message = "O ID da associação é obrigatório")
     private Long associacaoId;
-
     private String associacaoNome;
     private String associacaoLocalidade;
+    private String distrito;
+    private String bairro;
     private String localizacaoDetalhada;
 
     public ProdutorDTO() {}
@@ -39,6 +39,12 @@ public class ProdutorDTO {
 
     public String getAssociacaoLocalidade() { return associacaoLocalidade; }
     public void setAssociacaoLocalidade(String associacaoLocalidade) { this.associacaoLocalidade = associacaoLocalidade; }
+
+    public String getDistrito() { return distrito; }
+    public void setDistrito(String distrito) { this.distrito = distrito; }
+
+    public String getBairro() { return bairro; }
+    public void setBairro(String bairro) { this.bairro = bairro; }
 
     public String getLocalizacaoDetalhada() { return localizacaoDetalhada; }
     public void setLocalizacaoDetalhada(String localizacaoDetalhada) { this.localizacaoDetalhada = localizacaoDetalhada; }
