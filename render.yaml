@@ -4,3 +4,4 @@ services:
     name: agretech
     env: docker
     plan: free
+    autoDeploy: true

@@ -61,6 +61,8 @@ public class AuthService {
                 passwordEncoder.encode(dto.getSenha()),
                 dto.getPerfil()
         );
+        novo.setDistrito(dto.getDistrito());
+        novo.setBairro(dto.getBairro());
 
         Utilizador salvo = utilizadorRepository.save(novo);
 

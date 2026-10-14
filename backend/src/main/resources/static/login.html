@@ -66,9 +66,33 @@
                     <div class="form-group">
                         <label>👥 Tipo de conta</label>
                         <select name="perfil" required>
-                            <option value="">Selecione o tipo de conta...</option>
                             <option value="PRODUTOR">Agricultor</option>
                             <option value="COMPRADOR">Comprador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Distrito</label>
+                        <select name="distrito" id="registo-distrito" onchange="atualizarBairrosRegisto(this.value)">
+                            <option value="">Selecione o distrito...</option>
+                            <option value="Beira">Beira</option>
+                            <option value="Búzi">Búzi</option>
+                            <option value="Caia">Caia</option>
+                            <option value="Chemba">Chemba</option>
+                            <option value="Cheringoma">Cheringoma</option>
+                            <option value="Chibabava">Chibabava</option>
+                            <option value="Dondo">Dondo</option>
+                            <option value="Gorongosa">Gorongosa</option>
+                            <option value="Machanga">Machanga</option>
+                            <option value="Maringué">Maringué</option>
+                            <option value="Marromeu">Marromeu</option>
+                            <option value="Muanza">Muanza</option>
+                            <option value="Nhamatanda">Nhamatanda</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="grupo-bairro" style="display: none;">
+                        <label>Bairro ou Zona</label>
+                        <select name="bairro" id="registo-bairro">
+                            <option value="">Selecione o bairro...</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primario btn-block btn-lg">Criar conta</button>
@@ -122,6 +146,26 @@
             }
         }
 
+        const zonasPorDistrito = {
+            'Dondo': ['Bairro Central', 'Consito', 'Mafarinha', 'Canhandula', 'Nhamaiabwe', 'Chinamacondo', 'Savana', 'Mafambisse', 'Mútua'],
+            'Beira': ['Alto da Manga', 'Chaimite', 'Chingussura', 'Chipangara', 'Chota', 'Esturro', 'Inhamízua', 'Macurungo', 'Macuti', 'Mananga', 'Manga Mascarenhas', 'Maraza', 'Matacuane', 'Matadouro', 'Muave', 'Mungassa', 'Munhava-Central', 'Ndunda', 'Nhaconjo', 'Nhangau', 'Nhangoma', 'Pioneiros', 'Ponta-Gêa', 'Tchonja', 'Vaz', 'Vila Massane']
+        };
+
+        function atualizarBairrosRegisto(distrito) {
+            const grupo = document.getElementById('grupo-bairro');
+            const sel = document.getElementById('registo-bairro');
+            if (!sel || !grupo) return;
+            const zonas = zonasPorDistrito[distrito];
+            if (zonas && zonas.length > 0) {
+                sel.innerHTML = '<option value="">Selecione o bairro / zona...</option>' +
+                                zonas.map(z => `<option value="${z}">${z}</option>`).join('');
+                grupo.style.display = 'block';
+            } else {
+                sel.innerHTML = '<option value="">Nenhum bairro específico</option>';
+                grupo.style.display = 'none';
+            }
+        }
+
         async function handleRegisto(e) {
             e.preventDefault();
             esconderErro();
@@ -131,7 +175,9 @@
                     nome: form.nome.value,
                     telemovel: form.telemovel.value,
                     senha: form.senha.value,
-                    perfil: form.perfil.value
+                    perfil: form.perfil.value,
+                    distrito: form.distrito ? form.distrito.value : null,
+                    bairro: form.bairro ? form.bairro.value : null
                 });
                 Api.setAuth(res);
                 window.location.href = '/dashboard.html';

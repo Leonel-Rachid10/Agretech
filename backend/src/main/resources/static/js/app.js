@@ -55,6 +55,12 @@ const App = {
             lotes = await AgriDB.getCachedList('lotes_cache');
         }
 
+        const bairroFiltro = document.getElementById('filtro-bairro')?.value || null;
+        if (bairroFiltro && lotes && lotes.length > 0) {
+            lotes = lotes.filter(l => (l.associacaoLocalidade && l.associacaoLocalidade.toLowerCase().includes(bairroFiltro.toLowerCase())) || 
+                                     (l.associacaoNome && l.associacaoNome.toLowerCase().includes(bairroFiltro.toLowerCase())));
+        }
+
         if (!lotes || lotes.length === 0) {
             lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum lote encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
             if (kpiTotal) kpiTotal.textContent = '0';

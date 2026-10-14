@@ -59,8 +59,8 @@
                     </select>
                 </div>
                 <div>
-                    <label>Localidade</label>
-                    <select id="filtro-localidade" onchange="App.carregarCatalogo()">
+                    <label>Distrito</label>
+                    <select id="filtro-localidade" onchange="atualizarBairrosFiltro(this.value); App.carregarCatalogo()">
                         <option value="">Todos os Distritos</option>
                         <option value="Beira">Beira</option>
                         <option value="Búzi">Búzi</option>
@@ -75,6 +75,12 @@
                         <option value="Marromeu">Marromeu</option>
                         <option value="Muanza">Muanza</option>
                         <option value="Nhamatanda">Nhamatanda</option>
+                    </select>
+                </div>
+                <div id="col-filtro-bairro" style="display: none;">
+                    <label>Bairro / Zona</label>
+                    <select id="filtro-bairro" onchange="App.carregarCatalogo()">
+                        <option value="">Todos os Bairros</option>
                     </select>
                 </div>
                 <div>
@@ -129,6 +135,26 @@
                 if (navLogin) { navLogin.textContent = Api.user.nome.split(' ')[0]; navLogin.href = '/dashboard.html'; }
             }
         });
+
+        const zonasPorDistrito = {
+            'Dondo': ['Bairro Central', 'Consito', 'Mafarinha', 'Canhandula', 'Nhamaiabwe', 'Chinamacondo', 'Savana', 'Mafambisse', 'Mútua'],
+            'Beira': ['Alto da Manga', 'Chaimite', 'Chingussura', 'Chipangara', 'Chota', 'Esturro', 'Inhamízua', 'Macurungo', 'Macuti', 'Mananga', 'Manga Mascarenhas', 'Maraza', 'Matacuane', 'Matadouro', 'Muave', 'Mungassa', 'Munhava-Central', 'Ndunda', 'Nhaconjo', 'Nhangau', 'Nhangoma', 'Pioneiros', 'Ponta-Gêa', 'Tchonja', 'Vaz', 'Vila Massane']
+        };
+
+        function atualizarBairrosFiltro(distrito) {
+            const col = document.getElementById('col-filtro-bairro');
+            const sel = document.getElementById('filtro-bairro');
+            if (!col || !sel) return;
+            const zonas = zonasPorDistrito[distrito];
+            if (zonas && zonas.length > 0) {
+                sel.innerHTML = '<option value="">Todos os Bairros</option>' +
+                                zonas.map(z => `<option value="${z}">${z}</option>`).join('');
+                col.style.display = 'block';
+            } else {
+                sel.innerHTML = '<option value="">Todos os Bairros</option>';
+                col.style.display = 'none';
+            }
+        }
 
         function filtrarCatalogo(termo) {
             const cards = document.querySelectorAll('#catalogo-lista .produto-card');

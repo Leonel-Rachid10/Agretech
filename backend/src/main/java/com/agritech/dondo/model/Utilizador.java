@@ -26,6 +26,12 @@ public class Utilizador {
     @Column(nullable = false)
     private Perfil perfil;
 
+    @Column(length = 100)
+    private String distrito;
+
+    @Column(length = 100)
+    private String bairro;
+
     @Column(name = "data_criacao", updatable = false)
     private LocalDateTime dataCriacao;
 
@@ -60,6 +66,12 @@ public class Utilizador {
 
     public Perfil getPerfil() { return perfil; }
     public void setPerfil(Perfil perfil) { this.perfil = perfil; }
+
+    public String getDistrito() { return distrito; }
+    public void setDistrito(String distrito) { this.distrito = distrito; }
+
+    public String getBairro() { return bairro; }
+    public void setBairro(String bairro) { this.bairro = bairro; }
 
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
