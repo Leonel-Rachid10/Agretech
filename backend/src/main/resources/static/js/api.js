@@ -1,4 +1,4 @@
-// === AgriTech Dondo — Cliente HTTP REST com JWT ===
+// === AgreTech: Cliente HTTP REST com JWT ===
 const API_BASE = '/api';
 
 const Api = {
@@ -43,7 +43,7 @@ const Api = {
         const res = await fetch(API_BASE + path, opts);
         if (res.status === 401) {
             // Só termina sessão se já existia um token (pedido autenticado que expirou).
-            // Num login/registo falhado ainda não há sessão nenhuma — mostrar erro normal,
+            // Num login/registo falhado ainda não há sessão nenhuma - mostrar erro normal,
             // não redirecionar (isto evitava que a mensagem de erro aparecesse no login).
             if (this.token) { this.logout(); return null; }
             const err = await res.text();

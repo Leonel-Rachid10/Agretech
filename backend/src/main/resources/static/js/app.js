@@ -55,8 +55,10 @@ const App = {
 
         const bairroFiltro = document.getElementById('filtro-bairro')?.value || null;
         if (bairroFiltro && lotes && lotes.length > 0) {
-            lotes = lotes.filter(l => (l.associacaoLocalidade && l.associacaoLocalidade.toLowerCase().includes(bairroFiltro.toLowerCase())) || 
-                                     (l.associacaoNome && l.associacaoNome.toLowerCase().includes(bairroFiltro.toLowerCase())));
+            const bF = bairroFiltro.toLowerCase();
+            lotes = lotes.filter(l => (l.bairro && l.bairro.toLowerCase().includes(bF)) ||
+                                     (l.associacaoLocalidade && l.associacaoLocalidade.toLowerCase().includes(bF)) || 
+                                     (l.associacaoNome && l.associacaoNome.toLowerCase().includes(bF)));
         }
         if (carregadoDoCache && lotes) {
             const provinciaFiltro = filtros.provincia?.toLocaleLowerCase('pt-MZ');
@@ -163,7 +165,7 @@ const App = {
                 const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
                 return `<tr>
                     <td>${l.culturaNome}</td>
-                    <td>${l.produtorNome}<br><small>${l.associacaoLocalidade || ''}</small></td>
+                    <td>${l.produtorNome}<br><small>${[l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade || ''}</small></td>
                     <td>${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida||'KG'}</td>
                     <td>${l.dataColheitaPrevista || '-'}</td>
                     <td><span class="badge ${badgeClass[l.estado]||''}">${badgeLabel[l.estado]||l.estado}</span></td>

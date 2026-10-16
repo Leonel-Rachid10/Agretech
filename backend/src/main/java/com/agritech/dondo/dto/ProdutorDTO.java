@@ -7,10 +7,10 @@ public class ProdutorDTO {
 
     private Long id;
 
-    @NotBlank(message = "O nome do produtor é obrigatório")
+    @NotBlank(message = "O nome do agricultor é obrigatório")
     private String nome;
 
-    @NotBlank(message = "O telemóvel do produtor é obrigatório")
+    @NotBlank(message = "O telemóvel do agricultor é obrigatório")
     private String telemovel;
 
     private Long associacaoId;

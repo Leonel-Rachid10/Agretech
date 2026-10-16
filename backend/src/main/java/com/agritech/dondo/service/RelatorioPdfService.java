@@ -46,11 +46,11 @@ public class RelatorioPdfService {
             Font kpiValorFonte = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, new Color(33, 33, 33));
 
             // Título e Cabeçalho
-            Paragraph titulo = new Paragraph("AgreTech — Relatório Consolidado de Produtos Agrícolas", tituloFonte);
+            Paragraph titulo = new Paragraph("AgreTech: Relatório Consolidado de Produtos Agrícolas", tituloFonte);
             titulo.setAlignment(Element.ALIGN_CENTER);
             document.add(titulo);
 
-            Paragraph subtitulo = new Paragraph("Províncias e distritos selecionados — Emissão: " +
+            Paragraph subtitulo = new Paragraph("Províncias e distritos selecionados - Emissão: " +
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")), subTituloFonte);
             subtitulo.setAlignment(Element.ALIGN_CENTER);
             subtitulo.setSpacingAfter(15);

@@ -1,4 +1,4 @@
-// === AgriTech Dondo — Motor de Sincronização Automática (RF07) ===
+// === AgreTech: Motor de Sincronização Automática (RF07) ===
 const SyncManager = {
     isSyncing: false,
 
@@ -11,13 +11,13 @@ const SyncManager = {
     },
 
     onOnline() {
-        console.log('[Sync] Rede detectada — iniciando sincronização...');
+        console.log('[Sync] Rede detectada: iniciando sincronização...');
         this.updateBar();
         this.sync();
     },
 
     onOffline() {
-        console.log('[Sync] Sem rede — modo offline ativo');
+        console.log('[Sync] Sem rede: modo offline ativo');
         this.updateBar();
     },
 
@@ -28,7 +28,7 @@ const SyncManager = {
 
         if (!navigator.onLine) {
             bar.className = 'sync-bar active';
-            bar.textContent = ' Modo Offline — ' + (count > 0 ? count + ' registo(s) pendente(s) de sincronização' : 'Dados serão sincronizados quando houver rede');
+            bar.textContent = ' Modo Offline: ' + (count > 0 ? count + ' registo(s) pendente(s) de sincronização' : 'Dados serão sincronizados quando houver rede');
         } else if (count > 0) {
             bar.className = 'sync-bar active online';
             bar.textContent = ' Sincronizando ' + count + ' registo(s) pendente(s)...';

@@ -223,7 +223,7 @@
                         <input type="search" id="pesquisa-sincronizacoes" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar por ponto focal" oninput="filtrarTabela('tabela-sync', this.value)">
                     </div>
                     <div class="table-responsive" id="sync-lista">
-                        <div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronizacao registada ainda.</p></div>
+                        <div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronização registada ainda.</p></div>
                     </div>
                 </div>
             </div>
@@ -459,7 +459,7 @@
                     .sort((a, b) => a - b)[0];
                 document.getElementById('kpi-colheita').textContent = proximaColheita
                     ? proximaColheita.toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short' })
-                    : '—';
+                    : '-';
             } catch (e) { console.warn('Erro KPIs:', e); }
         }
 
@@ -610,7 +610,7 @@
             try {
                 const historico = await Api.get('/sync/historico');
                 if (!historico || historico.length === 0) {
-                    lista.innerHTML = '<div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronizacao registada ainda.</p></div>';
+                    lista.innerHTML = '<div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronização registada ainda.</p></div>';
                     return;
                 }
                 let html = `<table class="table table-hover mb-0" id="tabela-sync">
@@ -634,7 +634,7 @@
                 html += '</tbody></table>';
                 lista.innerHTML = html;
             } catch (e) {
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>Erro ao carregar historico.</p></div>';
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>Erro ao carregar histórico.</p></div>';
             }
         }
 
@@ -680,7 +680,7 @@
             datalist.innerHTML = zonas.map(z => `<option value="${z}">`).join('');
         }
 
-        // Compatibilidade antiga (select bairro) — mantém por segurança
+        // Compatibilidade antiga (select bairro) - mantém por segurança
         function atualizarBairros(distrito, targetId) {
             const sel = document.getElementById(targetId);
             if (!sel) return;

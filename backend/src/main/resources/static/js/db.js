@@ -1,4 +1,4 @@
-// === AgriTech Dondo — Camada IndexedDB para Operação Offline ===
+// === AgreTech: Camada IndexedDB para Operação Offline ===
 const DB_NAME = 'agritech_dondo_offline';
 const DB_VERSION = 1;
 
