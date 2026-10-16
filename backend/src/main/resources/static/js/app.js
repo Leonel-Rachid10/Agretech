@@ -270,6 +270,7 @@ const App = {
 
     async carregarProdutoresDashboard() {
         const lista = document.getElementById('produtores-lista');
+        const contador = document.getElementById('produtores-count-label');
         if (!lista) return;
 
         let produtores;
@@ -281,18 +282,36 @@ const App = {
         }
 
         if (!produtores || produtores.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum agricultor registado.</p></div>';
+            lista.innerHTML = '<div class="col-12 empty-state"><i class="bi bi-people fs-1 text-muted"></i><p class="mt-2 mb-0">Nenhum agricultor registado.</p></div>';
+            if (contador) contador.textContent = '0 agricultor(es)';
             return;
         }
 
+        if (contador) contador.textContent = produtores.length + ' agricultor(es)';
+
         lista.innerHTML = produtores.map(p => {
             const loc = [p.provincia, p.distrito, p.bairro].filter(Boolean).join(' · ') || (p.associacaoLocalidade || '');
-            return `<div class="card">
-                <div class="card-header"><h3> ${p.nome}</h3></div>
-                <div class="card-body">
-                    <p> ${p.telemovel}</p>
-                    ${loc ? '<p> Localidade: <strong>' + loc + '</strong></p>' : ''}
-                    ${p.localizacaoDetalhada ? '<p> ' + p.localizacaoDetalhada + '</p>' : ''}
+            const tel = (p.telemovel || '').replaceAll('+', '');
+            const inicial = (p.nome || 'A').trim().charAt(0).toUpperCase();
+            return `<div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 border shadow-sm rounded-3">
+                    <div class="card-header bg-white py-3 d-flex align-items-center gap-2">
+                        <div class="user-avatar" style="width:38px;height:38px;border-radius:50%;background:#55745D;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;">
+                            ${inicial}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h6 class="fw-bold mb-0 text-truncate">${p.nome}</h6>
+                            <small class="text-muted"><i class="bi bi-geo-alt"></i> ${loc || 'Moçambique'}</small>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2 text-muted small"><i class="bi bi-telephone text-success me-1"></i> <strong>${p.telemovel}</strong></p>
+                        ${p.localizacaoDetalhada ? '<p class="small text-muted mb-0"><i class="bi bi-pin-map text-muted me-1"></i>' + p.localizacaoDetalhada + '</p>' : ''}
+                    </div>
+                    <div class="card-footer bg-light border-0 d-flex gap-2">
+                        ${tel ? `<a href="https://wa.me/${tel}" target="_blank" class="btn btn-outline-success btn-sm w-50 rounded-pill"><i class="bi bi-whatsapp"></i> WhatsApp</a>` : ''}
+                        ${p.telemovel ? `<a href="tel:${p.telemovel}" class="btn btn-outline-secondary btn-sm w-50 rounded-pill"><i class="bi bi-telephone"></i> Ligar</a>` : ''}
+                    </div>
                 </div>
             </div>`;
         }).join('');

@@ -52,12 +52,87 @@
         .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--agri-muted); pointer-events: none; }
         .search-bar input { padding-left: 36px; border-radius: 8px; border: 1px solid var(--agri-border); font-size: 0.9rem; }
         .search-bar input:focus { border-color: var(--agri-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.12); outline: none; }
+        .btn-chip {
+            border: 1px solid var(--agri-border);
+            background: #fff;
+            color: var(--agri-muted);
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 14px;
+            white-space: nowrap;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+        }
+        .btn-chip:hover {
+            border-color: var(--agri-primary);
+            color: var(--agri-primary);
+        }
+        .btn-chip.active {
+            background: var(--agri-primary) !important;
+            color: #fff !important;
+            border-color: var(--agri-primary) !important;
+        }
+        .mobile-produto-card {
+            background: #fff;
+            border: 1px solid #E5EAE4;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(38, 50, 56, 0.04);
+        }
+        .mobile-produto-card .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+        .mobile-produto-card .prod-nome {
+            font-size: 1.05rem;
+            font-weight: 750;
+            color: var(--agri-text);
+            margin-bottom: 2px;
+        }
+        .mobile-produto-card .prod-meta {
+            font-size: 0.82rem;
+            color: var(--agri-muted);
+        }
+        .mobile-produto-card .prod-details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: #F8FAF7;
+            padding: 8px 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 0.82rem;
+        }
+        .mobile-produto-card .prod-detail-item .label {
+            font-size: 0.68rem;
+            color: var(--agri-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .mobile-produto-card .prod-detail-item .value {
+            font-weight: 700;
+            color: var(--agri-text);
+        }
+        .mobile-produto-card .card-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #E5EAE4;
+        }
         .page-title { font-size: clamp(1.45rem, 2vw, 1.85rem); }
         .table-responsive { border-radius: 10px; }
         @media (max-width: 575.98px) {
-            .kpi-card { padding: 16px; min-height: 104px; }
-            .kpi-icon { width: 40px; height: 40px; }
-            .kpi-valor { font-size: 1.55rem; }
+            .kpi-card { padding: 12px 14px; min-height: 88px; border-radius: 12px; }
+            .kpi-icon { width: 38px; height: 38px; font-size: 1.05rem; border-radius: 10px; }
+            .kpi-valor { font-size: 1.35rem; }
+            .kpi-label { font-size: 0.68rem; }
         }
     </style>
 </head>
@@ -108,44 +183,44 @@
             </div>
         </div>
 
-        <!-- KPIs -->
-        <div class="row g-3 mb-4">
-            <div class="col-12 col-sm-6 col-xl-3">
+        <!-- KPIs (Grelha 2x2 no mobile, 4 em linha no desktop) -->
+        <div class="row g-2 g-md-3 mb-4">
+            <div class="col-6 col-lg-3">
                 <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-box-seam"></i></div>
+                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                        <div class="kpi-icon"><i class="bi bi-box-seam"></i></div>
                         <div><div class="kpi-valor" id="kpi-lotes">0</div><div class="kpi-label">Produtos registados</div></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-lg-3">
                 <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-people-fill"></i></div>
+                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                        <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
                         <div><div class="kpi-valor" id="kpi-produtores">0</div><div class="kpi-label" id="kpi-produtores-label">Agricultores</div></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-lg-3">
                 <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-flower1"></i></div>
+                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                        <div class="kpi-icon"><i class="bi bi-flower1"></i></div>
                         <div><div class="kpi-valor" id="kpi-culturas">0</div><div class="kpi-label">Produtos Agrícolas</div></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-lg-3">
                 <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-calendar-event"></i></div>
+                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                        <div class="kpi-icon"><i class="bi bi-calendar-event"></i></div>
                         <div><div class="kpi-valor" id="kpi-colheita">-</div><div class="kpi-label">Próxima colheita</div></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TABS + ACTIONS -->
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-3">
+        <!-- TABS + AÇÕES RÁPIDAS -->
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
             <ul class="nav nav-pills bg-white p-1 rounded-3 shadow-sm border flex-wrap" id="pills-tab">
                 <li class="nav-item">
                     <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-lotes" type="button">
@@ -164,30 +239,44 @@
                 </li>
             </ul>
             <div class="d-flex gap-2">
-                <button class="btn btn-success btn-sm d-flex align-items-center gap-1 rounded-pill" id="btn-novo-lote" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()">
+                <button class="btn btn-success btn-sm d-flex align-items-center gap-1 rounded-pill px-3 py-2 fw-semibold" id="btn-novo-lote" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()">
                     <i class="bi bi-plus-circle-fill"></i> Novo Produto
                 </button>
-                <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 rounded-pill admin-only" data-bs-toggle="modal" data-bs-target="#modal-novo-produtor">
+                <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 rounded-pill px-3 py-2 admin-only fw-semibold" data-bs-toggle="modal" data-bs-target="#modal-novo-produtor">
                     <i class="bi bi-person-plus-fill"></i> Novo Agricultor
                 </button>
             </div>
         </div>
 
-        <!-- TAB CONTENT -->
+        <!-- BARRA DE PESQUISA UNIFICADA -->
+        <div class="card-section p-2 p-md-3 mb-3">
+            <div class="d-flex flex-column flex-md-row gap-2 align-items-stretch align-items-md-center justify-content-between">
+                <div class="search-bar flex-grow-1">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="pesquisa-unificada" class="form-control form-control-sm" autocomplete="off"
+                        placeholder="Pesquisar produtos agrícolas por nome, agricultor ou localização..."
+                        oninput="executarPesquisaUnificada(this.value)">
+                </div>
+                <div id="chips-filtro-produtos" class="d-flex gap-1 overflow-x-auto py-1 align-items-center">
+                    <span class="small text-muted me-1 d-none d-md-inline fw-semibold"><i class="bi bi-funnel"></i> Estado:</span>
+                    <button type="button" class="btn btn-chip active" data-estado="" onclick="filtrarPorEstadoRapido(this, '')">Todos</button>
+                    <button type="button" class="btn btn-chip" data-estado="PRONTO_PARA_COLHEITA" onclick="filtrarPorEstadoRapido(this, 'PRONTO_PARA_COLHEITA')">Pronto</button>
+                    <button type="button" class="btn btn-chip" data-estado="EM_CRESCIMENTO" onclick="filtrarPorEstadoRapido(this, 'EM_CRESCIMENTO')">Em Crescimento</button>
+                    <button type="button" class="btn btn-chip" data-estado="RESERVADO" onclick="filtrarPorEstadoRapido(this, 'RESERVADO')">Reservado</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO DAS ABAS -->
         <div class="tab-content">
-            <!-- LOTES -->
+            <!-- PRODUTOS -->
             <div class="tab-pane fade show active" id="tab-lotes">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h6 class="fw-bold mb-0"><i class="bi bi-list-check text-success me-2"></i>Produtos agrícolas</h6>
                         <span class="text-muted small" id="lotes-count-label" role="status" aria-live="polite"></span>
                     </div>
-                    <div class="search-bar mb-3">
-                        <i class="bi bi-search"></i>
-                        <label class="visually-hidden" for="pesquisa-lotes">Pesquisar produtos agrícolas</label>
-                        <input type="search" id="pesquisa-lotes" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar produtos agrícolas por nome, agricultor ou localização" oninput="filtrarProdutos(this.value)">
-                    </div>
-                    <div class="table-responsive" id="lotes-lista">
+                    <div id="lotes-lista">
                         <div class="empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar produtos...</p></div>
                     </div>
                 </div>
@@ -196,11 +285,9 @@
             <!-- AGRICULTORES -->
             <div class="tab-pane fade" id="tab-produtores">
                 <div class="card-section p-3 p-md-4">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-success me-2"></i>Agricultores Registados</h6>
-                    <div class="search-bar mb-3">
-                        <i class="bi bi-search"></i>
-                        <label class="visually-hidden" for="pesquisa-produtores">Pesquisar agricultores</label>
-                        <input type="search" id="pesquisa-produtores" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar agricultores" oninput="filtrarCards('produtores-lista', this.value)">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0"><i class="bi bi-person-lines-fill text-success me-2"></i>Agricultores Registados</h6>
+                        <span class="text-muted small" id="produtores-count-label" role="status" aria-live="polite"></span>
                     </div>
                     <div class="row g-3" id="produtores-lista">
                         <div class="col-12 empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar...</p></div>
@@ -208,7 +295,7 @@
                 </div>
             </div>
 
-            <!-- SINCRONIZACOES (RF08) -->
+            <!-- SINCRONIZAÇÕES (RF08) -->
             <div class="tab-pane fade" id="tab-sync">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -216,11 +303,6 @@
                         <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="carregarHistoricoSync()">
                             <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
                         </button>
-                    </div>
-                    <div class="search-bar mb-3">
-                        <i class="bi bi-search"></i>
-                        <label class="visually-hidden" for="pesquisa-sincronizacoes">Pesquisar sincronizações</label>
-                        <input type="search" id="pesquisa-sincronizacoes" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar por ponto focal" oninput="filtrarTabela('tabela-sync', this.value)">
                     </div>
                     <div class="table-responsive" id="sync-lista">
                         <div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronização registada ainda.</p></div>
@@ -433,7 +515,55 @@
             ]);
             atualizarKPIs();
             if (isAdmin) carregarHistoricoSync();
+
+            // Configurar barra de pesquisa unificada entre as abas
+            configurarPesquisaUnificada();
         });
+
+        // ---- PESQUISA UNIFICADA & NAVEGAÇÃO DE ABAS ----
+        let abaAtiva = 'tab-lotes';
+        let filtroEstadoAtivo = '';
+
+        function configurarPesquisaUnificada() {
+            document.querySelectorAll('#pills-tab button[data-bs-toggle="pill"]').forEach(btn => {
+                btn.addEventListener('shown.bs.tab', (e) => {
+                    const target = e.target.getAttribute('data-bs-target').replace('#', '');
+                    abaAtiva = target;
+                    const inputPesquisa = document.getElementById('pesquisa-unificada');
+                    const chipsContainer = document.getElementById('chips-filtro-produtos');
+
+                    if (target === 'tab-lotes') {
+                        if (chipsContainer) chipsContainer.style.setProperty('display', 'flex', 'important');
+                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar produtos agrícolas por nome, agricultor ou localização...';
+                    } else if (target === 'tab-produtores') {
+                        if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
+                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar agricultores por nome, telemóvel ou localização...';
+                    } else if (target === 'tab-sync') {
+                        if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
+                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar sincronizações por ponto focal...';
+                    }
+
+                    if (inputPesquisa) executarPesquisaUnificada(inputPesquisa.value);
+                });
+            });
+        }
+
+        function filtrarPorEstadoRapido(btn, estado) {
+            document.querySelectorAll('#chips-filtro-produtos .btn-chip').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            filtroEstadoAtivo = estado;
+            executarPesquisaUnificada(document.getElementById('pesquisa-unificada')?.value || '');
+        }
+
+        function executarPesquisaUnificada(termo) {
+            if (abaAtiva === 'tab-lotes') {
+                filtrarProdutos(termo, filtroEstadoAtivo);
+            } else if (abaAtiva === 'tab-produtores') {
+                filtrarCards('produtores-lista', termo);
+            } else if (abaAtiva === 'tab-sync') {
+                filtrarTabela('tabela-sync', termo);
+            }
+        }
 
         // ---- KPIs ----
         async function atualizarKPIs() {
@@ -484,30 +614,51 @@
         function filtrarCards(containerId, termo) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            const cards = container.querySelectorAll('.col-md-4, .col-sm-6, .col-12');
+            const cards = container.querySelectorAll('.col-12, .col-md-6, .col-lg-4, .col-sm-6');
             const t = normalizarBusca(termo);
+            let visiveis = 0;
             cards.forEach(card => {
-                card.hidden = Boolean(t && !normalizarBusca(card.textContent).includes(t));
+                const vis = !t || normalizarBusca(card.textContent).includes(t);
+                card.hidden = !vis;
+                if (vis) visiveis++;
             });
+            const contador = document.getElementById('produtores-count-label');
+            if (contador) {
+                contador.textContent = t ? `${visiveis} de ${cards.length} agricultor(es)` : `${cards.length} agricultor(es)`;
+            }
         }
 
-        function filtrarProdutos(termo) {
-            const tabela = document.getElementById('tabela-lotes');
+        function filtrarProdutos(termo, estado = filtroEstadoAtivo) {
+            const container = document.getElementById('lotes-lista');
             const contador = document.getElementById('lotes-count-label');
-            if (!tabela || !contador) return;
+            if (!container || !contador) return;
 
             const t = normalizarBusca(termo);
-            const rows = [...tabela.querySelectorAll('tbody tr')];
-            const encontrados = rows.filter(row => {
-                const corresponde = !t || normalizarBusca(row.textContent).includes(t);
-                row.hidden = !corresponde;
-                return corresponde;
-            }).length;
-            const total = rows.length;
-            contador.textContent = t ? `${encontrados} de ${total} produto(s)` : `${total} produto(s)`;
+
+            // Filtrar linhas na tabela Desktop
+            const rows = [...container.querySelectorAll('#tabela-lotes tbody tr')];
+            let encontrados = 0;
+            rows.forEach(row => {
+                const matchTexto = !t || normalizarBusca(row.textContent).includes(t);
+                const matchEstado = !estado || row.getAttribute('data-estado') === estado;
+                const visivel = matchTexto && matchEstado;
+                row.hidden = !visivel;
+                if (visivel) encontrados++;
+            });
+
+            // Filtrar cartões Mobile
+            const cards = [...container.querySelectorAll('.mobile-produto-card')];
+            cards.forEach(card => {
+                const matchTexto = !t || normalizarBusca(card.textContent).includes(t);
+                const matchEstado = !estado || card.getAttribute('data-estado') === estado;
+                card.hidden = !(matchTexto && matchEstado);
+            });
+
+            const total = rows.length || cards.length;
+            contador.textContent = (t || estado) ? `${encontrados} de ${total} produto(s)` : `${total} produto(s)`;
         }
 
-        // ---- PRODUTOS TABLE ----
+        // ---- PRODUTOS TABLE & MOBILE CARDS ----
         async function carregarLotes() {
             const lista = document.getElementById('lotes-lista');
             if (!lista) return;
@@ -521,6 +672,7 @@
                     ? '<button type="button" class="btn btn-success btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()"><i class="bi bi-plus-lg me-1"></i>Registar produto</button>'
                     : '';
                 lista.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-3">Ainda não há produtos registados.</p>' + acaoVazia + '</div>';
+                document.getElementById('lotes-count-label').textContent = '0 produto(s)';
                 return;
             }
             document.getElementById('lotes-count-label').textContent = lotes.length + ' produto(s)';
@@ -528,23 +680,31 @@
             const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
 
             const mostrarAgricultor = !isProdutor;
-            let html = `<table class="table table-hover mb-0" id="tabela-lotes">
+
+            // 1. Tabela Desktop / Tablet
+            let htmlTable = `<div class="d-none d-md-block table-responsive">
+                <table class="table table-hover mb-0" id="tabela-lotes">
                 <thead><tr>
                     <th>Produto agrícola</th>${mostrarAgricultor ? '<th>Agricultor</th>' : ''}<th>Quantidade</th><th>Preço/unidade</th><th>Colheita</th><th>Estado</th><th class="text-end">Ações</th>
                 </tr></thead><tbody>`;
+
+            // 2. Cartões Mobile para smartphones
+            let htmlCards = `<div class="d-md-none" id="cards-lotes">`;
 
             lotes.forEach(l => {
                 const preco = l.precoPorUnidade ? Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT' : '-';
                 const qty = Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (l.unidadeMedida || 'KG');
                 let actions = '';
                 if (isAdmin || isProdutor) {
-                    actions += `<button class="btn btn-outline-secondary btn-action me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}', '${l.unidadeMedida || 'unidade'}')" title="Editar" aria-label="Editar produto ${l.culturaNome}"><i class="bi bi-pencil"></i></button>`;
+                    actions += `<button class="btn btn-outline-secondary btn-action me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}', '${l.unidadeMedida || 'unidade'}')" title="Editar" aria-label="Editar produto ${l.culturaNome}"><i class="bi bi-pencil"></i> Editar</button>`;
                 }
                 if (isAdmin) {
                     actions += `<button class="btn btn-outline-danger btn-action" onclick="removerLote(${l.id})" title="Remover" aria-label="Remover produto ${l.culturaNome}"><i class="bi bi-trash3"></i></button>`;
                 }
                 const localidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade || '';
-                html += `<tr>
+
+                // Desktop Row
+                htmlTable += `<tr data-estado="${l.estado}">
                     <td><strong>${l.culturaNome}</strong></td>
                     ${mostrarAgricultor ? `<td>${l.produtorNome || '-'}${localidade ? '<br><small class="text-muted">' + localidade + '</small>' : ''}</td>` : ''}
                     <td>${qty}</td><td>${preco}</td>
@@ -552,10 +712,39 @@
                     <td><span class="badge badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span></td>
                     <td class="text-end">${actions}</td>
                 </tr>`;
+
+                // Mobile Card
+                htmlCards += `<div class="mobile-produto-card" data-estado="${l.estado}">
+                    <div class="card-top">
+                        <div>
+                            <div class="prod-nome">${l.culturaNome}</div>
+                            ${mostrarAgricultor ? `<div class="prod-meta"><i class="bi bi-person text-success"></i> ${l.produtorNome || '-'}${localidade ? ' · ' + localidade : ''}</div>` : ''}
+                        </div>
+                        <span class="badge badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
+                    </div>
+                    <div class="prod-details-grid">
+                        <div class="prod-detail-item">
+                            <div class="label">Quantidade</div>
+                            <div class="value">${qty}</div>
+                        </div>
+                        <div class="prod-detail-item">
+                            <div class="label">Preço/unid.</div>
+                            <div class="value">${preco}</div>
+                        </div>
+                        <div class="prod-detail-item">
+                            <div class="label">Colheita</div>
+                            <div class="value">${l.dataColheitaPrevista || '-'}</div>
+                        </div>
+                    </div>
+                    ${actions ? `<div class="card-actions">${actions}</div>` : ''}
+                </div>`;
             });
-            html += '</tbody></table>';
-            lista.innerHTML = html;
-            filtrarProdutos(document.getElementById('pesquisa-lotes')?.value || '');
+
+            htmlTable += '</tbody></table></div>';
+            htmlCards += '</div>';
+
+            lista.innerHTML = htmlTable + htmlCards;
+            filtrarProdutos(document.getElementById('pesquisa-unificada')?.value || '', filtroEstadoAtivo);
         }
 
         // ---- EDIT PRODUTO ----
