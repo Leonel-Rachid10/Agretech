@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <meta name="theme-color" content="#1F6F4A">
-    <meta name="description" content="Catálogo agrícola da Província de Sofala: encontre produtos frescos directamente dos produtores.">
+    <meta name="theme-color" content="#55745D">
+    <meta name="description" content="Catálogo de produtos agrícolas de Moçambique.">
     <title>AgreTech Catálogo Agrícola</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/style.css">
@@ -38,7 +38,7 @@
                 <div class="rotulo">Produtos Disponíveis</div>
             </div>
             <div class="kpi-card">
-                <div class="valor" id="kpi-volume">0 KG</div>
+                <div class="valor" id="kpi-quantidade">0</div>
                 <div class="rotulo">Quantidade Total</div>
             </div>
             <div class="kpi-card">
@@ -49,7 +49,15 @@
 
         <!-- FILTROS (RF04) -->
         <div class="filtros">
-            <h2>Filtrar Catálogo</h2>
+            <h2>Filtros do catálogo</h2>
+            <div class="catalog-search">
+                <label for="pesquisa-catalogo">Pesquisar produtos agrícolas</label>
+                <input type="search" id="pesquisa-catalogo" autocomplete="off"
+                    placeholder="Nome do produto, agricultor ou localização"
+                    aria-describedby="pesquisa-catalogo-ajuda"
+                    oninput="filtrarCatalogo(this.value)">
+                <p id="pesquisa-catalogo-ajuda" class="catalog-search-help">Pesquise por produto, agricultor, província, distrito ou zona.</p>
+            </div>
             <div class="filtros-grid">
                 <div>
                     <label>Produto Agrícola</label>
@@ -58,22 +66,15 @@
                     </select>
                 </div>
                 <div>
+                    <label>Província</label>
+                    <select id="filtro-provincia" onchange="populateDistricts('filtro-provincia', 'filtro-localidade'); atualizarBairrosFiltro(''); App.carregarCatalogo()">
+                        <option value="">Todas as Províncias</option>
+                    </select>
+                </div>
+                <div>
                     <label>Distrito</label>
-                    <select id="filtro-localidade" onchange="atualizarBairrosFiltro(this.value); App.carregarCatalogo()">
+                    <select id="filtro-localidade" disabled onchange="atualizarBairrosFiltro(this.value); App.carregarCatalogo()">
                         <option value="">Todos os Distritos</option>
-                        <option value="Beira">Beira</option>
-                        <option value="Búzi">Búzi</option>
-                        <option value="Caia">Caia</option>
-                        <option value="Chemba">Chemba</option>
-                        <option value="Cheringoma">Cheringoma</option>
-                        <option value="Chibabava">Chibabava</option>
-                        <option value="Dondo">Dondo</option>
-                        <option value="Gorongosa">Gorongosa</option>
-                        <option value="Machanga">Machanga</option>
-                        <option value="Maringué">Maringué</option>
-                        <option value="Marromeu">Marromeu</option>
-                        <option value="Muanza">Muanza</option>
-                        <option value="Nhamatanda">Nhamatanda</option>
                     </select>
                 </div>
                 <div id="col-filtro-bairro" style="display: none;">
@@ -92,41 +93,38 @@
                     </select>
                 </div>
                 <div>
-                    <label>Qtd. Mínima (KG)</label>
+                    <label>Quantidade mínima</label>
                     <input type="number" id="filtro-quantidade" placeholder="Ex: 100" onchange="App.carregarCatalogo()">
                 </div>
             </div>
             <div class="action-row">
-                <button class="btn btn-primario" onclick="App.carregarCatalogo()"> Pesquisar</button>
+                <button class="btn btn-primario" onclick="App.carregarCatalogo()">Aplicar filtros</button>
                 <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-pdf"> Relatório PDF</a>
             </div>
         </div>
 
         <!-- LISTA DE PRODUTOS (CATÁLOGO) -->
-        <div style="position:relative;margin-bottom:16px;">
-            <input type="text" id="pesquisa-catalogo" placeholder="Pesquisar por produto agrícola, agricultor ou localidade..."
-                oninput="filtrarCatalogo(this.value)"
-                style="width:100%;padding:11px 12px 11px 38px;border:1px solid #E0E0E0;border-radius:6px;font-size:0.95rem;color:#212121;background:#fff;transition:border-color 0.2s,box-shadow 0.2s;">
-            <i style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9E9E9E;font-size:1rem;" class="bi bi-search"></i>
-        </div>
+        <p id="catalogo-resultados" class="catalogo-resultados" role="status" aria-live="polite"></p>
         <div id="catalogo-lista">
-            <div class="empty-state"><div class="icone"></div><p>Carregando catalogo...</p></div>
+            <div class="empty-state"><div class="icone"></div><p>A carregar catálogo...</p></div>
         </div>
     </main>
 
     <script src="/js/api.js"></script>
+    <script src="/js/locations.js"></script>
     <script src="/js/db.js"></script>
     <script src="/js/sync.js"></script>
     <script src="/js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            populateProvinces('filtro-provincia', 'Todas as Províncias');
             // Registar Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW erro:', err));
             }
             await App.init();
             App.preencherFiltros();
-            App.carregarCatalogo();
+            await App.carregarCatalogo();
 
             // Atualizar link de login/gestão
             if (Api.isLoggedIn()) {
@@ -135,16 +133,11 @@
             }
         });
 
-        const zonasPorDistrito = {
-            'Dondo': ['Bairro Central', 'Consito', 'Mafarinha', 'Canhandula', 'Nhamaiabwe', 'Chinamacondo', 'Savana', 'Mafambisse', 'Mútua'],
-            'Beira': ['Alto da Manga', 'Chaimite', 'Chingussura', 'Chipangara', 'Chota', 'Esturro', 'Inhamízua', 'Macurungo', 'Macuti', 'Mananga', 'Manga Mascarenhas', 'Maraza', 'Matacuane', 'Matadouro', 'Muave', 'Mungassa', 'Munhava-Central', 'Ndunda', 'Nhaconjo', 'Nhangau', 'Nhangoma', 'Pioneiros', 'Ponta-Gêa', 'Tchonja', 'Vaz', 'Vila Massane']
-        };
-
         function atualizarBairrosFiltro(distrito) {
             const col = document.getElementById('col-filtro-bairro');
             const sel = document.getElementById('filtro-bairro');
             if (!col || !sel) return;
-            const zonas = zonasPorDistrito[distrito];
+            const zonas = AgriLocations.neighborhoods[distrito];
             if (zonas && zonas.length > 0) {
                 sel.innerHTML = '<option value="">Todos os Bairros</option>' +
                                 zonas.map(z => `<option value="${z}">${z}</option>`).join('');
@@ -155,12 +148,36 @@
             }
         }
 
+        function normalizarPesquisa(termo) {
+            return String(termo || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLocaleLowerCase('pt-MZ')
+                .trim();
+        }
+
         function filtrarCatalogo(termo) {
             const cards = document.querySelectorAll('#catalogo-lista .produto-card');
-            const t = termo.toLowerCase().trim();
+            const t = normalizarPesquisa(termo);
+            let encontrados = 0;
             cards.forEach(card => {
-                card.style.display = !t || card.textContent.toLowerCase().includes(t) ? '' : 'none';
+                const corresponde = !t || normalizarPesquisa(card.textContent).includes(t);
+                card.hidden = !corresponde;
+                if (corresponde) encontrados += 1;
             });
+            const resultado = document.getElementById('catalogo-resultados');
+            if (!resultado) return;
+            if (!cards.length) {
+                resultado.textContent = '';
+            } else if (t) {
+                resultado.textContent = encontrados === 1
+                    ? '1 produto encontrado.'
+                    : `${encontrados} produtos encontrados.`;
+            } else {
+                resultado.textContent = encontrados === 1
+                    ? '1 produto apresentado.'
+                    : `${encontrados} produtos apresentados.`;
+            }
         }
     </script>
 </body>

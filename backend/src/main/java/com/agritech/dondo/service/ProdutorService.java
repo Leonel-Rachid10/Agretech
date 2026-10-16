@@ -3,6 +3,7 @@ package com.agritech.dondo.service;
 import com.agritech.dondo.dto.ProdutorDTO;
 import com.agritech.dondo.model.Associacao;
 import com.agritech.dondo.model.Produtor;
+import com.agritech.dondo.model.Utilizador;
 import com.agritech.dondo.repository.AssociacaoRepository;
 import com.agritech.dondo.repository.ProdutorRepository;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,32 @@ public class ProdutorService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public Produtor obterOuCriarParaUtilizador(Utilizador utilizador) {
+        return produtorRepository.findByUtilizadorId(utilizador.getId()).orElseGet(() -> {
+            Produtor produtor = produtorRepository.findByTelemovel(utilizador.getTelemovel())
+                    .orElseGet(() -> new Produtor(utilizador.getNome(), utilizador.getTelemovel(), null, null));
+
+            if (produtor.getUtilizador() != null && !produtor.getUtilizador().getId().equals(utilizador.getId())) {
+                throw new IllegalStateException("Este perfil agrícola já está ligado a outra conta.");
+            }
+
+            produtor.setUtilizador(utilizador);
+            produtor.setNome(utilizador.getNome());
+            produtor.setTelemovel(utilizador.getTelemovel());
+            if (utilizador.getProvincia() != null && !utilizador.getProvincia().isBlank()) {
+                produtor.setProvincia(utilizador.getProvincia());
+            }
+            if (utilizador.getDistrito() != null && !utilizador.getDistrito().isBlank()) {
+                produtor.setDistrito(utilizador.getDistrito());
+            }
+            if (utilizador.getBairro() != null && !utilizador.getBairro().isBlank()) {
+                produtor.setBairro(utilizador.getBairro());
+            }
+            return produtorRepository.save(produtor);
+        });
+    }
+
     public ProdutorDTO buscarPorId(Long id) {
         Produtor produtor = produtorRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Produtor não encontrado com ID: " + id));
@@ -54,6 +81,7 @@ public class ProdutorService {
                 associacao,
                 dto.getLocalizacaoDetalhada()
         );
+        produtor.setProvincia(dto.getProvincia());
         produtor.setDistrito(dto.getDistrito());
         produtor.setBairro(dto.getBairro());
 
@@ -71,6 +99,7 @@ public class ProdutorService {
 
         produtor.setNome(dto.getNome());
         produtor.setTelemovel(dto.getTelemovel());
+        if (dto.getProvincia() != null) produtor.setProvincia(dto.getProvincia());
         if (dto.getDistrito() != null) produtor.setDistrito(dto.getDistrito());
         if (dto.getBairro() != null) produtor.setBairro(dto.getBairro());
         produtor.setLocalizacaoDetalhada(dto.getLocalizacaoDetalhada());
@@ -96,6 +125,7 @@ public class ProdutorService {
             dto.setAssociacaoNome(entity.getAssociacao().getNome());
             dto.setAssociacaoLocalidade(entity.getAssociacao().getLocalidade());
         }
+        dto.setProvincia(entity.getProvincia() != null ? entity.getProvincia() : "Sofala");
         dto.setDistrito(entity.getDistrito());
         dto.setBairro(entity.getBairro());
         dto.setLocalizacaoDetalhada(entity.getLocalizacaoDetalhada());

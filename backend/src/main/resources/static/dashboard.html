@@ -1,49 +1,45 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-MZ">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgreTech Painel de Gestao</title>
+    <title>AgreTech | Gestão</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha384-XGjxtQfXaH2tnPFa9x+cqJURcUJaYZ9tJ2V50C2Dq+5A82sX8p7w/j9m4F3M4v" crossorigin="anonymous">
     <link rel="manifest" href="/manifest.json">
     <style>
         :root {
             --agri-dark: #263238;
-            --agri-primary: #2E7D32;
-            --agri-primary-dark: #1B5E20;
-            --agri-bg: #F5F5F5;
+            --agri-primary: #55745D;
+            --agri-primary-dark: #385642;
+            --agri-bg: #F7F8F6;
             --agri-surface: #FFFFFF;
-            --agri-border: #E0E0E0;
-            --agri-text: #212121;
-            --agri-muted: #757575;
+            --agri-border: #E2E7E2;
+            --agri-text: #263238;
+            --agri-muted: #66716A;
         }
         body { background: var(--agri-bg); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--agri-text); }
-        .navbar-agri { background: var(--agri-dark); border-bottom: 3px solid var(--agri-primary); }
-        .navbar-agri .navbar-brand { font-weight: 700; letter-spacing: -0.5px; color: #fff; }
-        .navbar-agri .navbar-brand i { color: var(--agri-primary); }
-        .kpi-card { background: var(--agri-surface); border: 1px solid var(--agri-border); border-radius: 12px; padding: 20px; transition: box-shadow 0.2s; position: relative; overflow: hidden; }
-        .kpi-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .kpi-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 12px 0 0 12px; }
-        .kpi-card.kpi-green::before { background: #2E7D32; }
-        .kpi-card.kpi-blue::before { background: #1565C0; }
-        .kpi-card.kpi-amber::before { background: #F57F17; }
-        .kpi-card.kpi-teal::before { background: #00897B; }
-        .kpi-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
-        .kpi-valor { font-size: 1.75rem; font-weight: 800; line-height: 1; color: var(--agri-text); }
-        .kpi-label { font-size: 0.78rem; font-weight: 600; color: var(--agri-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .nav-pills .nav-link { border-radius: 8px; font-weight: 600; color: #495057; padding: 8px 16px; font-size: 0.9rem; }
+        .navbar-agri { background: #20352A; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .navbar-agri .navbar-brand { font-weight: 700; color: #fff; }
+        .navbar-agri .navbar-brand i { color: #8BC58B; }
+        .navbar-agri .nav-link { color: rgba(255,255,255,0.76); }
+        .navbar-agri .nav-link.active { color: #fff; }
+        .kpi-card { background: var(--agri-surface); border: 1px solid #E5EAE4; border-radius: 14px; padding: 20px; min-height: 116px; }
+        .kpi-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; background-color: #EEF3EF !important; color: #55745D !important; }
+        .kpi-valor { font-size: 1.8rem; font-weight: 750; line-height: 1.1; color: var(--agri-text); font-variant-numeric: tabular-nums; }
+        .kpi-label { font-size: 0.75rem; font-weight: 650; color: var(--agri-muted); text-transform: uppercase; }
+        .nav-pills .nav-link { border-radius: 9px; font-weight: 600; color: #526057; padding: 9px 15px; font-size: 0.9rem; }
         .nav-pills .nav-link.active { background: var(--agri-primary); color: #fff; }
-        .card-section { background: var(--agri-surface); border: 1px solid var(--agri-border); border-radius: 12px; }
-        .table thead th { background: #FAFAFA; color: var(--agri-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; border-bottom: 2px solid var(--agri-border); white-space: nowrap; }
+        .card-section { background: var(--agri-surface); border: 1px solid #E5EAE4; border-radius: 14px; }
+        .table thead th { background: #F8FAF7; color: var(--agri-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--agri-border); white-space: nowrap; }
         .table td { vertical-align: middle; font-size: 0.9rem; }
-        .table tbody tr:hover { background: #F5F5F5; }
+        .table tbody tr:hover { background: #F7FAF6; }
         .badge-estado { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-        .badge-crescimento { background: #E3F2FD; color: #1565C0; }
-        .badge-pronto { background: #E8F5E9; color: #2E7D32; }
-        .badge-reservado { background: #FFF8E1; color: #F57F17; }
-        .badge-vendido { background: #F3E5F5; color: #7B1FA2; }
-        .badge-sucesso { background: #E8F5E9; color: #2E7D32; }
+        .badge-crescimento { background: #EEF1F2; color: #52636A; }
+        .badge-pronto { background: #EEF3EF; color: #55745D; }
+        .badge-reservado { background: #F6F2E9; color: #8A7553; }
+        .badge-vendido { background: #F1EFF3; color: #6B6072; }
+        .badge-sucesso { background: #EEF3EF; color: #55745D; }
         .badge-erro { background: #FFEBEE; color: #C62828; }
         .role-badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .empty-state { text-align: center; padding: 48px 20px; color: var(--agri-muted); }
@@ -56,6 +52,13 @@
         .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--agri-muted); pointer-events: none; }
         .search-bar input { padding-left: 36px; border-radius: 8px; border: 1px solid var(--agri-border); font-size: 0.9rem; }
         .search-bar input:focus { border-color: var(--agri-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.12); outline: none; }
+        .page-title { font-size: clamp(1.45rem, 2vw, 1.85rem); }
+        .table-responsive { border-radius: 10px; }
+        @media (max-width: 575.98px) {
+            .kpi-card { padding: 16px; min-height: 104px; }
+            .kpi-icon { width: 40px; height: 40px; }
+            .kpi-valor { font-size: 1.55rem; }
+        }
     </style>
 </head>
 <body>
@@ -66,26 +69,16 @@
                 <i class="bi bi-tree-fill fs-4"></i>
                 <span>AgreTech</span>
             </a>
-            <!-- BARRA DE PESQUISA GLOBAL -->
-            <div class="search-bar mx-auto d-none d-lg-block" style="width:320px">
-                <i class="bi bi-search"></i>
-                <input type="text" id="pesquisa-global" class="form-control form-control-sm" placeholder="Pesquisar produtos, agricultores..." oninput="filtrarGlobal(this.value)">
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Abrir menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
-                <!-- pesquisa mobile -->
-                <div class="search-bar d-lg-none my-2">
-                    <i class="bi bi-search"></i>
-                    <input type="text" class="form-control form-control-sm" placeholder="Pesquisar..." oninput="filtrarGlobal(this.value)">
-                </div>
                 <ul class="navbar-nav me-auto ms-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link" href="/index.html"><i class="bi bi-shop me-1"></i>Catalogo</a>
+                        <a class="nav-link" href="/index.html"><i class="bi bi-shop me-1"></i>Catálogo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-bold" href="/dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i>Gestao</a>
+                        <a class="nav-link active fw-bold" href="/dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i>Gestão</a>
                     </li>
                 </ul>
                 <div class="user-info">
@@ -106,39 +99,46 @@
         <!-- HEADER -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
-                <h4 class="fw-bold mb-1" id="dash-titulo">Painel de Gestao</h4>
-                <p class="text-muted mb-0 small">Gestao integrada da Provincia de Sofala</p>
+                <h1 class="page-title fw-bold mb-0" id="dash-titulo">Painel de gestão</h1>
             </div>
             <div class="d-flex gap-2 admin-only">
                 <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 rounded-pill">
-                    <i class="bi bi-file-earmark-pdf-fill"></i> Relatorio PDF
+                    <i class="bi bi-file-earmark-pdf-fill"></i> Relatório PDF
                 </a>
             </div>
         </div>
 
         <!-- KPIs -->
         <div class="row g-3 mb-4">
-            <div class="col-12 col-md-4">
-                <div class="kpi-card kpi-green">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="kpi-card">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-boxes"></i></div>
-                        <div><div class="kpi-valor" id="kpi-lotes">0</div><div class="kpi-label">Produtos Registados</div></div>
+                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-box-seam"></i></div>
+                        <div><div class="kpi-valor" id="kpi-lotes">0</div><div class="kpi-label">Produtos registados</div></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
-                <div class="kpi-card kpi-blue">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="kpi-card">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-people-fill"></i></div>
-                        <div><div class="kpi-valor" id="kpi-produtores">0</div><div class="kpi-label">Agricultores</div></div>
+                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-people-fill"></i></div>
+                        <div><div class="kpi-valor" id="kpi-produtores">0</div><div class="kpi-label" id="kpi-produtores-label">Agricultores</div></div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-4">
-                <div class="kpi-card kpi-teal">
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="kpi-card">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="kpi-icon bg-info bg-opacity-10 text-info"><i class="bi bi-flower1"></i></div>
-                        <div><div class="kpi-valor" id="kpi-culturas">0</div><div class="kpi-label">Produtos Agricolas</div></div>
+                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-flower1"></i></div>
+                        <div><div class="kpi-valor" id="kpi-culturas">0</div><div class="kpi-label">Produtos Agrícolas</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="kpi-card">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="kpi-icon bg-success bg-opacity-10 text-success"><i class="bi bi-calendar-event"></i></div>
+                        <div><div class="kpi-valor" id="kpi-colheita">-</div><div class="kpi-label">Próxima colheita</div></div>
                     </div>
                 </div>
             </div>
@@ -159,7 +159,7 @@
                 </li>
                 <li class="nav-item admin-only">
                     <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button">
-                        <i class="bi bi-arrow-repeat me-1"></i>Sincronizacoes
+                        <i class="bi bi-arrow-repeat me-1"></i>Sincronizações
                     </button>
                 </li>
             </ul>
@@ -179,13 +179,13 @@
             <div class="tab-pane fade show active" id="tab-lotes">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-list-check text-success me-2"></i>Produtos Agricolas</h6>
-                        <span class="text-muted small" id="lotes-count-label"></span>
+                        <h6 class="fw-bold mb-0"><i class="bi bi-list-check text-success me-2"></i>Produtos agrícolas</h6>
+                        <span class="text-muted small" id="lotes-count-label" role="status" aria-live="polite"></span>
                     </div>
-                    <!-- Pesquisa nos produtos -->
                     <div class="search-bar mb-3">
                         <i class="bi bi-search"></i>
-                        <input type="text" id="pesquisa-lotes" class="form-control form-control-sm" placeholder="Filtrar por produto, agricultor ou localidade..." oninput="filtrarTabela('tabela-lotes', this.value)">
+                        <label class="visually-hidden" for="pesquisa-lotes">Pesquisar produtos agrícolas</label>
+                        <input type="search" id="pesquisa-lotes" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar produtos agrícolas por nome, agricultor ou localização" oninput="filtrarProdutos(this.value)">
                     </div>
                     <div class="table-responsive" id="lotes-lista">
                         <div class="empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar produtos...</p></div>
@@ -199,7 +199,8 @@
                     <h6 class="fw-bold mb-3"><i class="bi bi-person-lines-fill text-success me-2"></i>Agricultores Registados</h6>
                     <div class="search-bar mb-3">
                         <i class="bi bi-search"></i>
-                        <input type="text" class="form-control form-control-sm" placeholder="Pesquisar agricultores..." oninput="filtrarCards('produtores-lista', this.value)">
+                        <label class="visually-hidden" for="pesquisa-produtores">Pesquisar agricultores</label>
+                        <input type="search" id="pesquisa-produtores" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar agricultores" oninput="filtrarCards('produtores-lista', this.value)">
                     </div>
                     <div class="row g-3" id="produtores-lista">
                         <div class="col-12 empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar...</p></div>
@@ -211,14 +212,15 @@
             <div class="tab-pane fade" id="tab-sync">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-arrow-repeat text-success me-2"></i>Historico de Sincronizacoes</h6>
+                        <h6 class="fw-bold mb-0"><i class="bi bi-arrow-repeat text-success me-2"></i>Histórico de sincronizações</h6>
                         <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="carregarHistoricoSync()">
                             <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
                         </button>
                     </div>
                     <div class="search-bar mb-3">
                         <i class="bi bi-search"></i>
-                        <input type="text" class="form-control form-control-sm" placeholder="Pesquisar por ponto focal..." oninput="filtrarTabela('tabela-sync', this.value)">
+                        <label class="visually-hidden" for="pesquisa-sincronizacoes">Pesquisar sincronizações</label>
+                        <input type="search" id="pesquisa-sincronizacoes" class="form-control form-control-sm" autocomplete="off" placeholder="Pesquisar por ponto focal" oninput="filtrarTabela('tabela-sync', this.value)">
                     </div>
                     <div class="table-responsive" id="sync-lista">
                         <div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronizacao registada ainda.</p></div>
@@ -233,26 +235,30 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header modal-agri">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-box-seam me-2"></i>Registar Novo Produto Agricola</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h6 class="modal-title fw-bold"><i class="bi bi-box-seam me-2"></i>Registar novo produto agrícola</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form id="form-novo-lote" onsubmit="event.preventDefault(); App.submeterNovoLote(this);">
                     <div class="modal-body p-4">
-                        <div class="mb-3">
+                        <div class="mb-3 admin-only" id="campo-produtor-lote">
                             <label class="form-label fw-semibold small">Agricultor <span class="text-danger">*</span></label>
                             <select name="produtorId" id="lote-produtor" class="form-select form-select-sm" required></select>
                         </div>
+                        <div class="mb-3" id="produtor-proprio-lote" hidden>
+                            <span class="form-label fw-semibold small d-block">Agricultor</span>
+                            <div class="form-control form-control-sm bg-light" id="produtor-proprio-nome"></div>
+                        </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Produto Agricola <span class="text-danger">*</span></label>
-                            <select name="culturaId" id="lote-cultura" class="form-select form-select-sm" required></select>
+                            <label class="form-label fw-semibold small">Produto agrícola <span class="text-danger">*</span></label>
+                            <select name="culturaId" id="lote-cultura" class="form-select form-select-sm" required onchange="atualizarUnidadeProduto()"></select>
                         </div>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Quantidade (KG) <span class="text-danger">*</span></label>
+                                <label class="form-label fw-semibold small">Quantidade disponível (<span id="lote-unidade-label">unidade</span>) <span class="text-danger">*</span></label>
                                 <input type="number" name="quantidadeEstimada" id="lote-quantidade" step="0.01" class="form-control form-control-sm" placeholder="1500" required>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Preco/KG (MZN)</label>
+                                <label class="form-label fw-semibold small">Preço por unidade (MZN/<span id="lote-preco-unidade-label">unidade</span>)</label>
                                 <input type="number" name="precoPorUnidade" id="lote-preco" step="0.01" class="form-control form-control-sm" placeholder="45.00">
                             </div>
                         </div>
@@ -267,7 +273,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="form-label fw-semibold small">Observacoes</label>
+                            <label class="form-label fw-semibold small">Observações</label>
                             <textarea name="observacoes" id="lote-observacoes" rows="2" class="form-control form-control-sm" placeholder="Detalhes..."></textarea>
                         </div>
                     </div>
@@ -286,17 +292,17 @@
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header modal-agri">
                     <h6 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Atualizar Produto</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form id="form-editar-lote" onsubmit="event.preventDefault(); submeterEdicaoLote();">
                     <div class="modal-body p-4">
                         <input type="hidden" id="edit-lote-id">
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Quantidade (KG)</label>
+                            <label class="form-label fw-semibold small">Quantidade disponível (<span id="edit-unidade-label">unidade</span>)</label>
                             <input type="number" id="edit-quantidade" step="0.01" class="form-control form-control-sm" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Preco/KG (MZN)</label>
+                            <label class="form-label fw-semibold small">Preço por unidade (MZN/<span id="edit-preco-unidade-label">unidade</span>)</label>
                             <input type="number" id="edit-preco" step="0.01" class="form-control form-control-sm">
                         </div>
                         <div>
@@ -324,7 +330,7 @@
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header modal-agri">
                     <h6 class="modal-title fw-bold"><i class="bi bi-person-plus me-2"></i>Registar Novo Agricultor</h6>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <form onsubmit="event.preventDefault(); submeterNovoProdutor(this);">
                     <div class="modal-body p-4">
@@ -333,38 +339,36 @@
                             <input type="text" name="nome" class="form-control form-control-sm" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Telemovel <span class="text-danger">*</span></label>
-                            <input type="tel" name="telemovel" class="form-control form-control-sm" placeholder="+258841112233" required>
+                            <label class="form-label fw-semibold small">Telemóvel <span class="text-danger">*</span></label>
+                            <input type="tel" name="telemovel" class="form-control form-control-sm" placeholder="Ex: 841234567" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small">Senha de acesso <span class="text-danger">*</span></label>
+                            <input type="password" name="senha" class="form-control form-control-sm" placeholder="Mínimo 4 caracteres" minlength="4" required>
                         </div>
                         <div class="row g-2 mb-3">
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Distrito <span class="text-danger">*</span></label>
-                                <select name="distrito" class="form-select form-select-sm" required onchange="atualizarBairros(this.value, 'povoado-produtor')">
+                                <label class="form-label fw-semibold small">Província <span class="text-danger">*</span></label>
+                                <select name="provincia" id="produtor-provincia" class="form-select form-select-sm" required onchange="populateDistricts('produtor-provincia', 'produtor-distrito', 'Selecione a província...'); atualizarZonasProdutor('')">
                                     <option value="">Selecione...</option>
-                                    <option value="Beira">Beira</option>
-                                    <option value="Búzi">Búzi</option>
-                                    <option value="Caia">Caia</option>
-                                    <option value="Chemba">Chemba</option>
-                                    <option value="Cheringoma">Cheringoma</option>
-                                    <option value="Chibabava">Chibabava</option>
-                                    <option value="Dondo">Dondo</option>
-                                    <option value="Gorongosa">Gorongosa</option>
-                                    <option value="Machanga">Machanga</option>
-                                    <option value="Maringué">Maringué</option>
-                                    <option value="Marromeu">Marromeu</option>
-                                    <option value="Muanza">Muanza</option>
-                                    <option value="Nhamatanda">Nhamatanda</option>
                                 </select>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Bairro / Zona</label>
-                                <select name="bairro" id="povoado-produtor" class="form-select form-select-sm">
-                                    <option value="">Selecione o distrito...</option>
+                                <label class="form-label fw-semibold small">Distrito <span class="text-danger">*</span></label>
+                                <select name="distrito" id="produtor-distrito" class="form-select form-select-sm" required disabled onchange="atualizarZonasProdutor(this.value)">
+                                    <option value="">Selecione a província...</option>
                                 </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small">Zona / Bairro</label>
+                                <input type="text" name="bairro" id="produtor-zona" list="produtor-zonas-list"
+                                    class="form-control form-control-sm"
+                                    placeholder="Ex: Campo, Bairro Central..." disabled>
+                                <datalist id="produtor-zonas-list"></datalist>
                             </div>
                         </div>
                         <div>
-                            <label class="form-label fw-semibold small">Localizacao da Parcela</label>
+                            <label class="form-label fw-semibold small">Localização da parcela</label>
                             <textarea name="localizacaoDetalhada" rows="2" class="form-control form-control-sm" placeholder="Ex: Perto do rio..."></textarea>
                         </div>
                     </div>
@@ -379,10 +383,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="/js/api.js"></script>
+    <script src="/js/locations.js"></script>
     <script src="/js/db.js"></script>
     <script src="/js/sync.js"></script>
     <script src="/js/app.js"></script>
     <script>
+        populateProvinces('produtor-provincia', 'Selecione...');
         if (!Api.isLoggedIn()) window.location.href = '/login.html';
 
         const perfil = Api.user ? Api.user.perfil : '';
@@ -397,7 +403,7 @@
                 const firstName = Api.user.nome.split(' ')[0];
                 document.getElementById('user-nome-nav').textContent = Api.user.nome;
                 document.getElementById('user-avatar').textContent = firstName.charAt(0).toUpperCase();
-                document.getElementById('dash-titulo').textContent = 'Ola, ' + firstName + '!';
+                document.getElementById('dash-titulo').textContent = 'Olá, ' + firstName;
                 const perfilLabels = { ADMIN: 'Administrador', PRODUTOR: 'Agricultor', COMPRADOR: 'Comprador' };
                 document.getElementById('user-perfil-badge').textContent = perfilLabels[Api.user.perfil] || Api.user.perfil;
             }
@@ -410,10 +416,20 @@
                 document.getElementById('btn-novo-lote').style.display = 'none';
             }
 
+            if (isProdutor && !Api.user?.produtorId) {
+                try {
+                    const currentUser = await Api.getCurrentUser();
+                    Api.user.produtorId = currentUser.produtorId || null;
+                    localStorage.setItem('agritech_user', JSON.stringify(Api.user));
+                } catch (e) {
+                    console.warn('Não foi possível atualizar o perfil agrícola da conta:', e);
+                }
+            }
+
             await App.init();
             await Promise.all([
                 carregarLotes(),
-                App.carregarProdutoresDashboard()
+                isAdmin ? App.carregarProdutoresDashboard() : Promise.resolve()
             ]);
             atualizarKPIs();
             if (isAdmin) carregarHistoricoSync();
@@ -424,28 +440,44 @@
             try {
                 const [lotes, produtores, culturas] = await Promise.all([
                     Api.getLotes().catch(() => []),
-                    Api.getProdutores().catch(() => []),
+                    isAdmin ? Api.getProdutores().catch(() => []) : Promise.resolve([]),
                     Api.getCulturas().catch(() => [])
                 ]);
                 document.getElementById('kpi-lotes').textContent = lotes.length;
-                document.getElementById('kpi-produtores').textContent = produtores.length;
+                const souAgricultor = Api.user?.perfil === 'PRODUTOR';
+                document.getElementById('kpi-produtores').textContent = souAgricultor
+                    ? lotes.filter(lote => lote.estado === 'PRONTO_PARA_COLHEITA').length
+                    : produtores.length;
+                document.getElementById('kpi-produtores-label').textContent = souAgricultor ? 'Prontos para colheita' : 'Agricultores';
                 document.getElementById('kpi-culturas').textContent = culturas.length;
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+                const proximaColheita = lotes
+                    .filter(lote => lote.estado !== 'VENDIDO' && lote.dataColheitaPrevista)
+                    .map(lote => new Date(lote.dataColheitaPrevista + 'T00:00:00'))
+                    .filter(data => data >= hoje)
+                    .sort((a, b) => a - b)[0];
+                document.getElementById('kpi-colheita').textContent = proximaColheita
+                    ? proximaColheita.toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short' })
+                    : '—';
             } catch (e) { console.warn('Erro KPIs:', e); }
         }
 
-        // ---- PESQUISA GLOBAL ----
-        function filtrarGlobal(termo) {
-            filtrarTabela('tabela-lotes', termo);
-            filtrarCards('produtores-lista', termo);
+        function normalizarBusca(termo) {
+            return String(termo || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLocaleLowerCase('pt-MZ')
+                .trim();
         }
 
         function filtrarTabela(tabelaId, termo) {
             const tabela = document.getElementById(tabelaId);
             if (!tabela) return;
             const rows = tabela.querySelectorAll('tbody tr');
-            const t = termo.toLowerCase().trim();
+            const t = normalizarBusca(termo);
             rows.forEach(row => {
-                row.style.display = !t || row.textContent.toLowerCase().includes(t) ? '' : 'none';
+                row.hidden = Boolean(t && !normalizarBusca(row.textContent).includes(t));
             });
         }
 
@@ -453,10 +485,26 @@
             const container = document.getElementById(containerId);
             if (!container) return;
             const cards = container.querySelectorAll('.col-md-4, .col-sm-6, .col-12');
-            const t = termo.toLowerCase().trim();
+            const t = normalizarBusca(termo);
             cards.forEach(card => {
-                card.style.display = !t || card.textContent.toLowerCase().includes(t) ? '' : 'none';
+                card.hidden = Boolean(t && !normalizarBusca(card.textContent).includes(t));
             });
+        }
+
+        function filtrarProdutos(termo) {
+            const tabela = document.getElementById('tabela-lotes');
+            const contador = document.getElementById('lotes-count-label');
+            if (!tabela || !contador) return;
+
+            const t = normalizarBusca(termo);
+            const rows = [...tabela.querySelectorAll('tbody tr')];
+            const encontrados = rows.filter(row => {
+                const corresponde = !t || normalizarBusca(row.textContent).includes(t);
+                row.hidden = !corresponde;
+                return corresponde;
+            }).length;
+            const total = rows.length;
+            contador.textContent = t ? `${encontrados} de ${total} produto(s)` : `${total} produto(s)`;
         }
 
         // ---- PRODUTOS TABLE ----
@@ -465,20 +513,24 @@
             if (!lista) return;
             let lotes;
             try { lotes = await Api.getLotes(); } catch (e) {
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-wifi-off"></i><p>Sem conexao.</p></div>';
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-wifi-off"></i><p>Sem conexão.</p></div>';
                 return;
             }
             if (!lotes || lotes.length === 0) {
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p>Nenhum produto registado.<br>Clique em "Novo Produto" para comecar.</p></div>';
+                const acaoVazia = (isAdmin || isProdutor)
+                    ? '<button type="button" class="btn btn-success btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()"><i class="bi bi-plus-lg me-1"></i>Registar produto</button>'
+                    : '';
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-3">Ainda não há produtos registados.</p>' + acaoVazia + '</div>';
                 return;
             }
             document.getElementById('lotes-count-label').textContent = lotes.length + ' produto(s)';
             const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
             const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
 
+            const mostrarAgricultor = !isProdutor;
             let html = `<table class="table table-hover mb-0" id="tabela-lotes">
                 <thead><tr>
-                    <th>Produto Agricola</th><th>Agricultor</th><th>Quantidade</th><th>Preco/KG</th><th>Colheita</th><th>Estado</th><th class="text-end">Accoes</th>
+                    <th>Produto agrícola</th>${mostrarAgricultor ? '<th>Agricultor</th>' : ''}<th>Quantidade</th><th>Preço/unidade</th><th>Colheita</th><th>Estado</th><th class="text-end">Ações</th>
                 </tr></thead><tbody>`;
 
             lotes.forEach(l => {
@@ -486,14 +538,15 @@
                 const qty = Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (l.unidadeMedida || 'KG');
                 let actions = '';
                 if (isAdmin || isProdutor) {
-                    actions += `<button class="btn btn-outline-secondary btn-action me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}')" title="Editar"><i class="bi bi-pencil"></i></button>`;
+                    actions += `<button class="btn btn-outline-secondary btn-action me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}', '${l.unidadeMedida || 'unidade'}')" title="Editar" aria-label="Editar produto ${l.culturaNome}"><i class="bi bi-pencil"></i></button>`;
                 }
                 if (isAdmin) {
-                    actions += `<button class="btn btn-outline-danger btn-action" onclick="removerLote(${l.id})" title="Remover"><i class="bi bi-trash3"></i></button>`;
+                    actions += `<button class="btn btn-outline-danger btn-action" onclick="removerLote(${l.id})" title="Remover" aria-label="Remover produto ${l.culturaNome}"><i class="bi bi-trash3"></i></button>`;
                 }
+                const localidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade || '';
                 html += `<tr>
                     <td><strong>${l.culturaNome}</strong></td>
-                    <td>${l.produtorNome || '-'}<br><small class="text-muted">${l.associacaoLocalidade || ''}</small></td>
+                    ${mostrarAgricultor ? `<td>${l.produtorNome || '-'}${localidade ? '<br><small class="text-muted">' + localidade + '</small>' : ''}</td>` : ''}
                     <td>${qty}</td><td>${preco}</td>
                     <td>${l.dataColheitaPrevista || '-'}</td>
                     <td><span class="badge badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span></td>
@@ -502,14 +555,25 @@
             });
             html += '</tbody></table>';
             lista.innerHTML = html;
+            filtrarProdutos(document.getElementById('pesquisa-lotes')?.value || '');
         }
 
         // ---- EDIT PRODUTO ----
-        function abrirEdicaoLote(id, preco, quantidade, estado) {
+        function atualizarUnidadeProduto() {
+            const culturaId = Number.parseInt(document.getElementById('lote-cultura')?.value, 10);
+            const cultura = App.culturas.find(item => item.id === culturaId);
+            const unidade = cultura?.unidadeMedida || 'unidade';
+            document.getElementById('lote-unidade-label').textContent = unidade;
+            document.getElementById('lote-preco-unidade-label').textContent = unidade;
+        }
+
+        function abrirEdicaoLote(id, preco, quantidade, estado, unidade) {
             document.getElementById('edit-lote-id').value = id;
             document.getElementById('edit-preco').value = preco || '';
             document.getElementById('edit-quantidade').value = quantidade || '';
             document.getElementById('edit-estado').value = estado || 'EM_CRESCIMENTO';
+            document.getElementById('edit-unidade-label').textContent = unidade || 'unidade';
+            document.getElementById('edit-preco-unidade-label').textContent = unidade || 'unidade';
             new bootstrap.Modal(document.getElementById('modal-editar-lote')).show();
         }
 
@@ -576,33 +640,57 @@
 
         async function submeterNovoProdutor(form) {
             try {
-                await Api.criarProdutor({
+                // Usa o endpoint de registo para criar conta de agricultor com credenciais
+                await Api.registar({
                     nome: form.nome.value,
                     telemovel: form.telemovel.value,
+                    senha: form.senha.value,
+                    perfil: 'PRODUTOR',
+                    provincia: form.provincia.value,
                     distrito: form.distrito.value,
                     bairro: form.bairro.value || null,
+                    zona: form.bairro.value || null,
                     localizacaoDetalhada: form.localizacaoDetalhada.value || null
                 });
                 bootstrap.Modal.getInstance(document.getElementById('modal-novo-produtor')).hide();
                 form.reset();
-                App.carregarProdutoresDashboard();
-                atualizarKPIs();
+                // Reiniciar selects
+                const distritoSel = document.getElementById('produtor-distrito');
+                if (distritoSel) { distritoSel.innerHTML = '<option value="">Selecione a província...</option>'; distritoSel.disabled = true; }
+                const zonaInput = document.getElementById('produtor-zona');
+                if (zonaInput) { zonaInput.value = ''; zonaInput.disabled = true; }
+                await App.carregarProdutoresDashboard();
+                await atualizarKPIs();
+                alert('Agricultor registado com sucesso!');
+            } catch (e) {
+                alert('Erro ao registar agricultor: ' + (e.message || 'Verifique os dados e tente novamente.'));
+            }
         }
-        const zonasPorDistrito = {
-            'Dondo': ['Bairro Central', 'Consito', 'Mafarinha', 'Canhandula', 'Nhamaiabwe', 'Chinamacondo', 'Savana', 'Mafambisse', 'Mútua'],
-            'Beira': ['Alto da Manga', 'Chaimite', 'Chingussura', 'Chipangara', 'Chota', 'Esturro', 'Inhamízua', 'Macurungo', 'Macuti', 'Mananga', 'Manga Mascarenhas', 'Maraza', 'Matacuane', 'Matadouro', 'Muave', 'Mungassa', 'Munhava-Central', 'Ndunda', 'Nhaconjo', 'Nhangau', 'Nhangoma', 'Pioneiros', 'Ponta-Gêa', 'Tchonja', 'Vaz', 'Vila Massane']
-        };
 
+        function atualizarZonasProdutor(distrito) {
+            const input = document.getElementById('produtor-zona');
+            const datalist = document.getElementById('produtor-zonas-list');
+            if (!input || !datalist) return;
+            const zonas = AgriLocations.zones[distrito] || [];
+            input.value = '';
+            input.disabled = !distrito;
+            input.placeholder = distrito
+                ? (zonas.length > 0 ? 'Selecione ou escreva a zona...' : 'Ex: Campo, Sede...')
+                : 'Selecione o distrito primeiro';
+            datalist.innerHTML = zonas.map(z => `<option value="${z}">`).join('');
+        }
+
+        // Compatibilidade antiga (select bairro) — mantém por segurança
         function atualizarBairros(distrito, targetId) {
             const sel = document.getElementById(targetId);
             if (!sel) return;
             sel.innerHTML = '';
-            const zonas = zonasPorDistrito[distrito];
+            const zonas = AgriLocations.neighborhoods[distrito];
             if (zonas) {
-                sel.innerHTML = '<option value="">Selecione o bairro / zona...</option>' + 
+                sel.innerHTML = '<option value="">Selecione o bairro / zona...</option>' +
                                 zonas.map(z => `<option value="${z}">${z}</option>`).join('');
             } else if (distrito) {
-                sel.innerHTML = '<option value="Sede">(Sede / Sem zonas listadas)</option>';
+                sel.innerHTML = '<option value="">Sem zonas cadastradas</option>';
             } else {
                 sel.innerHTML = '<option value="">Selecione o distrito primeiro...</option>';
             }

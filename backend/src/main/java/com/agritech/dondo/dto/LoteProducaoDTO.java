@@ -10,13 +10,15 @@ public class LoteProducaoDTO {
 
     private Long id;
 
-    @NotNull(message = "O ID do produtor é obrigatório")
     private Long produtorId;
     private String produtorNome;
     private String produtorTelemovel;
 
     private String associacaoNome;
     private String associacaoLocalidade;
+    private String provincia;
+    private String distrito;
+    private String bairro;
 
     @NotNull(message = "O ID da cultura é obrigatório")
     private Long culturaId;
@@ -59,6 +61,15 @@ public class LoteProducaoDTO {
 
     public String getAssociacaoLocalidade() { return associacaoLocalidade; }
     public void setAssociacaoLocalidade(String associacaoLocalidade) { this.associacaoLocalidade = associacaoLocalidade; }
+
+    public String getProvincia() { return provincia; }
+    public void setProvincia(String provincia) { this.provincia = provincia; }
+
+    public String getDistrito() { return distrito; }
+    public void setDistrito(String distrito) { this.distrito = distrito; }
+
+    public String getBairro() { return bairro; }
+    public void setBairro(String bairro) { this.bairro = bairro; }
 
     public Long getCulturaId() { return culturaId; }
     public void setCulturaId(Long culturaId) { this.culturaId = culturaId; }

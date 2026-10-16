@@ -7,7 +7,13 @@ const Api = {
 
     setAuth(loginResponse) {
         this.token = loginResponse.token;
-        this.user = { id: loginResponse.id, nome: loginResponse.nome, telemovel: loginResponse.telemovel, perfil: loginResponse.perfil };
+        this.user = {
+            id: loginResponse.id,
+            nome: loginResponse.nome,
+            telemovel: loginResponse.telemovel,
+            perfil: loginResponse.perfil,
+            produtorId: loginResponse.produtorId || null
+        };
         localStorage.setItem('agritech_token', loginResponse.token);
         localStorage.setItem('agritech_user', JSON.stringify(this.user));
     },
@@ -62,6 +68,7 @@ const Api = {
     // Auth
     login(nome, senha) { return this.post('/auth/login', { nome, senha }); },
     registar(data) { return this.post('/auth/registo', data); },
+    getCurrentUser() { return this.get('/auth/me'); },
 
     // Culturas
     getCulturas() { return this.get('/culturas'); },
@@ -79,6 +86,7 @@ const Api = {
     getCatalogo(params = {}) {
         const qs = new URLSearchParams();
         if (params.culturaId) qs.set('culturaId', params.culturaId);
+        if (params.provincia) qs.set('provincia', params.provincia);
         if (params.localidade) qs.set('localidade', params.localidade);
         if (params.estado) qs.set('estado', params.estado);
         if (params.quantidadeMinima) qs.set('quantidadeMinima', params.quantidadeMinima);
@@ -105,7 +113,7 @@ const Api = {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'AgriTech_Dondo_Relatorio.pdf';
+        a.download = 'AgreTech_Relatorio.pdf';
         a.click();
         URL.revokeObjectURL(url);
     }

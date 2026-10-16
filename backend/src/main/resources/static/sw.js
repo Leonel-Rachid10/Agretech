@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agritech-dondo-v1';
+const CACHE_NAME = 'agritech-dondo-v3';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -6,6 +6,7 @@ const ASSETS_TO_CACHE = [
     '/dashboard.html',
     '/css/style.css',
     '/js/api.js',
+    '/js/locations.js',
     '/js/db.js',
     '/js/sync.js',
     '/js/app.js',

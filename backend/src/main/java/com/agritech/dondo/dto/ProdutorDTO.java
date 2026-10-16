@@ -16,6 +16,7 @@ public class ProdutorDTO {
     private Long associacaoId;
     private String associacaoNome;
     private String associacaoLocalidade;
+    private String provincia;
     private String distrito;
     private String bairro;
     private String localizacaoDetalhada;
@@ -39,6 +40,9 @@ public class ProdutorDTO {
 
     public String getAssociacaoLocalidade() { return associacaoLocalidade; }
     public void setAssociacaoLocalidade(String associacaoLocalidade) { this.associacaoLocalidade = associacaoLocalidade; }
+
+    public String getProvincia() { return provincia; }
+    public void setProvincia(String provincia) { this.provincia = provincia; }
 
     public String getDistrito() { return distrito; }
     public void setDistrito(String distrito) { this.distrito = distrito; }

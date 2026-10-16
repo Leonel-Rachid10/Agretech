@@ -17,9 +17,16 @@ public class Produtor {
     @Column(nullable = false, length = 20)
     private String telemovel;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "utilizador_id", unique = true)
+    private Utilizador utilizador;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "associacao_id", nullable = true)
     private Associacao associacao;
+
+    @Column(length = 100)
+    private String provincia;
 
     @Column(length = 100)
     private String distrito;
@@ -59,11 +66,17 @@ public class Produtor {
     public String getTelemovel() { return telemovel; }
     public void setTelemovel(String telemovel) { this.telemovel = telemovel; }
 
+    public Utilizador getUtilizador() { return utilizador; }
+    public void setUtilizador(Utilizador utilizador) { this.utilizador = utilizador; }
+
     public Associacao getAssociacao() { return associacao; }
     public void setAssociacao(Associacao associacao) { this.associacao = associacao; }
 
     public String getLocalizacaoDetalhada() { return localizacaoDetalhada; }
     public void setLocalizacaoDetalhada(String localizacaoDetalhada) { this.localizacaoDetalhada = localizacaoDetalhada; }
+
+    public String getProvincia() { return provincia; }
+    public void setProvincia(String provincia) { this.provincia = provincia; }
 
     public String getDistrito() { return distrito; }
     public void setDistrito(String distrito) { this.distrito = distrito; }

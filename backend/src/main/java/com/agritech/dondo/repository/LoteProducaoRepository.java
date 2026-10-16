@@ -18,14 +18,17 @@ public interface LoteProducaoRepository extends JpaRepository<LoteProducao, Long
 
     List<LoteProducao> findByProdutorAssociacaoId(Long associacaoId);
 
-    @Query("SELECT l FROM LoteProducao l WHERE " +
+    @Query("SELECT l FROM LoteProducao l LEFT JOIN l.produtor.associacao associacao WHERE " +
            "(:culturaId IS NULL OR l.cultura.id = :culturaId) AND " +
-           "(:localidade IS NULL OR LOWER(l.produtor.associacao.localidade) LIKE LOWER(CONCAT('%', :localidade, '%'))) AND " +
+           "(:provincia IS NULL OR LOWER(COALESCE(l.produtor.provincia, 'Sofala')) = LOWER(:provincia)) AND " +
+           "(:localidade IS NULL OR LOWER(COALESCE(associacao.localidade, l.produtor.distrito, '')) LIKE LOWER(CONCAT('%', :localidade, '%')) " +
+           "OR LOWER(COALESCE(l.produtor.bairro, '')) LIKE LOWER(CONCAT('%', :localidade, '%'))) AND " +
            "(:estado IS NULL OR l.estado = :estado) AND " +
            "(:quantidadeMinima IS NULL OR l.quantidadeEstimada >= :quantidadeMinima) " +
            "ORDER BY l.dataColheitaPrevista ASC")
     List<LoteProducao> pesquisarCatalogo(
             @Param("culturaId") Long culturaId,
+            @Param("provincia") String provincia,
             @Param("localidade") String localidade,
             @Param("estado") EstadoLote estado,
             @Param("quantidadeMinima") BigDecimal quantidadeMinima

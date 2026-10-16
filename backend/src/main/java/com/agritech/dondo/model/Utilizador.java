@@ -27,6 +27,9 @@ public class Utilizador {
     private Perfil perfil;
 
     @Column(length = 100)
+    private String provincia;
+
+    @Column(length = 100)
     private String distrito;
 
     @Column(length = 100)
@@ -34,6 +37,9 @@ public class Utilizador {
 
     @Column(name = "data_criacao", updatable = false)
     private LocalDateTime dataCriacao;
+
+    @Transient
+    private Long produtorId;
 
    @PrePersist
     public void prePersist() {
@@ -67,6 +73,9 @@ public class Utilizador {
     public Perfil getPerfil() { return perfil; }
     public void setPerfil(Perfil perfil) { this.perfil = perfil; }
 
+    public String getProvincia() { return provincia; }
+    public void setProvincia(String provincia) { this.provincia = provincia; }
+
     public String getDistrito() { return distrito; }
     public void setDistrito(String distrito) { this.distrito = distrito; }
 
@@ -75,4 +84,7 @@ public class Utilizador {
 
     public LocalDateTime getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(LocalDateTime dataCriacao) { this.dataCriacao = dataCriacao; }
+
+    public Long getProdutorId() { return produtorId; }
+    public void setProdutorId(Long produtorId) { this.produtorId = produtorId; }
 }

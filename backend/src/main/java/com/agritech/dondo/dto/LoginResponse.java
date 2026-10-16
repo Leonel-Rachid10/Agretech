@@ -10,15 +10,21 @@ public class LoginResponse {
     private String nome;
     private String telemovel;
     private Perfil perfil;
+    private Long produtorId;
 
     public LoginResponse() {}
 
     public LoginResponse(String token, Long id, String nome, String telemovel, Perfil perfil) {
+        this(token, id, nome, telemovel, perfil, null);
+    }
+
+    public LoginResponse(String token, Long id, String nome, String telemovel, Perfil perfil, Long produtorId) {
         this.token = token;
         this.id = id;
         this.nome = nome;
         this.telemovel = telemovel;
         this.perfil = perfil;
+        this.produtorId = produtorId;
     }
 
     public String getToken() { return token; }
@@ -38,4 +44,7 @@ public class LoginResponse {
 
     public Perfil getPerfil() { return perfil; }
     public void setPerfil(Perfil perfil) { this.perfil = perfil; }
+
+    public Long getProdutorId() { return produtorId; }
+    public void setProdutorId(Long produtorId) { this.produtorId = produtorId; }
 }

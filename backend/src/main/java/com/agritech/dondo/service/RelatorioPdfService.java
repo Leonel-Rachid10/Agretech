@@ -14,7 +14,9 @@ import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RelatorioPdfService {
@@ -44,21 +46,28 @@ public class RelatorioPdfService {
             Font kpiValorFonte = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, new Color(33, 33, 33));
 
             // Título e Cabeçalho
-            Paragraph titulo = new Paragraph("AgriTech Dondo — Relatório Consolidado de Produção Agrícola", tituloFonte);
+            Paragraph titulo = new Paragraph("AgreTech — Relatório Consolidado de Produtos Agrícolas", tituloFonte);
             titulo.setAlignment(Element.ALIGN_CENTER);
             document.add(titulo);
 
-            Paragraph subtitulo = new Paragraph("Distrito do Dondo, Província de Sofala — Emissão: " +
+            Paragraph subtitulo = new Paragraph("Províncias e distritos selecionados — Emissão: " +
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")), subTituloFonte);
             subtitulo.setAlignment(Element.ALIGN_CENTER);
             subtitulo.setSpacingAfter(15);
             document.add(subtitulo);
 
             // Cálculos de KPIs
-            int totalLotes = lotes.size();
-            BigDecimal volumeTotalKg = lotes.stream()
-                    .map(LoteProducao::getQuantidadeEstimada)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            int totalProdutos = lotes.size();
+            Map<String, BigDecimal> quantidadePorUnidade = new LinkedHashMap<>();
+            for (LoteProducao produto : lotes) {
+                String unidade = produto.getCultura().getUnidadeMedida();
+                if (unidade == null || unidade.isBlank()) unidade = "un.";
+                quantidadePorUnidade.merge(unidade, produto.getQuantidadeEstimada(), BigDecimal::add);
+            }
+            String quantidadeTotal = quantidadePorUnidade.entrySet().stream()
+                    .map(item -> item.getValue().stripTrailingZeros().toPlainString() + " " + item.getKey())
+                    .reduce((a, b) -> a + " · " + b)
+                    .orElse("0");
 
             long prontosColheita = lotes.stream()
                     .filter(l -> l.getEstado() == EstadoLote.PRONTO_PARA_COLHEITA)
@@ -73,10 +82,10 @@ public class RelatorioPdfService {
             kpiTable.setWidthPercentage(100);
             kpiTable.setSpacingAfter(15);
 
-            adicionarKpiCell(kpiTable, "TOTAL DE LOTES", String.valueOf(totalLotes), kpiTituloFonte, kpiValorFonte, new Color(232, 245, 233));
-            adicionarKpiCell(kpiTable, "VOLUME TOTAL (KG)", volumeTotalKg.toPlainString() + " KG", kpiTituloFonte, kpiValorFonte, new Color(227, 242, 253));
-            adicionarKpiCell(kpiTable, "PRONTOS PARA COLHEITA", String.valueOf(prontosColheita), kpiTituloFonte, kpiValorFonte, new Color(255, 243, 224));
-            adicionarKpiCell(kpiTable, "EM CRESCIMENTO", String.valueOf(emCrescimento), kpiTituloFonte, kpiValorFonte, new Color(243, 229, 245));
+            adicionarKpiCell(kpiTable, "PRODUTOS AGRÍCOLAS", String.valueOf(totalProdutos), kpiTituloFonte, kpiValorFonte, new Color(241, 245, 241));
+            adicionarKpiCell(kpiTable, "QUANTIDADE TOTAL", quantidadeTotal, kpiTituloFonte, kpiValorFonte, new Color(239, 243, 244));
+            adicionarKpiCell(kpiTable, "PRONTOS PARA COLHEITA", String.valueOf(prontosColheita), kpiTituloFonte, kpiValorFonte, new Color(247, 243, 233));
+            adicionarKpiCell(kpiTable, "EM CRESCIMENTO", String.valueOf(emCrescimento), kpiTituloFonte, kpiValorFonte, new Color(243, 241, 245));
 
             document.add(kpiTable);
 
@@ -85,7 +94,7 @@ public class RelatorioPdfService {
             table.setWidthPercentage(100);
             table.setWidths(new float[]{1.5f, 1.2f, 1.8f, 2.0f, 1.3f, 1.3f, 1.2f, 1.5f});
 
-            String[] headers = {"Cultura", "Categoria", "Produtor", "Associação / Local", "Qtd. Estimada", "Colheita Prevista", "Preço (MZN)", "Estado"};
+            String[] headers = {"Produto agrícola", "Categoria", "Agricultor", "Localidade", "Quantidade disponível", "Colheita prevista", "Preço (MZN)", "Estado"};
             for (String h : headers) {
                 PdfPCell cell = new PdfPCell(new Phrase(h, cabecalhoTabela));
                 cell.setBackgroundColor(new Color(46, 125, 50));
@@ -104,8 +113,14 @@ public class RelatorioPdfService {
                 adicionarLinha(table, lote.getProdutor().getNome(), textoTabela, rowBg, Element.ALIGN_LEFT);
 
                 String local = lote.getProdutor().getAssociacao() != null
-                        ? lote.getProdutor().getAssociacao().getNome() + " (" + lote.getProdutor().getAssociacao().getLocalidade() + ")"
-                        : "N/D";
+                        && lote.getProdutor().getAssociacao().getLocalidade() != null
+                        && !lote.getProdutor().getAssociacao().getLocalidade().isBlank()
+                        ? lote.getProdutor().getAssociacao().getLocalidade()
+                        : String.join(" · ", java.util.stream.Stream.of(
+                                lote.getProdutor().getProvincia(), lote.getProdutor().getDistrito(), lote.getProdutor().getBairro())
+                                .filter(value -> value != null && !value.isBlank())
+                                .toList());
+                if (local.isBlank()) local = "N/D";
                 adicionarLinha(table, local, textoTabela, rowBg, Element.ALIGN_LEFT);
 
                 adicionarLinha(table, lote.getQuantidadeEstimada() + " " + lote.getCultura().getUnidadeMedida(), textoTabela, rowBg, Element.ALIGN_RIGHT);
@@ -120,7 +135,7 @@ public class RelatorioPdfService {
             document.add(table);
 
             // Rodapé
-            Paragraph rodape = new Paragraph("\nDocumento gerado pelo sistema AgriTech Dondo — Apoio ao Corredor da Beira e Produtores do Dondo", subTituloFonte);
+            Paragraph rodape = new Paragraph("\nDocumento gerado pela plataforma AgreTech", subTituloFonte);
             rodape.setAlignment(Element.ALIGN_RIGHT);
             document.add(rodape);
 

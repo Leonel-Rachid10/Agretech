@@ -20,6 +20,7 @@ public class RegistoUtilizadorDTO {
     @NotNull(message = "O perfil é obrigatório")
     private Perfil perfil;
 
+    private String provincia;
     private String distrito;
     private String bairro;
 
@@ -43,6 +44,9 @@ public class RegistoUtilizadorDTO {
 
     public Perfil getPerfil() { return perfil; }
     public void setPerfil(Perfil perfil) { this.perfil = perfil; }
+
+    public String getProvincia() { return provincia; }
+    public void setProvincia(String provincia) { this.provincia = provincia; }
 
     public String getDistrito() { return distrito; }
     public void setDistrito(String distrito) { this.distrito = distrito; }

@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ProdutorRepository extends JpaRepository<Produtor, Long> {
     List<Produtor> findByAssociacaoId(Long associacaoId);
     Optional<Produtor> findByTelemovel(String telemovel);
+    Optional<Produtor> findByUtilizadorId(Long utilizadorId);
 }

@@ -35,13 +35,13 @@ public class ProdutorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProdutorDTO> criar(@Valid @RequestBody ProdutorDTO dto) {
         return ResponseEntity.ok(produtorService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProdutorDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutorDTO dto) {
         return ResponseEntity.ok(produtorService.atualizar(id, dto));
     }

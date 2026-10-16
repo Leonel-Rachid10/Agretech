@@ -6,6 +6,8 @@ import com.agritech.dondo.service.LoteProducaoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -27,15 +29,16 @@ public class LoteProducaoController {
     @GetMapping("/catalogo")
     public ResponseEntity<List<LoteProducaoDTO>> pesquisarCatalogo(
             @RequestParam(required = false) Long culturaId,
+            @RequestParam(required = false) String provincia,
             @RequestParam(required = false) String localidade,
             @RequestParam(required = false) EstadoLote estado,
             @RequestParam(required = false) BigDecimal quantidadeMinima) {
-        return ResponseEntity.ok(loteProducaoService.pesquisarCatalogo(culturaId, localidade, estado, quantidadeMinima));
+        return ResponseEntity.ok(loteProducaoService.pesquisarCatalogo(culturaId, provincia, localidade, estado, quantidadeMinima));
     }
 
     @GetMapping
-    public ResponseEntity<List<LoteProducaoDTO>> listarTodos() {
-        return ResponseEntity.ok(loteProducaoService.listarTodos());
+    public ResponseEntity<List<LoteProducaoDTO>> listarTodos(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(loteProducaoService.listarVisiveisPara(userDetails.getUsername()));
     }
 
     @GetMapping("/{id}")
@@ -58,22 +61,25 @@ public class LoteProducaoController {
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
-    public ResponseEntity<LoteProducaoDTO> criar(@Valid @RequestBody LoteProducaoDTO dto) {
-        return ResponseEntity.ok(loteProducaoService.criar(dto));
+    public ResponseEntity<LoteProducaoDTO> criar(@Valid @RequestBody LoteProducaoDTO dto,
+                                                  @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(loteProducaoService.criar(dto, userDetails.getUsername()));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
-    public ResponseEntity<LoteProducaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody LoteProducaoDTO dto) {
-        return ResponseEntity.ok(loteProducaoService.atualizar(id, dto));
+    public ResponseEntity<LoteProducaoDTO> atualizar(@PathVariable Long id, @RequestBody LoteProducaoDTO dto,
+                                                      @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(loteProducaoService.atualizar(id, dto, userDetails.getUsername()));
     }
 
     @PatchMapping("/{id}/estado")
     @PreAuthorize("hasAnyRole('ADMIN', 'PRODUTOR')")
     public ResponseEntity<LoteProducaoDTO> atualizarEstado(
             @PathVariable Long id,
-            @RequestParam EstadoLote novoEstado) {
-        return ResponseEntity.ok(loteProducaoService.atualizarEstado(id, novoEstado));
+            @RequestParam EstadoLote novoEstado,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(loteProducaoService.atualizarEstado(id, novoEstado, userDetails.getUsername()));
     }
 
     @DeleteMapping("/{id}")

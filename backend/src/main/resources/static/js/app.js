@@ -20,31 +20,37 @@ const App = {
 
     refreshCurrentView() {
         if (document.getElementById('catalogo-lista')) this.carregarCatalogo();
-        if (document.getElementById('lotes-lista')) this.carregarLotesDashboard();
+        if (document.getElementById('lotes-lista')) {
+            if (typeof window.carregarLotes === 'function') window.carregarLotes();
+            else this.carregarLotesDashboard();
+        }
     },
 
     // === CATÁLOGO (index.html) ===
     async carregarCatalogo() {
         const lista = document.getElementById('catalogo-lista');
         const kpiTotal = document.getElementById('kpi-total');
-        const kpiVolume = document.getElementById('kpi-volume');
+        const kpiQuantidade = document.getElementById('kpi-quantidade');
         const kpiProntos = document.getElementById('kpi-prontos');
         if (!lista) return;
 
         const filtros = {
             culturaId: document.getElementById('filtro-cultura')?.value || null,
+            provincia: document.getElementById('filtro-provincia')?.value || null,
             localidade: document.getElementById('filtro-localidade')?.value || null,
             estado: document.getElementById('filtro-estado')?.value || null,
             quantidadeMinima: document.getElementById('filtro-quantidade')?.value || null
         };
 
         let lotes;
+        let carregadoDoCache = false;
         try {
             lotes = await Api.getCatalogo(filtros);
             if (lotes) await AgriDB.cacheList('lotes_cache', lotes);
         } catch (e) {
             console.warn('Falha ao carregar catálogo online, a usar cache offline:', e);
             lotes = await AgriDB.getCachedList('lotes_cache');
+            carregadoDoCache = true;
         }
 
         const bairroFiltro = document.getElementById('filtro-bairro')?.value || null;
@@ -52,24 +58,46 @@ const App = {
             lotes = lotes.filter(l => (l.associacaoLocalidade && l.associacaoLocalidade.toLowerCase().includes(bairroFiltro.toLowerCase())) || 
                                      (l.associacaoNome && l.associacaoNome.toLowerCase().includes(bairroFiltro.toLowerCase())));
         }
+        if (carregadoDoCache && lotes) {
+            const provinciaFiltro = filtros.provincia?.toLocaleLowerCase('pt-MZ');
+            const distritoFiltro = filtros.localidade?.toLocaleLowerCase('pt-MZ');
+            if (provinciaFiltro) {
+                lotes = lotes.filter(produto => (produto.provincia || '').toLocaleLowerCase('pt-MZ') === provinciaFiltro);
+            }
+            if (distritoFiltro) {
+                lotes = lotes.filter(produto => (produto.distrito || produto.associacaoLocalidade || '').toLocaleLowerCase('pt-MZ').includes(distritoFiltro));
+            }
+        }
 
         if (!lotes || lotes.length === 0) {
             lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
             if (kpiTotal) kpiTotal.textContent = '0';
-            if (kpiVolume) kpiVolume.textContent = '0 KG';
+            if (kpiQuantidade) kpiQuantidade.textContent = '0';
             if (kpiProntos) kpiProntos.textContent = '0';
             return;
         }
 
         // KPIs
         if (kpiTotal) kpiTotal.textContent = lotes.length;
-        if (kpiVolume) {
-            const vol = lotes.reduce((s, l) => s + Number.parseFloat(l.quantidadeEstimada || 0), 0);
-            kpiVolume.textContent = vol.toLocaleString('pt-MZ') + ' KG';
+        if (kpiQuantidade) {
+            const quantidadesPorUnidade = lotes.reduce((totais, produto) => {
+                const unidade = produto.unidadeMedida || 'un.';
+                totais.set(unidade, (totais.get(unidade) || 0) + Number.parseFloat(produto.quantidadeEstimada || 0));
+                return totais;
+            }, new Map());
+            const quantidadeTotal = [...quantidadesPorUnidade.entries()]
+                .map(([unidade, total]) => `${total.toLocaleString('pt-MZ')} ${unidade}`)
+                .join(' · ');
+            kpiQuantidade.textContent = quantidadeTotal || '0';
+            kpiQuantidade.title = quantidadeTotal;
         }
         if (kpiProntos) kpiProntos.textContent = lotes.filter(l => l.estado === 'PRONTO_PARA_COLHEITA').length;
 
         lista.innerHTML = lotes.map(l => this.renderLoteCard(l)).join('');
+        const pesquisaCatalogo = document.getElementById('pesquisa-catalogo');
+        if (pesquisaCatalogo && typeof window.filtrarCatalogo === 'function') {
+            window.filtrarCatalogo(pesquisaCatalogo.value);
+        }
     },
 
     renderLoteCard(l) {
@@ -78,10 +106,11 @@ const App = {
         
         // SonarLint S7781: replaceAll em vez de replace com regex
         const tel = (l.produtorTelemovel || '').replaceAll('+', '');
+        const localidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade;
         const msgWa = encodeURIComponent('Olá, vi o produto ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgreTech e tenho interesse. Podemos negociar?');
 
         // SonarLint S7773: Number.parseFloat
-        return `<div class="card">
+        return `<div class="card produto-card">
             <div class="card-header">
                 <h3> ${l.culturaNome}</h3>
                 <span class="badge ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
@@ -90,7 +119,7 @@ const App = {
                 <p class="destaque">${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida || 'KG'}</p>
                 ${l.precoPorUnidade ? '<p> Preço: <strong>' + Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (l.unidadeMedida||'KG') + '</strong></p>' : ''}
                 <p> Agricultor: <strong>${l.produtorNome || 'N/D'}</strong></p>
-                ${l.associacaoLocalidade ? '<p> Localidade: <strong>' + l.associacaoLocalidade + '</strong></p>' : ''}
+                ${localidade ? '<p> Localidade: <strong>' + localidade + '</strong></p>' : ''}
                 <p> Colheita prevista: <strong>${l.dataColheitaPrevista || 'N/D'}</strong></p>
                 ${l.observacoes ? '<p> ' + l.observacoes + '</p>' : ''}
             </div>
@@ -104,7 +133,7 @@ const App = {
     preencherFiltros() {
         const selCultura = document.getElementById('filtro-cultura');
         if (selCultura && this.culturas) {
-            selCultura.innerHTML = '<option value="">Todos os Produtos Agricolas</option>' +
+            selCultura.innerHTML = '<option value="">Todos os produtos agrícolas</option>' +
                 this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + '</option>').join('');
         }
     },
@@ -128,7 +157,7 @@ const App = {
             return;
         }
 
-        lista.innerHTML = '<div class="tabela-wrapper"><table><thead><tr><th>Produto Agricola</th><th>Agricultor</th><th>Quantidade</th><th>Colheita</th><th>Estado</th><th>Acções</th></tr></thead><tbody>' +
+        lista.innerHTML = '<div class="tabela-wrapper"><table><thead><tr><th>Produto agrícola</th><th>Agricultor</th><th>Quantidade</th><th>Colheita</th><th>Estado</th><th>Ações</th></tr></thead><tbody>' +
             lotes.map(l => {
                 const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
                 const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
@@ -165,9 +194,23 @@ const App = {
     async preencherFormLote() {
         const selCultura = document.getElementById('lote-cultura');
         const selProdutor = document.getElementById('lote-produtor');
+        const souAdmin = Api.user?.perfil === 'ADMIN';
+        const campoProdutor = document.getElementById('campo-produtor-lote');
+        const produtorProprio = document.getElementById('produtor-proprio-lote');
         if (selCultura && this.culturas) {
-            selCultura.innerHTML = '<option value="">Selecione o produto agricola</option>' +
+            selCultura.innerHTML = '<option value="">Selecione o produto agrícola</option>' +
                 this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + '</option>').join('');
+        }
+        if (campoProdutor) campoProdutor.hidden = !souAdmin;
+        if (produtorProprio) produtorProprio.hidden = souAdmin;
+        if (selProdutor) {
+            selProdutor.required = souAdmin;
+            selProdutor.disabled = !souAdmin;
+        }
+        if (!souAdmin) {
+            const nomeProprio = document.getElementById('produtor-proprio-nome');
+            if (nomeProprio) nomeProprio.textContent = Api.user?.nome || 'A sua conta';
+            return;
         }
         if (selProdutor) {
             let produtores;
@@ -179,7 +222,7 @@ const App = {
             }
             selProdutor.innerHTML = '<option value="">Selecione o agricultor</option>' +
                 produtores.map(p => {
-                    const loc = p.distrito ? p.distrito + (p.bairro ? ' - ' + p.bairro : '') : (p.associacaoLocalidade || '');
+                    const loc = [p.provincia, p.distrito, p.bairro].filter(Boolean).join(' · ') || (p.associacaoLocalidade || '');
                     return '<option value="' + p.id + '">' + p.nome + (loc ? ' (' + loc + ')' : '') + '</option>';
                 }).join('');
         }
@@ -188,7 +231,9 @@ const App = {
     async submeterNovoLote(form) {
         // SonarLint S7773: Number.parseInt com base 10 e Number.parseFloat
         const data = {
-            produtorId: Number.parseInt(form.produtorId.value, 10),
+            produtorId: Api.user?.perfil === 'ADMIN'
+                ? Number.parseInt(form.produtorId.value, 10)
+                : (Api.user?.produtorId || null),
             culturaId: Number.parseInt(form.culturaId.value, 10),
             quantidadeEstimada: Number.parseFloat(form.quantidadeEstimada.value),
             dataColheitaPrevista: form.dataColheitaPrevista.value,
@@ -210,7 +255,12 @@ const App = {
             await Api.criarLote(data);
             alert(' Produto registado com sucesso!');
             fecharModal('modal-novo-lote');
-            this.carregarLotesDashboard();
+            if (typeof window.carregarLotes === 'function') {
+                await window.carregarLotes();
+                if (typeof window.atualizarKPIs === 'function') await window.atualizarKPIs();
+            } else {
+                this.carregarLotesDashboard();
+            }
         } catch (e) {
             alert('Erro: ' + e.message);
         }
@@ -234,7 +284,7 @@ const App = {
         }
 
         lista.innerHTML = produtores.map(p => {
-            const loc = p.distrito ? p.distrito + (p.bairro ? ' (' + p.bairro + ')' : '') : (p.associacaoLocalidade || '');
+            const loc = [p.provincia, p.distrito, p.bairro].filter(Boolean).join(' · ') || (p.associacaoLocalidade || '');
             return `<div class="card">
                 <div class="card-header"><h3> ${p.nome}</h3></div>
                 <div class="card-body">

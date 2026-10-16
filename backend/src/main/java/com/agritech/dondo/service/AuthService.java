@@ -5,6 +5,8 @@ import com.agritech.dondo.dto.LoginRequest;
 import com.agritech.dondo.dto.LoginResponse;
 import com.agritech.dondo.dto.RegistoUtilizadorDTO;
 import com.agritech.dondo.model.Utilizador;
+import com.agritech.dondo.model.Produtor;
+import com.agritech.dondo.model.Perfil;
 import com.agritech.dondo.repository.UtilizadorRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,15 +18,19 @@ public class AuthService {
     private final UtilizadorRepository utilizadorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final ProdutorService produtorService;
 
     public AuthService(UtilizadorRepository utilizadorRepository,
                        PasswordEncoder passwordEncoder,
-                       JwtUtil jwtUtil) {
+                       JwtUtil jwtUtil,
+                       ProdutorService produtorService) {
         this.utilizadorRepository = utilizadorRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.produtorService = produtorService;
     }
 
+    @Transactional
     public LoginResponse login(LoginRequest request) {
         Utilizador utilizador = utilizadorRepository.findByNome(request.getNome())
                 .orElseThrow(() -> new IllegalArgumentException("Telemóvel ou senha incorretos"));
@@ -32,6 +38,10 @@ public class AuthService {
         if (!passwordEncoder.matches(request.getSenha(), utilizador.getSenhaHash())) {
             throw new IllegalArgumentException("Telemóvel ou senha incorretos");
         }
+
+        Produtor produtor = utilizador.getPerfil() == Perfil.PRODUTOR
+                ? produtorService.obterOuCriarParaUtilizador(utilizador)
+                : null;
 
         String token = jwtUtil.generateToken(
                 utilizador.getNome(),
@@ -45,14 +55,18 @@ public class AuthService {
                 utilizador.getId(),
                 utilizador.getNome(),
                 utilizador.getTelemovel(),
-                utilizador.getPerfil()
+                utilizador.getPerfil(),
+                produtor != null ? produtor.getId() : null
         );
     }
 
     @Transactional
     public LoginResponse registar(RegistoUtilizadorDTO dto) {
-        if (utilizadorRepository.existsByNome(dto.getNome())) {
-            throw new IllegalArgumentException("Já existe um utilizador registado com este número de telemóvel");
+        if (dto.getPerfil() == Perfil.ADMIN) {
+            throw new IllegalArgumentException("Não é possível criar uma conta de administrador pelo registo público.");
+        }
+        if (utilizadorRepository.existsByNome(dto.getNome()) || utilizadorRepository.existsByTelemovel(dto.getTelemovel())) {
+            throw new IllegalArgumentException("Já existe uma conta com este nome ou número de telemóvel");
         }
 
         Utilizador novo = new Utilizador(
@@ -61,10 +75,14 @@ public class AuthService {
                 passwordEncoder.encode(dto.getSenha()),
                 dto.getPerfil()
         );
+        novo.setProvincia(dto.getProvincia());
         novo.setDistrito(dto.getDistrito());
         novo.setBairro(dto.getBairro());
 
         Utilizador salvo = utilizadorRepository.save(novo);
+        Produtor produtor = salvo.getPerfil() == Perfil.PRODUTOR
+                ? produtorService.obterOuCriarParaUtilizador(salvo)
+                : null;
 
         String token = jwtUtil.generateToken(
                 salvo.getNome(),
@@ -78,12 +96,17 @@ public class AuthService {
                 salvo.getId(),
                 salvo.getNome(),
                 salvo.getTelemovel(),
-                salvo.getPerfil()
+                salvo.getPerfil(),
+                produtor != null ? produtor.getId() : null
         );
     }
 
     public Utilizador obterPorNome(String nome) {
-        return utilizadorRepository.findByNome(nome)
+        Utilizador utilizador = utilizadorRepository.findByNome(nome)
                 .orElseThrow(() -> new IllegalArgumentException("Utilizador não encontrado"));
+        if (utilizador.getPerfil() == Perfil.PRODUTOR) {
+            utilizador.setProdutorId(produtorService.obterOuCriarParaUtilizador(utilizador).getId());
+        }
+        return utilizador;
     }
 }

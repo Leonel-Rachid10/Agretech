@@ -15,7 +15,6 @@
                     <span class="brand-mark">Ag</span>
                     <div>
                         <h1>AgreTech</h1>
-                        <p>Plataforma Agrícola da Província de Sofala</p>
                     </div>
                 </div>
 
@@ -25,7 +24,6 @@
                 <div class="login-box-header">
                     <span class="eyebrow">Acesso ao sistema</span>
                     <h2>Entrar na conta</h2>
-                    <p>Use as credenciais oficiais atribuídas ao seu perfil.</p>
                 </div>
 
             <div id="erro-msg" class="erro-msg"></div>
@@ -65,35 +63,27 @@
                     </div>
                     <div class="form-group">
                         <label>👥 Tipo de conta</label>
-                        <select name="perfil" required>
+                        <select name="perfil" required onchange="atualizarObrigatoriedadeLocalizacao()">
                             <option value="PRODUTOR">Agricultor</option>
                             <option value="COMPRADOR">Comprador</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Distrito</label>
-                        <select name="distrito" id="registo-distrito" onchange="atualizarBairrosRegisto(this.value)">
-                            <option value="">Selecione o distrito...</option>
-                            <option value="Beira">Beira</option>
-                            <option value="Búzi">Búzi</option>
-                            <option value="Caia">Caia</option>
-                            <option value="Chemba">Chemba</option>
-                            <option value="Cheringoma">Cheringoma</option>
-                            <option value="Chibabava">Chibabava</option>
-                            <option value="Dondo">Dondo</option>
-                            <option value="Gorongosa">Gorongosa</option>
-                            <option value="Machanga">Machanga</option>
-                            <option value="Maringué">Maringué</option>
-                            <option value="Marromeu">Marromeu</option>
-                            <option value="Muanza">Muanza</option>
-                            <option value="Nhamatanda">Nhamatanda</option>
+                        <label>Província</label>
+                        <select name="provincia" id="registo-provincia" onchange="atualizarDistritosRegisto()">
+                            <option value="">Selecione a província...</option>
                         </select>
                     </div>
-                    <div class="form-group" id="grupo-bairro" style="display: none;">
-                        <label>Bairro ou Zona</label>
-                        <select name="bairro" id="registo-bairro">
-                            <option value="">Selecione o bairro...</option>
+                    <div class="form-group">
+                        <label>Distrito</label>
+                        <select name="distrito" id="registo-distrito" disabled onchange="atualizarZonaRegisto()">
+                            <option value="">Selecione a província primeiro...</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Zona</label>
+                        <input type="text" name="zona" id="registo-zona" list="registo-zonas" placeholder="Selecione o distrito primeiro" disabled>
+                        <datalist id="registo-zonas"></datalist>
                     </div>
                     <button type="submit" class="btn btn-primario btn-block btn-lg">Criar conta</button>
                 </form>
@@ -110,6 +100,7 @@
     </div>
 
     <script src="/js/api.js"></script>
+    <script src="/js/locations.js"></script>
     <script>
         // Redirecionar se já estiver logado
         if (Api.isLoggedIn()) window.location.href = '/dashboard.html';
@@ -146,24 +137,20 @@
             }
         }
 
-        const zonasPorDistrito = {
-            'Dondo': ['Bairro Central', 'Consito', 'Mafarinha', 'Canhandula', 'Nhamaiabwe', 'Chinamacondo', 'Savana', 'Mafambisse', 'Mútua'],
-            'Beira': ['Alto da Manga', 'Chaimite', 'Chingussura', 'Chipangara', 'Chota', 'Esturro', 'Inhamízua', 'Macurungo', 'Macuti', 'Mananga', 'Manga Mascarenhas', 'Maraza', 'Matacuane', 'Matadouro', 'Muave', 'Mungassa', 'Munhava-Central', 'Ndunda', 'Nhaconjo', 'Nhangau', 'Nhangoma', 'Pioneiros', 'Ponta-Gêa', 'Tchonja', 'Vaz', 'Vila Massane']
-        };
+        function atualizarDistritosRegisto() {
+            populateDistricts('registo-provincia', 'registo-distrito', 'Selecione a província primeiro...');
+            atualizarZonaRegisto();
+        }
 
-        function atualizarBairrosRegisto(distrito) {
-            const grupo = document.getElementById('grupo-bairro');
-            const sel = document.getElementById('registo-bairro');
-            if (!sel || !grupo) return;
-            const zonas = zonasPorDistrito[distrito];
-            if (zonas && zonas.length > 0) {
-                sel.innerHTML = '<option value="">Selecione o bairro / zona...</option>' +
-                                zonas.map(z => `<option value="${z}">${z}</option>`).join('');
-                grupo.style.display = 'block';
-            } else {
-                sel.innerHTML = '<option value="">Nenhum bairro específico</option>';
-                grupo.style.display = 'none';
-            }
+        function atualizarZonaRegisto() {
+            populateZones('registo-distrito', 'registo-zona', 'registo-zonas');
+        }
+
+        function atualizarObrigatoriedadeLocalizacao() {
+            const eAgricultor = document.querySelector('#form-registo [name="perfil"]').value === 'PRODUTOR';
+            document.getElementById('registo-provincia').required = eAgricultor;
+            document.getElementById('registo-distrito').required = eAgricultor;
+            document.getElementById('registo-zona').required = eAgricultor;
         }
 
         async function handleRegisto(e) {
@@ -171,13 +158,16 @@
             esconderErro();
             const form = e.target;
             try {
+                const zona = form.zona ? form.zona.value.trim() : null;
                 const res = await Api.registar({
                     nome: form.nome.value,
                     telemovel: form.telemovel.value,
                     senha: form.senha.value,
                     perfil: form.perfil.value,
+                    provincia: form.provincia ? form.provincia.value : null,
                     distrito: form.distrito ? form.distrito.value : null,
-                    bairro: form.bairro ? form.bairro.value : null
+                    zona,
+                    bairro: zona
                 });
                 Api.setAuth(res);
                 window.location.href = '/dashboard.html';
@@ -185,6 +175,9 @@
                 mostrarErro(err.message || 'Erro ao criar conta. Verifique os dados e tente novamente.');
             }
         }
+
+        populateProvinces('registo-provincia', 'Selecione a província...');
+        atualizarObrigatoriedadeLocalizacao();
     </script>
 </body>
 </html>
