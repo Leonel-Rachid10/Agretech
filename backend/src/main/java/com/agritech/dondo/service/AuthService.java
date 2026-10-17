@@ -8,9 +8,13 @@ import com.agritech.dondo.model.Utilizador;
 import com.agritech.dondo.model.Produtor;
 import com.agritech.dondo.model.Perfil;
 import com.agritech.dondo.repository.UtilizadorRepository;
+import com.agritech.dondo.dto.UtilizadorDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -108,5 +112,20 @@ public class AuthService {
             utilizador.setProdutorId(produtorService.obterOuCriarParaUtilizador(utilizador).getId());
         }
         return utilizador;
+    }
+
+    public List<UtilizadorDTO> listarTodosDTO() {
+        return utilizadorRepository.findAll().stream()
+                .map(u -> new UtilizadorDTO(
+                        u.getId(),
+                        u.getNome(),
+                        u.getTelemovel(),
+                        u.getPerfil(),
+                        u.getProvincia(),
+                        u.getDistrito(),
+                        u.getBairro(),
+                        u.getDataCriacao()
+                ))
+                .collect(Collectors.toList());
     }
 }

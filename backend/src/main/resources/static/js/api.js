@@ -69,6 +69,7 @@ const Api = {
     login(nome, senha) { return this.post('/auth/login', { nome, senha }); },
     registar(data) { return this.post('/auth/registo', data); },
     getCurrentUser() { return this.get('/auth/me'); },
+    getUtilizadores() { return this.get('/utilizadores'); },
 
     // Culturas
     getCulturas() { return this.get('/culturas'); },

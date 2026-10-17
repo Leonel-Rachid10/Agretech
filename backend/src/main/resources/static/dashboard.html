@@ -233,6 +233,11 @@
                     </button>
                 </li>
                 <li class="nav-item admin-only">
+                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-utilizadores" type="button">
+                        <i class="bi bi-people-fill me-1"></i>Utilizadores
+                    </button>
+                </li>
+                <li class="nav-item admin-only">
                     <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button">
                         <i class="bi bi-arrow-repeat me-1"></i>Sincronizações
                     </button>
@@ -291,6 +296,19 @@
                     </div>
                     <div class="row g-3" id="produtores-lista">
                         <div class="col-12 empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar...</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UTILIZADORES -->
+            <div class="tab-pane fade" id="tab-utilizadores">
+                <div class="card-section p-3 p-md-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0"><i class="bi bi-people-fill text-success me-2"></i>Utilizadores do Sistema</h6>
+                        <span class="text-muted small" id="utilizadores-count-label" role="status" aria-live="polite"></span>
+                    </div>
+                    <div id="utilizadores-lista">
+                        <div class="empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar utilizadores...</p></div>
                     </div>
                 </div>
             </div>
@@ -511,7 +529,8 @@
             await App.init();
             await Promise.all([
                 carregarLotes(),
-                isAdmin ? App.carregarProdutoresDashboard() : Promise.resolve()
+                isAdmin ? App.carregarProdutoresDashboard() : Promise.resolve(),
+                isAdmin ? carregarUtilizadores() : Promise.resolve()
             ]);
             atualizarKPIs();
             if (isAdmin) carregarHistoricoSync();
@@ -538,6 +557,9 @@
                     } else if (target === 'tab-produtores') {
                         if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar agricultores por nome, telemóvel ou localização...';
+                    } else if (target === 'tab-utilizadores') {
+                        if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
+                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar utilizadores por nome, telemóvel, perfil ou distrito...';
                     } else if (target === 'tab-sync') {
                         if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar sincronizações por ponto focal...';
@@ -560,6 +582,8 @@
                 filtrarProdutos(termo, filtroEstadoAtivo);
             } else if (abaAtiva === 'tab-produtores') {
                 filtrarCards('produtores-lista', termo);
+            } else if (abaAtiva === 'tab-utilizadores') {
+                filtrarUtilizadores(termo);
             } else if (abaAtiva === 'tab-sync') {
                 filtrarTabela('tabela-sync', termo);
             }
@@ -790,6 +814,129 @@
                 await carregarLotes();
                 atualizarKPIs();
             } catch (e) { alert('Erro: ' + e.message); }
+        }
+
+        // ---- UTILIZADORES (ADMIN) ----
+        async function carregarUtilizadores() {
+            const container = document.getElementById('utilizadores-lista');
+            const contador = document.getElementById('utilizadores-count-label');
+            if (!container) return;
+
+            let utilizadores;
+            try {
+                utilizadores = await Api.getUtilizadores();
+            } catch (e) {
+                console.warn('Erro ao carregar utilizadores:', e);
+                container.innerHTML = '<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>Erro ao carregar lista de utilizadores.</p></div>';
+                return;
+            }
+
+            if (!utilizadores || utilizadores.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="bi bi-people"></i><p>Nenhum utilizador registado no sistema.</p></div>';
+                if (contador) contador.textContent = '0 utilizador(es)';
+                return;
+            }
+
+            if (contador) contador.textContent = utilizadores.length + ' utilizador(es)';
+
+            const perfilBadges = {
+                ADMIN: '<span class="badge bg-dark text-white">Administrador</span>',
+                PRODUTOR: '<span class="badge bg-success text-white">Agricultor</span>',
+                COMPRADOR: '<span class="badge bg-primary text-white">Comprador</span>'
+            };
+
+            // 1. Tabela Desktop / Tablet
+            let htmlTable = `<div class="d-none d-md-block table-responsive">
+                <table class="table table-hover mb-0" id="tabela-utilizadores">
+                <thead><tr>
+                    <th>Utilizador</th>
+                    <th>Telemóvel</th>
+                    <th>Perfil</th>
+                    <th>Localização</th>
+                    <th>Data Registo</th>
+                </tr></thead><tbody>`;
+
+            // 2. Cartões Mobile
+            let htmlCards = `<div class="d-md-none" id="cards-utilizadores">`;
+
+            utilizadores.forEach(u => {
+                const loc = [u.provincia, u.distrito, u.bairro].filter(Boolean).join(' · ') || '-';
+                const dataReg = u.dataCriacao ? new Date(u.dataCriacao).toLocaleDateString('pt-MZ', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
+                const inicial = (u.nome || 'U').trim().charAt(0).toUpperCase();
+
+                // Desktop Row
+                htmlTable += `<tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:#55745D;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">
+                                ${inicial}
+                            </div>
+                            <strong>${u.nome}</strong>
+                        </div>
+                    </td>
+                    <td><a href="tel:${u.telemovel}" class="text-decoration-none text-dark">${u.telemovel}</a></td>
+                    <td>${perfilBadges[u.perfil] || u.perfil}</td>
+                    <td><small class="text-muted">${loc}</small></td>
+                    <td><small class="text-muted">${dataReg}</small></td>
+                </tr>`;
+
+                // Mobile Card
+                htmlCards += `<div class="mobile-produto-card mobile-user-card">
+                    <div class="card-top">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="user-avatar" style="width:34px;height:34px;border-radius:50%;background:#55745D;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;">
+                                ${inicial}
+                            </div>
+                            <div>
+                                <div class="prod-nome">${u.nome}</div>
+                                <div class="prod-meta"><i class="bi bi-geo-alt"></i> ${loc}</div>
+                            </div>
+                        </div>
+                        <div>${perfilBadges[u.perfil] || u.perfil}</div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top">
+                        <small class="text-muted"><i class="bi bi-calendar"></i> Registo: ${dataReg}</small>
+                        <a href="tel:${u.telemovel}" class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3">
+                            <i class="bi bi-telephone me-1"></i> ${u.telemovel}
+                        </a>
+                    </div>
+                </div>`;
+            });
+
+            htmlTable += '</tbody></table></div>';
+            htmlCards += '</div>';
+
+            container.innerHTML = htmlTable + htmlCards;
+            filtrarUtilizadores(document.getElementById('pesquisa-unificada')?.value || '');
+        }
+
+        function filtrarUtilizadores(termo) {
+            const container = document.getElementById('utilizadores-lista');
+            const contador = document.getElementById('utilizadores-count-label');
+            if (!container) return;
+
+            const t = normalizarBusca(termo);
+
+            // Filtrar linhas na tabela desktop
+            const rows = [...container.querySelectorAll('#tabela-utilizadores tbody tr')];
+            let visiveis = 0;
+            rows.forEach(row => {
+                const vis = !t || normalizarBusca(row.textContent).includes(t);
+                row.hidden = !vis;
+                if (vis) visiveis++;
+            });
+
+            // Filtrar cartões mobile
+            const cards = [...container.querySelectorAll('.mobile-user-card')];
+            cards.forEach(card => {
+                const vis = !t || normalizarBusca(card.textContent).includes(t);
+                card.hidden = !vis;
+            });
+
+            const total = rows.length || cards.length;
+            if (contador) {
+                contador.textContent = t ? `${visiveis} de ${total} utilizador(es)` : `${total} utilizador(es)`;
+            }
         }
 
         // ---- RF08: HISTORICO DE SINCRONIZACOES ----
