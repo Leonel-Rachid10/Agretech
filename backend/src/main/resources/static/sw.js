@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agritech-dondo-v3';
+const CACHE_NAME = 'agritech-dondo-v4';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -10,7 +10,15 @@ const ASSETS_TO_CACHE = [
     '/js/db.js',
     '/js/sync.js',
     '/js/app.js',
-    '/manifest.json'
+    '/manifest.json',
+    '/favicon.svg',
+    '/favicon.ico',
+    '/apple-touch-icon.png',
+    '/img/logo.svg',
+    '/img/logo-icon.svg',
+    '/img/instagram-qr.png',
+    '/icons/icon-192.png',
+    '/icons/icon-512.png'
 ];
 
 // Install: cache essential assets

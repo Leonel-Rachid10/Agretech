@@ -6,13 +6,19 @@
     <meta name="theme-color" content="#55745D">
     <meta name="description" content="Catálogo de produtos agrícolas de Moçambique.">
     <title>AgreTech Catálogo Agrícola</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="alternate icon" type="image/png" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <!-- NAVBAR -->
     <header class="navbar">
-        <div class="logo"><span></span> AgreTech</div>
+        <a href="/index.html" class="logo" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
+            <img src="/img/logo-icon.svg" alt="AgreTech" width="28" height="28" style="border-radius: 6px;">
+            <span>AgreTech</span>
+        </a>
         <nav>
             <a href="/index.html">Catálogo</a>
             <a href="/dashboard.html">Gestão</a>
@@ -110,6 +116,58 @@
         </div>
     </main>
 
+    <!-- RODAPÉ FIXO -->
+    <footer class="agri-footer-fixed" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-brand-side">
+                <img src="/img/logo-icon.svg" alt="AgreTech" width="22" height="22" class="footer-logo">
+                <span class="footer-brand-text">AgreTech</span>
+                <span class="footer-separator">·</span>
+                <span class="footer-region">Moçambique</span>
+            </div>
+            <div class="footer-dev-side">
+                <span class="footer-dev-by">Desenvolvido por</span>
+                <button type="button" class="btn-instagram-creator" onclick="abrirModalInstagram()" aria-label="Ver perfil Instagram de Leonel Rachid">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    <span class="creator-handle">@LEONEL_RACHID_10</span>
+                    <span class="qr-pill">QR</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL INSTAGRAM QR CODE -->
+    <div id="modal-instagram-qr" class="modal-instagram-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-insta-title" onclick="fecharModalInstagram(event)">
+        <div class="modal-instagram-card" onclick="event.stopPropagation()">
+            <button type="button" class="modal-instagram-close" onclick="fecharModalInstagram()" aria-label="Fechar">&times;</button>
+            <div class="modal-instagram-avatar">
+                <div class="modal-instagram-avatar-inner">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                </div>
+            </div>
+            <h3 id="modal-insta-title" class="modal-instagram-title">Leonel Rachid</h3>
+            <div class="modal-instagram-subtitle">@leonel_rachid_10</div>
+            <img src="/img/instagram-qr.png" alt="Código QR do Instagram de Leonel Rachid" class="modal-instagram-img">
+            <p class="modal-instagram-hint">Aponte a câmara do telemóvel para aceder diretamente ao perfil.</p>
+            <a href="https://www.instagram.com/leonel_rachid_10/" target="_blank" rel="noopener noreferrer" class="btn-open-instagram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                Abrir no Instagram
+            </a>
+        </div>
+    </div>
+
     <script src="/js/api.js"></script>
     <script src="/js/locations.js"></script>
     <script src="/js/db.js"></script>
@@ -179,6 +237,22 @@
                     : `${encontrados} produtos apresentados.`;
             }
         }
+
+        // ---- MODAL INSTAGRAM CREATOR ----
+        function abrirModalInstagram() {
+            const modal = document.getElementById('modal-instagram-qr');
+            if (modal) modal.classList.add('active');
+        }
+
+        function fecharModalInstagram(event) {
+            if (event && event.target && event.target !== event.currentTarget && !event.target.classList.contains('modal-instagram-close')) return;
+            const modal = document.getElementById('modal-instagram-qr');
+            if (modal) modal.classList.remove('active');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') fecharModalInstagram();
+        });
     </script>
 </body>
 </html>

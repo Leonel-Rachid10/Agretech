@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180" width="640" height="180">
+  <defs>
+    <!-- Background Gradient for Icon -->
+    <linearGradient id="iconBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B4332"/>
+      <stop offset="100%" stop-color="#112018"/>
+    </linearGradient>
+
+    <!-- Leaf Main Gradient -->
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2D6A4F"/>
+      <stop offset="100%" stop-color="#52B788"/>
+    </linearGradient>
+
+    <!-- Leaf Tech Gradient -->
+    <linearGradient id="leafTech" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#2D6A4F"/>
+    </linearGradient>
+
+    <!-- Gold Accent -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ICON (Left) -->
+  <g transform="translate(10, 15)">
+    <!-- Squircle Frame -->
+    <rect x="5" y="5" width="140" height="140" rx="36" fill="url(#iconBg)" stroke="rgba(255,255,255,0.15)" stroke-width="2.5"/>
+
+    <!-- Sun Accent -->
+    <circle cx="75" cy="38" r="9" fill="url(#gold)"/>
+
+    <!-- Stem -->
+    <path d="M 75 52 L 75 120" stroke="#74C69D" stroke-width="4.5" stroke-linecap="round"/>
+
+    <!-- Left Organic Leaf -->
+    <path d="M 75 105 C 50 105 30 85 35 55 C 55 55 75 75 75 105 Z" fill="url(#leafGrad)"/>
+    <path d="M 62 88 C 52 82 46 72 45 65" fill="none" stroke="#B7E4C7" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>
+
+    <!-- Right Tech Leaf -->
+    <path d="M 75 96 C 100 96 120 76 116 48 C 96 48 75 66 75 96 Z" fill="url(#leafTech)"/>
+
+    <!-- Tech Circuits on Right Leaf -->
+    <path d="M 82 85 L 94 76 L 104 76" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="104" cy="76" r="2.8" fill="#FFFFFF"/>
+
+    <!-- Root Base -->
+    <circle cx="75" cy="120" r="4" fill="#52B788"/>
+  </g>
+
+  <!-- TEXT "AgreTech" -->
+  <g transform="translate(180, 102)">
+    <text font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="68" font-weight="800" letter-spacing="-1.5">
+      <tspan fill="#1B4332">Agre</tspan>
+      <tspan fill="#2D6A4F">Tech</tspan>
+    </text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="4" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="700" fill="#64746A" letter-spacing="4.5">
+      CONEXÃO AGRÍCOLA · MOÇAMBIQUE
+    </text>
+  </g>
+</svg>

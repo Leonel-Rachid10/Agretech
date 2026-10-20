@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="favBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B4332"/>
+      <stop offset="100%" stop-color="#112018"/>
+    </linearGradient>
+    <linearGradient id="favLeaf" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2D6A4F"/>
+      <stop offset="100%" stop-color="#52B788"/>
+    </linearGradient>
+    <linearGradient id="favTech" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#74C69D"/>
+      <stop offset="100%" stop-color="#2D6A4F"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Squircle Base -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#favBg)"/>
+
+  <!-- Golden Sun Accent -->
+  <circle cx="32" cy="15" r="4.5" fill="#F59E0B"/>
+
+  <!-- Stem -->
+  <path d="M 32 21 L 32 50" stroke="#74C69D" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Left Leaf -->
+  <path d="M 32 44 C 20 44 11 34 13 21 C 22 21 32 30 32 44 Z" fill="url(#favLeaf)"/>
+
+  <!-- Right Leaf -->
+  <path d="M 32 40 C 44 40 53 30 51 18 C 41 18 32 26 32 40 Z" fill="url(#favTech)"/>
+
+  <!-- Circuit Node on Right Leaf -->
+  <circle cx="43" cy="28" r="2" fill="#FFFFFF"/>
+</svg>
