@@ -247,7 +247,11 @@ const App = {
 
         if (!navigator.onLine) {
             await AgriDB.addToSyncQueue('novo_lote', data);
-            alert(' Produto guardado offline! Será sincronizado quando houver rede.');
+            if (typeof window.showToast === 'function') {
+                window.showToast('Produto guardado offline! Será sincronizado quando houver rede.', 'info');
+            } else {
+                alert('Produto guardado offline! Será sincronizado quando houver rede.');
+            }
             SyncManager.updateBar();
             fecharModal('modal-novo-lote');
             return;
@@ -255,7 +259,11 @@ const App = {
 
         try {
             await Api.criarLote(data);
-            alert(' Produto registado com sucesso!');
+            if (typeof window.showToast === 'function') {
+                window.showToast('Produto registado com sucesso no catálogo!', 'sucesso');
+            } else {
+                alert('Produto registado com sucesso!');
+            }
             fecharModal('modal-novo-lote');
             if (typeof window.carregarLotes === 'function') {
                 await window.carregarLotes();
@@ -264,7 +272,11 @@ const App = {
                 this.carregarLotesDashboard();
             }
         } catch (e) {
-            alert('Erro: ' + e.message);
+            if (typeof window.showToast === 'function') {
+                window.showToast('Erro: ' + e.message, 'erro');
+            } else {
+                alert('Erro: ' + e.message);
+            }
         }
     },
 

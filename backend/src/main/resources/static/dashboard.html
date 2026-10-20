@@ -9,142 +9,649 @@
     <link rel="manifest" href="/manifest.json">
     <style>
         :root {
-            --agri-dark: #263238;
-            --agri-primary: #55745D;
-            --agri-primary-dark: #385642;
-            --agri-bg: #F7F8F6;
+            --agri-dark: #15241C;
+            --agri-primary: #2D6A4F;
+            --agri-primary-hover: #1B4332;
+            --agri-primary-light: #E8F5E9;
+            --agri-accent: #52B788;
+            --agri-bg: #F4F6F4;
             --agri-surface: #FFFFFF;
-            --agri-border: #E2E7E2;
-            --agri-text: #263238;
-            --agri-muted: #66716A;
+            --agri-border: #E5EAE5;
+            --agri-border-subtle: #F0F4F1;
+            --agri-text: #1C2826;
+            --agri-muted: #64746A;
+            --agri-shadow-sm: 0 1px 3px 0 rgba(21, 36, 28, 0.05);
+            --agri-shadow: 0 4px 16px -2px rgba(21, 36, 28, 0.07), 0 2px 4px -2px rgba(21, 36, 28, 0.04);
+            --agri-shadow-lg: 0 12px 28px -4px rgba(21, 36, 28, 0.10), 0 4px 8px -2px rgba(21, 36, 28, 0.04);
+            --agri-radius: 14px;
+            --agri-radius-sm: 10px;
         }
-        body { background: var(--agri-bg); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--agri-text); }
-        .navbar-agri { background: #20352A; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .navbar-agri .navbar-brand { font-weight: 700; color: #fff; }
-        .navbar-agri .navbar-brand i { color: #8BC58B; }
-        .navbar-agri .nav-link { color: rgba(255,255,255,0.76); }
-        .navbar-agri .nav-link.active { color: #fff; }
-        .kpi-card { background: var(--agri-surface); border: 1px solid #E5EAE4; border-radius: 14px; padding: 20px; min-height: 116px; }
-        .kpi-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; background-color: #EEF3EF !important; color: #55745D !important; }
-        .kpi-valor { font-size: 1.8rem; font-weight: 750; line-height: 1.1; color: var(--agri-text); font-variant-numeric: tabular-nums; }
-        .kpi-label { font-size: 0.75rem; font-weight: 650; color: var(--agri-muted); text-transform: uppercase; }
-        .nav-pills .nav-link { border-radius: 9px; font-weight: 600; color: #526057; padding: 9px 15px; font-size: 0.9rem; }
-        .nav-pills .nav-link.active { background: var(--agri-primary); color: #fff; }
-        .card-section { background: var(--agri-surface); border: 1px solid #E5EAE4; border-radius: 14px; }
-        .table thead th { background: #F8FAF7; color: var(--agri-muted); font-size: 0.75rem; text-transform: uppercase; font-weight: 700; border-bottom: 1px solid var(--agri-border); white-space: nowrap; }
-        .table td { vertical-align: middle; font-size: 0.9rem; }
-        .table tbody tr:hover { background: #F7FAF6; }
-        .badge-estado { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-        .badge-crescimento { background: #EEF1F2; color: #52636A; }
-        .badge-pronto { background: #EEF3EF; color: #55745D; }
-        .badge-reservado { background: #F6F2E9; color: #8A7553; }
-        .badge-vendido { background: #F1EFF3; color: #6B6072; }
-        .badge-sucesso { background: #EEF3EF; color: #55745D; }
-        .badge-erro { background: #FFEBEE; color: #C62828; }
-        .role-badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .empty-state { text-align: center; padding: 48px 20px; color: var(--agri-muted); }
-        .empty-state i { font-size: 3rem; opacity: 0.3; margin-bottom: 12px; display: block; }
-        .btn-action { padding: 4px 8px; font-size: 0.78rem; border-radius: 6px; }
-        .modal-header.modal-agri { background: var(--agri-primary-dark); color: #fff; }
-        .user-info { display: flex; align-items: center; gap: 8px; }
-        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--agri-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
-        .search-bar { position: relative; }
-        .search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--agri-muted); pointer-events: none; }
-        .search-bar input { padding-left: 36px; border-radius: 8px; border: 1px solid var(--agri-border); font-size: 0.9rem; }
-        .search-bar input:focus { border-color: var(--agri-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.12); outline: none; }
+
+        body {
+            background-color: var(--agri-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--agri-text);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* === NAVBAR MODERNA === */
+        .navbar-agri {
+            background: linear-gradient(180deg, #182C22 0%, #13241C 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+        .navbar-agri .navbar-brand {
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.02em;
+        }
+        .navbar-agri .navbar-brand i {
+            color: #74C69D;
+            filter: drop-shadow(0 0 6px rgba(116, 198, 157, 0.4));
+        }
+        .navbar-agri .nav-link {
+            color: rgba(255, 255, 255, 0.78);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .navbar-agri .nav-link:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .navbar-agri .nav-link.active {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        /* === HEADER GREETING BANNER === */
+        .greeting-banner {
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAF8 100%);
+            border: 1px solid var(--agri-border);
+            border-radius: var(--agri-radius);
+            padding: 22px 24px;
+            box-shadow: var(--agri-shadow-sm);
+            margin-bottom: 22px;
+        }
+        .page-title {
+            font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: var(--agri-dark);
+            margin-bottom: 4px;
+        }
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: var(--agri-muted);
+            margin: 0;
+        }
+
+        /* === KPI CARDS ELEVADOS === */
+        .kpi-card {
+            background: var(--agri-surface);
+            border: 1px solid var(--agri-border);
+            border-radius: var(--agri-radius);
+            padding: 18px 20px;
+            box-shadow: var(--agri-shadow-sm);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--agri-shadow);
+            border-color: #D1DCD2;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .kpi-card:hover::before {
+            opacity: 1;
+        }
+        .kpi-card.kpi-emerald::before { background: #2D6A4F; }
+        .kpi-card.kpi-indigo::before { background: #4F46E5; }
+        .kpi-card.kpi-amber::before { background: #D97706; }
+        .kpi-card.kpi-teal::before { background: #0D9488; }
+
+        .kpi-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        .kpi-emerald .kpi-icon { background: #E8F5E9; color: #2D6A4F; }
+        .kpi-indigo .kpi-icon { background: #EEF2FF; color: #4F46E5; }
+        .kpi-amber .kpi-icon { background: #FEF3C7; color: #D97706; }
+        .kpi-teal .kpi-icon { background: #CCFBF1; color: #0D9488; }
+
+        .kpi-micro-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            letter-spacing: 0.02em;
+        }
+        .kpi-emerald .kpi-micro-badge { background: #E8F5E9; color: #2D6A4F; }
+        .kpi-indigo .kpi-micro-badge { background: #EEF2FF; color: #4F46E5; }
+        .kpi-amber .kpi-micro-badge { background: #FEF3C7; color: #B45309; }
+        .kpi-teal .kpi-micro-badge { background: #CCFBF1; color: #0F766E; }
+
+        .kpi-valor {
+            font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+            font-weight: 800;
+            line-height: 1;
+            color: var(--agri-dark);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+        .kpi-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--agri-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        /* === SEGMENTED TABS NAVEGAÇÃO === */
+        .tabs-container {
+            background: #EAEFEA;
+            border: 1px solid #DFE6DF;
+            border-radius: 12px;
+            padding: 4px;
+            display: inline-flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .tabs-container .nav-link {
+            border: none;
+            background: transparent;
+            color: #55665B;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .tabs-container .nav-link:hover {
+            color: var(--agri-dark);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .tabs-container .nav-link.active {
+            background: #FFFFFF;
+            color: var(--agri-dark);
+            font-weight: 750;
+            box-shadow: 0 2px 6px rgba(21, 36, 28, 0.08);
+        }
+        .tab-badge {
+            font-size: 0.7rem;
+            font-weight: 750;
+            padding: 2px 7px;
+            border-radius: 10px;
+            background: rgba(45, 106, 79, 0.12);
+            color: var(--agri-primary);
+        }
+        .tabs-container .nav-link.active .tab-badge {
+            background: var(--agri-primary);
+            color: #FFFFFF;
+        }
+
+        /* === BARRA DE PESQUISA E FILTROS === */
+        .search-section {
+            background: var(--agri-surface);
+            border: 1px solid var(--agri-border);
+            border-radius: var(--agri-radius);
+            padding: 14px 18px;
+            box-shadow: var(--agri-shadow-sm);
+            margin-bottom: 20px;
+        }
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+        }
+        .search-box i.search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--agri-muted);
+            pointer-events: none;
+            font-size: 0.95rem;
+        }
+        .search-box input {
+            padding-left: 40px;
+            padding-right: 70px;
+            height: 42px;
+            border-radius: 10px;
+            border: 1px solid var(--agri-border);
+            font-size: 0.92rem;
+            background: #FAFCFA;
+            transition: all 0.2s ease;
+        }
+        .search-box input:focus {
+            background: #FFFFFF;
+            border-color: var(--agri-primary);
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+            outline: none;
+        }
+        .search-kbd {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            font-family: inherit;
+            background: #EEF2EE;
+            border: 1px solid #D5DDD5;
+            color: var(--agri-muted);
+            border-radius: 6px;
+            padding: 2px 6px;
+            pointer-events: none;
+        }
+        .btn-clear-search {
+            position: absolute;
+            right: 48px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: var(--agri-muted);
+            font-size: 1rem;
+            padding: 0;
+            display: none;
+            cursor: pointer;
+        }
+        .btn-clear-search:hover { color: var(--agri-dark); }
+
         .btn-chip {
             border: 1px solid var(--agri-border);
-            background: #fff;
+            background: #FFFFFF;
             color: var(--agri-muted);
             border-radius: 20px;
             font-size: 0.78rem;
-            font-weight: 600;
-            padding: 5px 14px;
+            font-weight: 650;
+            padding: 6px 14px;
             white-space: nowrap;
             transition: all 0.15s ease-in-out;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .btn-chip:hover {
             border-color: var(--agri-primary);
             color: var(--agri-primary);
+            background: #F8FAF8;
         }
         .btn-chip.active {
             background: var(--agri-primary) !important;
-            color: #fff !important;
+            color: #FFFFFF !important;
             border-color: var(--agri-primary) !important;
+            box-shadow: 0 2px 6px rgba(45, 106, 79, 0.25);
         }
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .chip-dot-all { background: #64746A; }
+        .chip-dot-pronto { background: #10B981; }
+        .chip-dot-crescimento { background: #0EA5E9; }
+        .chip-dot-reservado { background: #F59E0B; }
+        .btn-chip.active .chip-dot { background: #FFFFFF; }
+
+        /* === CARD SECTIONS & TABLES === */
+        .card-section {
+            background: var(--agri-surface);
+            border: 1px solid var(--agri-border);
+            border-radius: var(--agri-radius);
+            box-shadow: var(--agri-shadow-sm);
+        }
+        .table-agri {
+            margin-bottom: 0;
+        }
+        .table-agri thead th {
+            background: #F8FAF8;
+            color: var(--agri-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 750;
+            letter-spacing: 0.04em;
+            border-bottom: 1px solid var(--agri-border);
+            padding: 12px 16px;
+            white-space: nowrap;
+        }
+        .table-agri tbody td {
+            vertical-align: middle;
+            font-size: 0.9rem;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--agri-border-subtle);
+        }
+        .table-agri tbody tr:hover {
+            background: #F8FAF7;
+        }
+        .table-agri tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* === BADGES DE ESTADO MODERNOS === */
+        .badge-estado {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge-estado::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .badge-pronto {
+            background: #E8F5E9;
+            color: #1B4332;
+            border: 1px solid #C8E6C9;
+        }
+        .badge-pronto::before { background: #2D6A4F; }
+
+        .badge-crescimento {
+            background: #E0F2FE;
+            color: #0369A1;
+            border: 1px solid #BAE6FD;
+        }
+        .badge-crescimento::before { background: #0284C7; }
+
+        .badge-reservado {
+            background: #FEF3C7;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+        .badge-reservado::before { background: #D97706; }
+
+        .badge-vendido {
+            background: #F3E8FF;
+            color: #6B21A8;
+            border: 1px solid #E9D5FF;
+        }
+        .badge-vendido::before { background: #9333EA; }
+
+        .badge-sucesso { background: #E8F5E9; color: #1B4332; }
+        .badge-erro { background: #FEE2E2; color: #991B1B; }
+
+        /* === CARTÕES MOBILE MODERNOS === */
         .mobile-produto-card {
-            background: #fff;
-            border: 1px solid #E5EAE4;
-            border-radius: 12px;
-            padding: 14px;
+            background: #FFFFFF;
+            border: 1px solid var(--agri-border);
+            border-radius: var(--agri-radius);
+            padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 1px 4px rgba(38, 50, 56, 0.04);
+            box-shadow: var(--agri-shadow-sm);
+            transition: all 0.2s ease;
+            position: relative;
         }
+        .mobile-produto-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            bottom: 14px;
+            width: 4px;
+            border-radius: 0 4px 4px 0;
+        }
+        .mobile-produto-card[data-estado="PRONTO_PARA_COLHEITA"]::before { background: #2D6A4F; }
+        .mobile-produto-card[data-estado="EM_CRESCIMENTO"]::before { background: #0284C7; }
+        .mobile-produto-card[data-estado="RESERVADO"]::before { background: #D97706; }
+        .mobile-produto-card[data-estado="VENDIDO"]::before { background: #9333EA; }
+
         .mobile-produto-card .card-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 8px;
-            gap: 8px;
+            margin-bottom: 10px;
+            gap: 10px;
         }
         .mobile-produto-card .prod-nome {
-            font-size: 1.05rem;
-            font-weight: 750;
-            color: var(--agri-text);
-            margin-bottom: 2px;
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: var(--agri-dark);
+            letter-spacing: -0.01em;
+            margin-bottom: 3px;
         }
         .mobile-produto-card .prod-meta {
             font-size: 0.82rem;
             color: var(--agri-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         .mobile-produto-card .prod-details-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            background: #F8FAF7;
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            font-size: 0.82rem;
+            background: #F8FAF8;
+            border: 1px solid #ECF0EC;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin: 12px 0 10px;
         }
         .mobile-produto-card .prod-detail-item .label {
             font-size: 0.68rem;
             color: var(--agri-muted);
-            font-weight: 600;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 2px;
         }
         .mobile-produto-card .prod-detail-item .value {
-            font-weight: 700;
-            color: var(--agri-text);
+            font-weight: 800;
+            color: var(--agri-dark);
+            font-size: 0.92rem;
         }
         .mobile-produto-card .card-actions {
             display: flex;
             gap: 8px;
             justify-content: flex-end;
-            margin-top: 8px;
-            padding-top: 8px;
-            border-top: 1px dashed #E5EAE4;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--agri-border);
         }
-        .page-title { font-size: clamp(1.45rem, 2vw, 1.85rem); }
-        .table-responsive { border-radius: 10px; }
+
+        /* === BOTOES E ACOES === */
+        .btn-agri-primary {
+            background: linear-gradient(135deg, #2D6A4F 0%, #1B4332 100%);
+            color: #FFFFFF;
+            border: none;
+            box-shadow: 0 2px 6px rgba(45, 106, 79, 0.25);
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .btn-agri-primary:hover {
+            color: #FFFFFF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(45, 106, 79, 0.35);
+        }
+
+        .btn-agri-secondary {
+            background: #FFFFFF;
+            color: var(--agri-primary);
+            border: 1px solid var(--agri-border);
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+        .btn-agri-secondary:hover {
+            background: #F4F8F5;
+            color: var(--agri-primary-hover);
+            border-color: #D1DCD2;
+        }
+
+        .btn-action-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--agri-border);
+            background: #FFFFFF;
+            color: var(--agri-muted);
+            transition: all 0.15s ease;
+        }
+        .btn-action-icon:hover {
+            color: var(--agri-primary);
+            border-color: var(--agri-primary);
+            background: #F4F8F5;
+        }
+        .btn-action-danger:hover {
+            color: #DC2626 !important;
+            border-color: #F87171 !important;
+            background: #FEF2F2 !important;
+        }
+
+        /* === TOAST NOTIFICACOES === */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1090;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 380px;
+            pointer-events: none;
+        }
+        .agri-toast {
+            background: #FFFFFF;
+            border: 1px solid var(--agri-border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            box-shadow: var(--agri-shadow-lg);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            pointer-events: auto;
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+        .agri-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .agri-toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .agri-toast-sucesso .agri-toast-icon { background: #E8F5E9; color: #2D6A4F; }
+        .agri-toast-erro .agri-toast-icon { background: #FEE2E2; color: #DC2626; }
+        .agri-toast-info .agri-toast-icon { background: #E0F2FE; color: #0284C7; }
+        .agri-toast-content { flex-grow: 1; }
+        .agri-toast-title { font-weight: 750; font-size: 0.88rem; color: var(--agri-dark); margin-bottom: 2px; }
+        .agri-toast-msg { font-size: 0.8rem; color: var(--agri-muted); margin: 0; line-height: 1.35; }
+        .agri-toast-close {
+            background: transparent;
+            border: none;
+            color: var(--agri-muted);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        /* === USER AVATAR === */
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2D6A4F 0%, #1B4332 100%);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 750;
+            font-size: 0.82rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        }
+
+        /* === EMPTY STATE === */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--agri-muted);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.35;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .empty-state p {
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        /* === RESPONSIVIDADE MOBILE === */
         @media (max-width: 575.98px) {
-            .kpi-card { padding: 12px 14px; min-height: 88px; border-radius: 12px; }
-            .kpi-icon { width: 38px; height: 38px; font-size: 1.05rem; border-radius: 10px; }
-            .kpi-valor { font-size: 1.35rem; }
+            .greeting-banner { padding: 16px; margin-bottom: 16px; }
+            .kpi-card { padding: 14px; min-height: 98px; }
+            .kpi-icon { width: 38px; height: 38px; font-size: 1.1rem; }
+            .kpi-valor { font-size: 1.5rem; }
             .kpi-label { font-size: 0.68rem; }
+            .tabs-container { width: 100%; justify-content: stretch; }
+            .tabs-container .nav-item { flex: 1 1 auto; }
+            .tabs-container .nav-link { justify-content: center; font-size: 0.82rem; padding: 7px 10px; }
+            .search-section { padding: 12px; }
+            .search-kbd { display: none; }
         }
     </style>
 </head>
 <body>
+    <!-- CONTAINER DE TOASTS -->
+    <div id="toast-container" aria-live="polite"></div>
+
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-agri sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-agri sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/index.html">
                 <i class="bi bi-tree-fill fs-4"></i>
                 <span>AgreTech</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Abrir menu">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-label="Abrir menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navMenu">
@@ -153,17 +660,17 @@
                         <a class="nav-link" href="/index.html"><i class="bi bi-shop me-1"></i>Catálogo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active fw-bold" href="/dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i>Gestão</a>
+                        <a class="nav-link active" href="/dashboard.html"><i class="bi bi-grid-1x2-fill me-1"></i>Gestão</a>
                     </li>
                 </ul>
-                <div class="user-info">
+                <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
                     <div class="user-avatar" id="user-avatar">U</div>
-                    <div class="d-none d-sm-block">
-                        <div class="text-white fw-semibold small lh-1" id="user-nome-nav">Utilizador</div>
-                        <span class="badge role-badge bg-success bg-opacity-25 text-white mt-1" id="user-perfil-badge">-</span>
+                    <div class="d-none d-sm-block text-start lh-1">
+                        <div class="text-white fw-semibold small" id="user-nome-nav">Utilizador</div>
+                        <span class="badge bg-success bg-opacity-25 text-white mt-1" style="font-size:0.68rem; font-weight:700;" id="user-perfil-badge">-</span>
                     </div>
-                    <button class="btn btn-outline-light btn-sm ms-2 rounded-pill px-3" onclick="Api.logout()">
-                        <i class="bi bi-box-arrow-right"></i> Sair
+                    <button class="btn btn-outline-light btn-sm ms-2 rounded-pill px-3" onclick="Api.logout()" aria-label="Terminar sessão">
+                        <i class="bi bi-box-arrow-right me-1"></i>Sair
                     </button>
                 </div>
             </div>
@@ -171,155 +678,182 @@
     </nav>
 
     <main class="container py-4">
-        <!-- HEADER -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <!-- GREETING BANNER COM ACOES RAPIDAS -->
+        <div class="greeting-banner d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
-                <h1 class="page-title fw-bold mb-0" id="dash-titulo">Painel de gestão</h1>
+                <h1 class="page-title" id="dash-titulo">Painel de Gestão</h1>
+                <p class="page-subtitle" id="dash-subtitulo">Plataforma Digital de Conexão Agrícola - Moçambique</p>
             </div>
-            <div class="d-flex gap-2 admin-only">
-                <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 rounded-pill">
-                    <i class="bi bi-file-earmark-pdf-fill"></i> Relatório PDF
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-agri-primary btn-sm d-flex align-items-center gap-2 rounded-pill px-3 py-2" id="btn-novo-lote" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()">
+                    <i class="bi bi-plus-circle-fill"></i> Novo Produto
+                </button>
+                <button class="btn btn-agri-secondary btn-sm d-flex align-items-center gap-2 rounded-pill px-3 py-2 admin-only" data-bs-toggle="modal" data-bs-target="#modal-novo-produtor">
+                    <i class="bi bi-person-plus-fill"></i> Novo Agricultor
+                </button>
+                <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 rounded-pill px-3 py-2 admin-only" title="Baixar relatório completo em PDF">
+                    <i class="bi bi-file-earmark-pdf-fill"></i> PDF
                 </a>
             </div>
         </div>
 
-        <!-- KPIs (Grelha 2x2 no mobile, 4 em linha no desktop) -->
+        <!-- KPIS (4 CARDS EM GRELHA ELEVADA) -->
         <div class="row g-2 g-md-3 mb-4">
             <div class="col-6 col-lg-3">
-                <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="kpi-card kpi-emerald">
+                    <div class="kpi-top">
                         <div class="kpi-icon"><i class="bi bi-box-seam"></i></div>
-                        <div><div class="kpi-valor" id="kpi-lotes">0</div><div class="kpi-label">Produtos registados</div></div>
+                        <span class="kpi-micro-badge">Produtos</span>
+                    </div>
+                    <div>
+                        <div class="kpi-valor" id="kpi-lotes">0</div>
+                        <div class="kpi-label">Produtos registados</div>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="kpi-card kpi-indigo">
+                    <div class="kpi-top">
                         <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
-                        <div><div class="kpi-valor" id="kpi-produtores">0</div><div class="kpi-label" id="kpi-produtores-label">Agricultores</div></div>
+                        <span class="kpi-micro-badge" id="kpi-produtores-micro">Produtores</span>
+                    </div>
+                    <div>
+                        <div class="kpi-valor" id="kpi-produtores">0</div>
+                        <div class="kpi-label" id="kpi-produtores-label">Agricultores</div>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-2 gap-sm-3">
+                <div class="kpi-card kpi-amber">
+                    <div class="kpi-top">
                         <div class="kpi-icon"><i class="bi bi-flower1"></i></div>
-                        <div><div class="kpi-valor" id="kpi-culturas">0</div><div class="kpi-label">Produtos Agrícolas</div></div>
+                        <span class="kpi-micro-badge">Catálogo</span>
+                    </div>
+                    <div>
+                        <div class="kpi-valor" id="kpi-culturas">0</div>
+                        <div class="kpi-label">Produtos Agrícolas</div>
                     </div>
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <div class="kpi-card">
-                    <div class="d-flex align-items-center gap-2 gap-sm-3">
-                        <div class="kpi-icon"><i class="bi bi-calendar-event"></i></div>
-                        <div><div class="kpi-valor" id="kpi-colheita">-</div><div class="kpi-label">Próxima colheita</div></div>
+                <div class="kpi-card kpi-teal">
+                    <div class="kpi-top">
+                        <div class="kpi-icon"><i class="bi bi-calendar-check"></i></div>
+                        <span class="kpi-micro-badge">Previsão</span>
+                    </div>
+                    <div>
+                        <div class="kpi-valor" id="kpi-colheita">-</div>
+                        <div class="kpi-label">Próxima colheita</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TABS + AÇÕES RÁPIDAS -->
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
-            <ul class="nav nav-pills bg-white p-1 rounded-3 shadow-sm border flex-wrap" id="pills-tab">
-                <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-lotes" type="button">
-                        <i class="bi bi-box-seam me-1"></i>Produtos
-                    </button>
-                </li>
-                <li class="nav-item admin-only">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-produtores" type="button">
-                        <i class="bi bi-person-workspace me-1"></i>Agricultores
-                    </button>
-                </li>
-                <li class="nav-item admin-only">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-utilizadores" type="button">
-                        <i class="bi bi-people-fill me-1"></i>Utilizadores
-                    </button>
-                </li>
-                <li class="nav-item admin-only">
-                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button">
-                        <i class="bi bi-arrow-repeat me-1"></i>Sincronizações
-                    </button>
-                </li>
-            </ul>
-            <div class="d-flex gap-2">
-                <button class="btn btn-success btn-sm d-flex align-items-center gap-1 rounded-pill px-3 py-2 fw-semibold" id="btn-novo-lote" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()">
-                    <i class="bi bi-plus-circle-fill"></i> Novo Produto
+        <!-- SEGMENTED TABS -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="tabs-container" id="pills-tab" role="tablist">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-lotes" type="button" role="tab">
+                    <i class="bi bi-box-seam"></i> Produtos <span class="tab-badge" id="badge-tab-produtos">0</span>
                 </button>
-                <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 rounded-pill px-3 py-2 admin-only fw-semibold" data-bs-toggle="modal" data-bs-target="#modal-novo-produtor">
-                    <i class="bi bi-person-plus-fill"></i> Novo Agricultor
+                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-produtores" type="button" role="tab">
+                    <i class="bi bi-person-workspace"></i> Agricultores <span class="tab-badge" id="badge-tab-agricultores">0</span>
+                </button>
+                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-utilizadores" type="button" role="tab">
+                    <i class="bi bi-people-fill"></i> Utilizadores <span class="tab-badge" id="badge-tab-utilizadores">0</span>
+                </button>
+                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button" role="tab">
+                    <i class="bi bi-arrow-repeat"></i> Sincronizações
                 </button>
             </div>
         </div>
 
-        <!-- BARRA DE PESQUISA UNIFICADA -->
-        <div class="card-section p-2 p-md-3 mb-3">
+        <!-- BARRA DE PESQUISA UNIFICADA E CHIPS DE ESTADO -->
+        <div class="search-section">
             <div class="d-flex flex-column flex-md-row gap-2 align-items-stretch align-items-md-center justify-content-between">
-                <div class="search-bar flex-grow-1">
-                    <i class="bi bi-search"></i>
-                    <input type="search" id="pesquisa-unificada" class="form-control form-control-sm" autocomplete="off"
+                <div class="search-box">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="search" id="pesquisa-unificada" autocomplete="off"
                         placeholder="Pesquisar produtos agrícolas por nome, agricultor ou localização..."
                         oninput="executarPesquisaUnificada(this.value)">
+                    <button type="button" id="btn-limpar-busca" class="btn-clear-search" onclick="limparBusca()" aria-label="Limpar pesquisa">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                    <kbd class="search-kbd">Ctrl+K</kbd>
                 </div>
                 <div id="chips-filtro-produtos" class="d-flex gap-1 overflow-x-auto py-1 align-items-center">
-                    <span class="small text-muted me-1 d-none d-md-inline fw-semibold"><i class="bi bi-funnel"></i> Estado:</span>
-                    <button type="button" class="btn btn-chip active" data-estado="" onclick="filtrarPorEstadoRapido(this, '')">Todos</button>
-                    <button type="button" class="btn btn-chip" data-estado="PRONTO_PARA_COLHEITA" onclick="filtrarPorEstadoRapido(this, 'PRONTO_PARA_COLHEITA')">Pronto</button>
-                    <button type="button" class="btn btn-chip" data-estado="EM_CRESCIMENTO" onclick="filtrarPorEstadoRapido(this, 'EM_CRESCIMENTO')">Em Crescimento</button>
-                    <button type="button" class="btn btn-chip" data-estado="RESERVADO" onclick="filtrarPorEstadoRapido(this, 'RESERVADO')">Reservado</button>
+                    <button type="button" class="btn btn-chip active" data-estado="" onclick="filtrarPorEstadoRapido(this, '')">
+                        <span class="chip-dot chip-dot-all"></span> Todos
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado="PRONTO_PARA_COLHEITA" onclick="filtrarPorEstadoRapido(this, 'PRONTO_PARA_COLHEITA')">
+                        <span class="chip-dot chip-dot-pronto"></span> Pronto
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado="EM_CRESCIMENTO" onclick="filtrarPorEstadoRapido(this, 'EM_CRESCIMENTO')">
+                        <span class="chip-dot chip-dot-crescimento"></span> Em Crescimento
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado="RESERVADO" onclick="filtrarPorEstadoRapido(this, 'RESERVADO')">
+                        <span class="chip-dot chip-dot-reservado"></span> Reservado
+                    </button>
                 </div>
             </div>
         </div>
 
         <!-- CONTEÚDO DAS ABAS -->
         <div class="tab-content">
-            <!-- PRODUTOS -->
-            <div class="tab-pane fade show active" id="tab-lotes">
+            <!-- ABA PRODUTOS -->
+            <div class="tab-pane fade show active" id="tab-lotes" role="tabpanel">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-list-check text-success me-2"></i>Produtos agrícolas</h6>
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-list-check text-success me-2"></i>Produtos Agrícolas Disponíveis</h6>
                         <span class="text-muted small" id="lotes-count-label" role="status" aria-live="polite"></span>
                     </div>
                     <div id="lotes-lista">
-                        <div class="empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar produtos...</p></div>
+                        <div class="empty-state">
+                            <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                            <p class="mt-2 mb-0">A carregar produtos...</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- AGRICULTORES -->
-            <div class="tab-pane fade" id="tab-produtores">
+            <!-- ABA AGRICULTORES -->
+            <div class="tab-pane fade" id="tab-produtores" role="tabpanel">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-person-lines-fill text-success me-2"></i>Agricultores Registados</h6>
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-person-lines-fill text-success me-2"></i>Agricultores Registados</h6>
                         <span class="text-muted small" id="produtores-count-label" role="status" aria-live="polite"></span>
                     </div>
                     <div class="row g-3" id="produtores-lista">
-                        <div class="col-12 empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar...</p></div>
+                        <div class="col-12 empty-state">
+                            <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                            <p class="mt-2 mb-0">A carregar agricultores...</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- UTILIZADORES -->
-            <div class="tab-pane fade" id="tab-utilizadores">
+            <!-- ABA UTILIZADORES -->
+            <div class="tab-pane fade" id="tab-utilizadores" role="tabpanel">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-people-fill text-success me-2"></i>Utilizadores do Sistema</h6>
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-people-fill text-success me-2"></i>Utilizadores do Sistema</h6>
                         <span class="text-muted small" id="utilizadores-count-label" role="status" aria-live="polite"></span>
                     </div>
                     <div id="utilizadores-lista">
-                        <div class="empty-state"><div class="spinner-border text-success spinner-border-sm" role="status"></div><p class="mt-2 mb-0">A carregar utilizadores...</p></div>
+                        <div class="empty-state">
+                            <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                            <p class="mt-2 mb-0">A carregar utilizadores...</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SINCRONIZAÇÕES (RF08) -->
-            <div class="tab-pane fade" id="tab-sync">
+            <!-- ABA SINCRONIZAÇÕES -->
+            <div class="tab-pane fade" id="tab-sync" role="tabpanel">
                 <div class="card-section p-3 p-md-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0"><i class="bi bi-arrow-repeat text-success me-2"></i>Histórico de sincronizações</h6>
-                        <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="carregarHistoricoSync()">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Actualizar
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-arrow-repeat text-success me-2"></i>Histórico de Sincronizações</h6>
+                        <button class="btn btn-agri-secondary btn-sm rounded-pill" onclick="carregarHistoricoSync()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
                         </button>
                     </div>
                     <div class="table-responsive" id="sync-lista">
@@ -333,12 +867,12 @@
     <!-- MODAL: NOVO PRODUTO -->
     <div class="modal fade" id="modal-novo-lote" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header modal-agri">
-                    <h6 class="modal-title fw-bold"><i class="bi bi-box-seam me-2"></i>Registar novo produto agrícola</h6>
+            <div class="modal-content border-0 shadow-lg" style="border-radius: var(--agri-radius);">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%);">
+                    <h6 class="modal-title fw-bold"><i class="bi bi-box-seam me-2"></i>Registar Novo Produto Agrícola</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <form id="form-novo-lote" onsubmit="event.preventDefault(); App.submeterNovoLote(this);">
+                <form id="form-novo-lote" onsubmit="event.preventDefault(); submeterNovoLoteComFeedback(this);">
                     <div class="modal-body p-4">
                         <div class="mb-3 admin-only" id="campo-produtor-lote">
                             <label class="form-label fw-semibold small">Agricultor <span class="text-danger">*</span></label>
@@ -358,7 +892,7 @@
                                 <input type="number" name="quantidadeEstimada" id="lote-quantidade" step="0.01" class="form-control form-control-sm" placeholder="1500" required>
                             </div>
                             <div class="col-6">
-                                <label class="form-label fw-semibold small">Preço por unidade (MZN/<span id="lote-preco-unidade-label">unidade</span>)</label>
+                                <label class="form-label fw-semibold small">Preço por unidade (MT/<span id="lote-preco-unidade-label">unidade</span>)</label>
                                 <input type="number" name="precoPorUnidade" id="lote-preco" step="0.01" class="form-control form-control-sm" placeholder="45.00">
                             </div>
                         </div>
@@ -374,12 +908,14 @@
                         </div>
                         <div>
                             <label class="form-label fw-semibold small">Observações</label>
-                            <textarea name="observacoes" id="lote-observacoes" rows="2" class="form-control form-control-sm" placeholder="Detalhes..."></textarea>
+                            <textarea name="observacoes" id="lote-observacoes" rows="2" class="form-control form-control-sm" placeholder="Detalhes adicionais sobre a produção..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success btn-sm px-4"><i class="bi bi-check-circle me-1"></i>Guardar</button>
+                    <div class="modal-footer bg-light border-0">
+                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="btn-salvar-novo-lote" class="btn btn-agri-primary btn-sm rounded-pill px-4">
+                            <i class="bi bi-check-circle me-1"></i>Guardar
+                        </button>
                     </div>
                 </form>
             </div>
@@ -389,8 +925,8 @@
     <!-- MODAL: EDITAR PRODUTO -->
     <div class="modal fade" id="modal-editar-lote" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header modal-agri">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: var(--agri-radius);">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%);">
                     <h6 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Atualizar Produto</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
@@ -402,7 +938,7 @@
                             <input type="number" id="edit-quantidade" step="0.01" class="form-control form-control-sm" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-semibold small">Preço por unidade (MZN/<span id="edit-preco-unidade-label">unidade</span>)</label>
+                            <label class="form-label fw-semibold small">Preço por unidade (MT/<span id="edit-preco-unidade-label">unidade</span>)</label>
                             <input type="number" id="edit-preco" step="0.01" class="form-control form-control-sm">
                         </div>
                         <div>
@@ -415,9 +951,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success btn-sm px-4"><i class="bi bi-check-circle me-1"></i>Salvar</button>
+                    <div class="modal-footer bg-light border-0">
+                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-agri-primary btn-sm rounded-pill px-4"><i class="bi bi-check-circle me-1"></i>Salvar</button>
                     </div>
                 </form>
             </div>
@@ -427,16 +963,16 @@
     <!-- MODAL: NOVO AGRICULTOR -->
     <div class="modal fade" id="modal-novo-produtor" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header modal-agri">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: var(--agri-radius);">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 100%);">
                     <h6 class="modal-title fw-bold"><i class="bi bi-person-plus me-2"></i>Registar Novo Agricultor</h6>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
-                <form onsubmit="event.preventDefault(); submeterNovoProdutor(this);">
+                <form id="form-novo-produtor" onsubmit="event.preventDefault(); submeterNovoProdutor(this);">
                     <div class="modal-body p-4">
                         <div class="mb-3">
                             <label class="form-label fw-semibold small">Nome Completo <span class="text-danger">*</span></label>
-                            <input type="text" name="nome" class="form-control form-control-sm" required>
+                            <input type="text" name="nome" class="form-control form-control-sm" placeholder="Ex: Mateus Sitoe" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold small">Telemóvel <span class="text-danger">*</span></label>
@@ -469,14 +1005,37 @@
                         </div>
                         <div>
                             <label class="form-label fw-semibold small">Localização da parcela</label>
-                            <textarea name="localizacaoDetalhada" rows="2" class="form-control form-control-sm" placeholder="Ex: Perto do rio..."></textarea>
+                            <textarea name="localizacaoDetalhada" rows="2" class="form-control form-control-sm" placeholder="Ex: Perto do rio Púngoè..."></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success btn-sm px-4"><i class="bi bi-check-circle me-1"></i>Guardar</button>
+                    <div class="modal-footer bg-light border-0">
+                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="btn-salvar-novo-produtor" class="btn btn-agri-primary btn-sm rounded-pill px-4">
+                            <i class="bi bi-check-circle me-1"></i>Guardar
+                        </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIRMACAO REMOVER PRODUTO -->
+    <div class="modal fade" id="modal-confirmar-remover" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: var(--agri-radius);">
+                <div class="modal-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold mb-2 text-dark">Remover Produto</h6>
+                    <p class="small text-muted mb-4" id="confirmar-remover-msg">Tem certeza que deseja remover este produto agrícola do sistema?</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-confirmar-remover-acao" class="btn btn-danger btn-sm rounded-pill px-4">
+                            <i class="bi bi-trash3 me-1"></i>Remover
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -495,10 +1054,61 @@
         const isAdmin = perfil === 'ADMIN';
         const isProdutor = perfil === 'PRODUTOR';
 
+        // Sistema de Notificações Toast Moderno
+        function showToast(mensagem, tipo = 'sucesso', titulo = '') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const icones = {
+                sucesso: 'bi-check-lg',
+                erro: 'bi-exclamation-triangle-fill',
+                info: 'bi-info-circle-fill'
+            };
+            const titulos = {
+                sucesso: 'Sucesso',
+                erro: 'Atenção',
+                info: 'Informação'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `agri-toast agri-toast-${tipo}`;
+            toast.innerHTML = `
+                <div class="agri-toast-icon"><i class="bi ${icones[tipo] || icones.info}"></i></div>
+                <div class="agri-toast-content">
+                    <div class="agri-toast-title">${titulo || titulos[tipo] || 'Notificação'}</div>
+                    <p class="agri-toast-msg">${mensagem}</p>
+                </div>
+                <button type="button" class="agri-toast-close" aria-label="Fechar">&times;</button>
+            `;
+
+            toast.querySelector('.agri-toast-close').onclick = () => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            };
+
+            container.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 
-            // User info
+            // Atalho de teclado Ctrl + K para focar na pesquisa
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('pesquisa-unificada')?.focus();
+                }
+            });
+
+            // Dados do Utilizador
             if (Api.user) {
                 const firstName = Api.user.nome.split(' ')[0];
                 document.getElementById('user-nome-nav').textContent = Api.user.nome;
@@ -506,14 +1116,20 @@
                 document.getElementById('dash-titulo').textContent = 'Olá, ' + firstName;
                 const perfilLabels = { ADMIN: 'Administrador', PRODUTOR: 'Agricultor', COMPRADOR: 'Comprador' };
                 document.getElementById('user-perfil-badge').textContent = perfilLabels[Api.user.perfil] || Api.user.perfil;
+                
+                const subtitulo = isProdutor
+                    ? 'Acompanhe a sua produção, colheitas e produtos disponíveis para venda'
+                    : 'Painel Geral de Gestão Agrícola - Distrito do Dondo e Província de Sofala';
+                document.getElementById('dash-subtitulo').textContent = subtitulo;
             }
 
-            // Permissions
+            // Permissões de Visualização
             if (!isAdmin) {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
             }
             if (!isAdmin && !isProdutor) {
-                document.getElementById('btn-novo-lote').style.display = 'none';
+                const btnNovo = document.getElementById('btn-novo-lote');
+                if (btnNovo) btnNovo.style.display = 'none';
             }
 
             if (isProdutor && !Api.user?.produtorId) {
@@ -562,7 +1178,7 @@
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar utilizadores por nome, telemóvel, perfil ou distrito...';
                     } else if (target === 'tab-sync') {
                         if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
-                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar sincronizações por ponto focal...';
+                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar histórico de sincronizações por telemóvel...';
                     }
 
                     if (inputPesquisa) executarPesquisaUnificada(inputPesquisa.value);
@@ -578,6 +1194,9 @@
         }
 
         function executarPesquisaUnificada(termo) {
+            const btnLimpar = document.getElementById('btn-limpar-busca');
+            if (btnLimpar) btnLimpar.style.display = termo ? 'block' : 'none';
+
             if (abaAtiva === 'tab-lotes') {
                 filtrarProdutos(termo, filtroEstadoAtivo);
             } else if (abaAtiva === 'tab-produtores') {
@@ -589,7 +1208,16 @@
             }
         }
 
-        // ---- KPIs ----
+        function limparBusca() {
+            const input = document.getElementById('pesquisa-unificada');
+            if (input) {
+                input.value = '';
+                executarPesquisaUnificada('');
+                input.focus();
+            }
+        }
+
+        // ---- KPIS E CONTAGENS ----
         async function atualizarKPIs() {
             try {
                 const [lotes, produtores, culturas] = await Promise.all([
@@ -597,13 +1225,26 @@
                     isAdmin ? Api.getProdutores().catch(() => []) : Promise.resolve([]),
                     Api.getCulturas().catch(() => [])
                 ]);
+
+                // Atualizar KPI Valores
                 document.getElementById('kpi-lotes').textContent = lotes.length;
+                document.getElementById('badge-tab-produtos').textContent = lotes.length;
+
                 const souAgricultor = Api.user?.perfil === 'PRODUTOR';
-                document.getElementById('kpi-produtores').textContent = souAgricultor
-                    ? lotes.filter(lote => lote.estado === 'PRONTO_PARA_COLHEITA').length
-                    : produtores.length;
-                document.getElementById('kpi-produtores-label').textContent = souAgricultor ? 'Prontos para colheita' : 'Agricultores';
+                if (souAgricultor) {
+                    const prontos = lotes.filter(l => l.estado === 'PRONTO_PARA_COLHEITA').length;
+                    document.getElementById('kpi-produtores').textContent = prontos;
+                    document.getElementById('kpi-produtores-label').textContent = 'Prontos para colheita';
+                    document.getElementById('kpi-produtores-micro').textContent = 'Colheita';
+                } else {
+                    document.getElementById('kpi-produtores').textContent = produtores.length;
+                    document.getElementById('kpi-produtores-label').textContent = 'Agricultores';
+                    document.getElementById('kpi-produtores-micro').textContent = 'Produtores';
+                    document.getElementById('badge-tab-agricultores').textContent = produtores.length;
+                }
+
                 document.getElementById('kpi-culturas').textContent = culturas.length;
+
                 const hoje = new Date();
                 hoje.setHours(0, 0, 0, 0);
                 const proximaColheita = lotes
@@ -611,10 +1252,13 @@
                     .map(lote => new Date(lote.dataColheitaPrevista + 'T00:00:00'))
                     .filter(data => data >= hoje)
                     .sort((a, b) => a - b)[0];
+
                 document.getElementById('kpi-colheita').textContent = proximaColheita
                     ? proximaColheita.toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short' })
-                    : '-';
-            } catch (e) { console.warn('Erro KPIs:', e); }
+                    : 'N/D';
+            } catch (e) {
+                console.warn('Erro ao atualizar KPIs:', e);
+            }
         }
 
         function normalizarBusca(termo) {
@@ -682,69 +1326,84 @@
             contador.textContent = (t || estado) ? `${encontrados} de ${total} produto(s)` : `${total} produto(s)`;
         }
 
-        // ---- PRODUTOS TABLE & MOBILE CARDS ----
+        // ---- CARREGAR PRODUTOS (TABELA DESKTOP + CARTOES MOBILE) ----
         async function carregarLotes() {
             const lista = document.getElementById('lotes-lista');
             if (!lista) return;
+
             let lotes;
-            try { lotes = await Api.getLotes(); } catch (e) {
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-wifi-off"></i><p>Sem conexão.</p></div>';
+            try {
+                lotes = await Api.getLotes();
+            } catch (e) {
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-wifi-off"></i><p>Sem conexão de rede.</p></div>';
                 return;
             }
+
             if (!lotes || lotes.length === 0) {
                 const acaoVazia = (isAdmin || isProdutor)
-                    ? '<button type="button" class="btn btn-success btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()"><i class="bi bi-plus-lg me-1"></i>Registar produto</button>'
+                    ? '<button type="button" class="btn btn-agri-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()"><i class="bi bi-plus-lg me-1"></i>Registar primeiro produto</button>'
                     : '';
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-3">Ainda não há produtos registados.</p>' + acaoVazia + '</div>';
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-3">Ainda não há produtos registados no sistema.</p>' + acaoVazia + '</div>';
                 document.getElementById('lotes-count-label').textContent = '0 produto(s)';
                 return;
             }
+
             document.getElementById('lotes-count-label').textContent = lotes.length + ' produto(s)';
             const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
-            const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
+            const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto p/ Colheita', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
 
             const mostrarAgricultor = !isProdutor;
 
             // 1. Tabela Desktop / Tablet
             let htmlTable = `<div class="d-none d-md-block table-responsive">
-                <table class="table table-hover mb-0" id="tabela-lotes">
+                <table class="table table-agri table-hover" id="tabela-lotes">
                 <thead><tr>
-                    <th>Produto agrícola</th>${mostrarAgricultor ? '<th>Agricultor</th>' : ''}<th>Quantidade</th><th>Preço/unidade</th><th>Colheita</th><th>Estado</th><th class="text-end">Ações</th>
+                    <th><i class="bi bi-box-seam me-1"></i> Produto Agrícola</th>
+                    ${mostrarAgricultor ? '<th><i class="bi bi-person me-1"></i> Agricultor</th>' : ''}
+                    <th>Quantidade</th>
+                    <th>Preço / Unidade</th>
+                    <th>Colheita Prevista</th>
+                    <th>Estado</th>
+                    <th class="text-end">Ações</th>
                 </tr></thead><tbody>`;
 
-            // 2. Cartões Mobile para smartphones
+            // 2. Cartões Mobile para Smartphones
             let htmlCards = `<div class="d-md-none" id="cards-lotes">`;
 
             lotes.forEach(l => {
                 const preco = l.precoPorUnidade ? Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT' : '-';
                 const qty = Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (l.unidadeMedida || 'KG');
+                
                 let actions = '';
                 if (isAdmin || isProdutor) {
-                    actions += `<button class="btn btn-outline-secondary btn-action me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}', '${l.unidadeMedida || 'unidade'}')" title="Editar" aria-label="Editar produto ${l.culturaNome}"><i class="bi bi-pencil"></i> Editar</button>`;
+                    actions += `<button class="btn-action-icon me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}', '${l.unidadeMedida || 'unidade'}')" title="Editar produto" aria-label="Editar produto ${l.culturaNome}"><i class="bi bi-pencil"></i></button>`;
                 }
                 if (isAdmin) {
-                    actions += `<button class="btn btn-outline-danger btn-action" onclick="removerLote(${l.id})" title="Remover" aria-label="Remover produto ${l.culturaNome}"><i class="bi bi-trash3"></i></button>`;
+                    actions += `<button class="btn-action-icon btn-action-danger" onclick="confirmarRemoverLote(${l.id}, '${l.culturaNome}')" title="Remover produto" aria-label="Remover produto ${l.culturaNome}"><i class="bi bi-trash3"></i></button>`;
                 }
                 const localidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade || '';
 
-                // Desktop Row
+                // Linha Desktop
                 htmlTable += `<tr data-estado="${l.estado}">
-                    <td><strong>${l.culturaNome}</strong></td>
-                    ${mostrarAgricultor ? `<td>${l.produtorNome || '-'}${localidade ? '<br><small class="text-muted">' + localidade + '</small>' : ''}</td>` : ''}
-                    <td>${qty}</td><td>${preco}</td>
-                    <td>${l.dataColheitaPrevista || '-'}</td>
-                    <td><span class="badge badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span></td>
+                    <td>
+                        <div class="fw-bold text-dark">${l.culturaNome}</div>
+                    </td>
+                    ${mostrarAgricultor ? `<td><div class="fw-semibold">${l.produtorNome || '-'}</div>${localidade ? '<small class="text-muted"><i class="bi bi-geo-alt"></i> ' + localidade + '</small>' : ''}</td>` : ''}
+                    <td><span class="fw-bold">${qty}</span></td>
+                    <td><span class="badge bg-light text-dark border">${preco}</span></td>
+                    <td><small class="text-muted"><i class="bi bi-calendar3 me-1"></i>${l.dataColheitaPrevista || '-'}</small></td>
+                    <td><span class="badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span></td>
                     <td class="text-end">${actions}</td>
                 </tr>`;
 
-                // Mobile Card
+                // Cartão Mobile
                 htmlCards += `<div class="mobile-produto-card" data-estado="${l.estado}">
                     <div class="card-top">
                         <div>
                             <div class="prod-nome">${l.culturaNome}</div>
                             ${mostrarAgricultor ? `<div class="prod-meta"><i class="bi bi-person text-success"></i> ${l.produtorNome || '-'}${localidade ? ' · ' + localidade : ''}</div>` : ''}
                         </div>
-                        <span class="badge badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
+                        <span class="badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
                     </div>
                     <div class="prod-details-grid">
                         <div class="prod-detail-item">
@@ -771,7 +1430,28 @@
             filtrarProdutos(document.getElementById('pesquisa-unificada')?.value || '', filtroEstadoAtivo);
         }
 
-        // ---- EDIT PRODUTO ----
+        // Submissão de Novo Produto com Feedback Moderno
+        async function submeterNovoLoteComFeedback(form) {
+            const btn = document.getElementById('btn-salvar-novo-lote');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>A guardar...'; }
+
+            try {
+                await App.submeterNovoLote(form);
+                const modalEl = document.getElementById('modal-novo-lote');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+                form.reset();
+                await carregarLotes();
+                await atualizarKPIs();
+                showToast('Produto agrícola registado com sucesso no catálogo!', 'sucesso');
+            } catch (e) {
+                showToast('Erro ao registar produto: ' + (e.message || 'Tente novamente.'), 'erro');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar'; }
+            }
+        }
+
+        // ---- EDIÇÃO DE PRODUTO ----
         function atualizarUnidadeProduto() {
             const culturaId = Number.parseInt(document.getElementById('lote-cultura')?.value, 10);
             const cultura = App.culturas.find(item => item.id === culturaId);
@@ -803,23 +1483,39 @@
                 await Api.atualizarLote(id, data);
                 bootstrap.Modal.getInstance(document.getElementById('modal-editar-lote')).hide();
                 await carregarLotes();
-                atualizarKPIs();
-            } catch (e) { alert('Erro: ' + e.message); }
+                await atualizarKPIs();
+                showToast('Produto atualizado com sucesso!', 'sucesso');
+            } catch (e) {
+                showToast('Erro ao atualizar: ' + e.message, 'erro');
+            }
         }
 
-        async function removerLote(id) {
-            if (!confirm('Tem certeza que deseja remover este produto?')) return;
-            try {
-                await Api.removerLote(id);
-                await carregarLotes();
-                atualizarKPIs();
-            } catch (e) { alert('Erro: ' + e.message); }
+        // Confirmação Moderna de Remoção
+        let idLoteParaRemover = null;
+        function confirmarRemoverLote(id, nome) {
+            idLoteParaRemover = id;
+            document.getElementById('confirmar-remover-msg').textContent = `Tem certeza que deseja remover o produto "${nome}" do sistema?`;
+            const modal = new bootstrap.Modal(document.getElementById('modal-confirmar-remover'));
+            
+            document.getElementById('btn-confirmar-remover-acao').onclick = async () => {
+                modal.hide();
+                try {
+                    await Api.removerLote(idLoteParaRemover);
+                    await carregarLotes();
+                    await atualizarKPIs();
+                    showToast('Produto agrícola removido com sucesso.', 'sucesso');
+                } catch (e) {
+                    showToast('Erro ao remover produto: ' + e.message, 'erro');
+                }
+            };
+            modal.show();
         }
 
         // ---- UTILIZADORES (ADMIN) ----
         async function carregarUtilizadores() {
             const container = document.getElementById('utilizadores-lista');
             const contador = document.getElementById('utilizadores-count-label');
+            const tabBadge = document.getElementById('badge-tab-utilizadores');
             if (!container) return;
 
             let utilizadores;
@@ -834,25 +1530,27 @@
             if (!utilizadores || utilizadores.length === 0) {
                 container.innerHTML = '<div class="empty-state"><i class="bi bi-people"></i><p>Nenhum utilizador registado no sistema.</p></div>';
                 if (contador) contador.textContent = '0 utilizador(es)';
+                if (tabBadge) tabBadge.textContent = '0';
                 return;
             }
 
             if (contador) contador.textContent = utilizadores.length + ' utilizador(es)';
+            if (tabBadge) tabBadge.textContent = utilizadores.length;
 
             const perfilBadges = {
-                ADMIN: '<span class="badge bg-dark text-white">Administrador</span>',
-                PRODUTOR: '<span class="badge bg-success text-white">Agricultor</span>',
-                COMPRADOR: '<span class="badge bg-primary text-white">Comprador</span>'
+                ADMIN: '<span class="badge bg-dark text-white rounded-pill px-2 py-1">Administrador</span>',
+                PRODUTOR: '<span class="badge bg-success text-white rounded-pill px-2 py-1">Agricultor</span>',
+                COMPRADOR: '<span class="badge bg-primary text-white rounded-pill px-2 py-1">Comprador</span>'
             };
 
             // 1. Tabela Desktop / Tablet
             let htmlTable = `<div class="d-none d-md-block table-responsive">
-                <table class="table table-hover mb-0" id="tabela-utilizadores">
+                <table class="table table-agri table-hover" id="tabela-utilizadores">
                 <thead><tr>
-                    <th>Utilizador</th>
-                    <th>Telemóvel</th>
+                    <th><i class="bi bi-person me-1"></i> Utilizador</th>
+                    <th><i class="bi bi-telephone me-1"></i> Telemóvel</th>
                     <th>Perfil</th>
-                    <th>Localização</th>
+                    <th><i class="bi bi-geo-alt me-1"></i> Localização</th>
                     <th>Data Registo</th>
                 </tr></thead><tbody>`;
 
@@ -864,40 +1562,36 @@
                 const dataReg = u.dataCriacao ? new Date(u.dataCriacao).toLocaleDateString('pt-MZ', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
                 const inicial = (u.nome || 'U').trim().charAt(0).toUpperCase();
 
-                // Desktop Row
+                // Linha Desktop
                 htmlTable += `<tr>
                     <td>
                         <div class="d-flex align-items-center gap-2">
-                            <div class="user-avatar" style="width:32px;height:32px;border-radius:50%;background:#55745D;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">
-                                ${inicial}
-                            </div>
-                            <strong>${u.nome}</strong>
+                            <div class="user-avatar" style="width:34px;height:34px;">${inicial}</div>
+                            <strong class="text-dark">${u.nome}</strong>
                         </div>
                     </td>
-                    <td><a href="tel:${u.telemovel}" class="text-decoration-none text-dark">${u.telemovel}</a></td>
+                    <td><a href="tel:${u.telemovel}" class="text-decoration-none fw-semibold text-dark"><i class="bi bi-telephone text-success me-1"></i>${u.telemovel}</a></td>
                     <td>${perfilBadges[u.perfil] || u.perfil}</td>
                     <td><small class="text-muted">${loc}</small></td>
                     <td><small class="text-muted">${dataReg}</small></td>
                 </tr>`;
 
-                // Mobile Card
+                // Cartão Mobile
                 htmlCards += `<div class="mobile-produto-card mobile-user-card">
                     <div class="card-top">
                         <div class="d-flex align-items-center gap-2">
-                            <div class="user-avatar" style="width:34px;height:34px;border-radius:50%;background:#55745D;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;">
-                                ${inicial}
-                            </div>
+                            <div class="user-avatar" style="width:36px;height:36px;">${inicial}</div>
                             <div>
                                 <div class="prod-nome">${u.nome}</div>
-                                <div class="prod-meta"><i class="bi bi-geo-alt"></i> ${loc}</div>
+                                <div class="prod-meta"><i class="bi bi-geo-alt text-success"></i> ${loc}</div>
                             </div>
                         </div>
                         <div>${perfilBadges[u.perfil] || u.perfil}</div>
                     </div>
                     <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top">
-                        <small class="text-muted"><i class="bi bi-calendar"></i> Registo: ${dataReg}</small>
+                        <small class="text-muted"><i class="bi bi-calendar3"></i> Registo: ${dataReg}</small>
                         <a href="tel:${u.telemovel}" class="btn btn-sm btn-outline-secondary rounded-pill py-1 px-3">
-                            <i class="bi bi-telephone me-1"></i> ${u.telemovel}
+                            <i class="bi bi-telephone me-1"></i> Ligar
                         </a>
                     </div>
                 </div>`;
@@ -949,7 +1643,7 @@
                     lista.innerHTML = '<div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronização registada ainda.</p></div>';
                     return;
                 }
-                let html = `<table class="table table-hover mb-0" id="tabela-sync">
+                let html = `<table class="table table-agri table-hover mb-0" id="tabela-sync">
                     <thead><tr>
                         <th>Data / Hora</th><th>Ponto Focal</th><th>Agricultores</th><th>Produtos</th><th>Estado</th><th>Erros</th>
                     </tr></thead><tbody>`;
@@ -961,8 +1655,8 @@
                     html += `<tr>
                         <td>${data}</td>
                         <td>${s.pontoFocalTelemovel || '-'}</td>
-                        <td class="text-center">${s.produtoresSincronizados}</td>
-                        <td class="text-center">${s.lotesSincronizados}</td>
+                        <td class="text-center font-monospace">${s.produtoresSincronizados}</td>
+                        <td class="text-center font-monospace">${s.lotesSincronizados}</td>
                         <td>${estadoBadge}</td>
                         <td><small class="text-muted">${s.erros || '-'}</small></td>
                     </tr>`;
@@ -975,8 +1669,10 @@
         }
 
         async function submeterNovoProdutor(form) {
+            const btn = document.getElementById('btn-salvar-novo-produtor');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>A guardar...'; }
+
             try {
-                // Usa o endpoint de registo para criar conta de agricultor com credenciais
                 await Api.registar({
                     nome: form.nome.value,
                     telemovel: form.telemovel.value,
@@ -990,16 +1686,17 @@
                 });
                 bootstrap.Modal.getInstance(document.getElementById('modal-novo-produtor')).hide();
                 form.reset();
-                // Reiniciar selects
                 const distritoSel = document.getElementById('produtor-distrito');
                 if (distritoSel) { distritoSel.innerHTML = '<option value="">Selecione a província...</option>'; distritoSel.disabled = true; }
                 const zonaInput = document.getElementById('produtor-zona');
                 if (zonaInput) { zonaInput.value = ''; zonaInput.disabled = true; }
                 await App.carregarProdutoresDashboard();
                 await atualizarKPIs();
-                alert('Agricultor registado com sucesso!');
+                showToast('Novo agricultor registado com sucesso!', 'sucesso');
             } catch (e) {
-                alert('Erro ao registar agricultor: ' + (e.message || 'Verifique os dados e tente novamente.'));
+                showToast('Erro ao registar agricultor: ' + (e.message || 'Verifique os dados.'), 'erro');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar'; }
             }
         }
 
@@ -1014,22 +1711,6 @@
                 ? (zonas.length > 0 ? 'Selecione ou escreva a zona...' : 'Ex: Campo, Sede...')
                 : 'Selecione o distrito primeiro';
             datalist.innerHTML = zonas.map(z => `<option value="${z}">`).join('');
-        }
-
-        // Compatibilidade antiga (select bairro) - mantém por segurança
-        function atualizarBairros(distrito, targetId) {
-            const sel = document.getElementById(targetId);
-            if (!sel) return;
-            sel.innerHTML = '';
-            const zonas = AgriLocations.neighborhoods[distrito];
-            if (zonas) {
-                sel.innerHTML = '<option value="">Selecione o bairro / zona...</option>' +
-                                zonas.map(z => `<option value="${z}">${z}</option>`).join('');
-            } else if (distrito) {
-                sel.innerHTML = '<option value="">Sem zonas cadastradas</option>';
-            } else {
-                sel.innerHTML = '<option value="">Selecione o distrito primeiro...</option>';
-            }
         }
     </script>
 </body>
