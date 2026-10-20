@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface CulturaRepository extends JpaRepository<Cultura, Long> {
     Optional<Cultura> findByNomeIgnoreCase(String nome);
+    boolean existsByNomeIgnoreCase(String nome);
     List<Cultura> findAllByOrderByNomeAsc();
 }
