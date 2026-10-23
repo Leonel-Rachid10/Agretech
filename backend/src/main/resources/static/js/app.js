@@ -3,18 +3,15 @@ const App = {
     culturas: [],
 
     async init() {
-        await AgriDB.open();
-        SyncManager.init();
         await this.carregarDadosBase();
     },
 
     async carregarDadosBase() {
         try {
             this.culturas = await Api.getCulturas();
-            if (this.culturas) await AgriDB.cacheList('culturas', this.culturas);
         } catch (e) {
-            console.warn('Falha ao carregar produtos agricolas online, a usar cache offline:', e);
-            this.culturas = await AgriDB.getCachedList('culturas');
+            console.warn('Falha ao carregar produtos agrícolas:', e);
+            this.culturas = [];
         }
     },
 
@@ -43,14 +40,11 @@ const App = {
         };
 
         let lotes;
-        let carregadoDoCache = false;
         try {
             lotes = await Api.getCatalogo(filtros);
-            if (lotes) await AgriDB.cacheList('lotes_cache', lotes);
         } catch (e) {
-            console.warn('Falha ao carregar catálogo online, a usar cache offline:', e);
-            lotes = await AgriDB.getCachedList('lotes_cache');
-            carregadoDoCache = true;
+            console.warn('Falha ao carregar catálogo online:', e);
+            lotes = [];
         }
 
         const bairroFiltro = document.getElementById('filtro-bairro')?.value || null;
@@ -59,16 +53,6 @@ const App = {
             lotes = lotes.filter(l => (l.bairro && l.bairro.toLowerCase().includes(bF)) ||
                                      (l.associacaoLocalidade && l.associacaoLocalidade.toLowerCase().includes(bF)) || 
                                      (l.associacaoNome && l.associacaoNome.toLowerCase().includes(bF)));
-        }
-        if (carregadoDoCache && lotes) {
-            const provinciaFiltro = filtros.provincia?.toLocaleLowerCase('pt-MZ');
-            const distritoFiltro = filtros.localidade?.toLocaleLowerCase('pt-MZ');
-            if (provinciaFiltro) {
-                lotes = lotes.filter(produto => (produto.provincia || '').toLocaleLowerCase('pt-MZ') === provinciaFiltro);
-            }
-            if (distritoFiltro) {
-                lotes = lotes.filter(produto => (produto.distrito || produto.associacaoLocalidade || '').toLocaleLowerCase('pt-MZ').includes(distritoFiltro));
-            }
         }
 
         if (!lotes || lotes.length === 0) {
@@ -150,7 +134,7 @@ const App = {
             lotes = await Api.getLotes();
         } catch (e) {
             console.warn('Falha ao carregar produtos do dashboard:', e);
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Sem conexão. Os produtos offline serão mostrados após sincronização.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Sem conexão de rede. Verifique a sua ligação.</p></div>';
             return;
         }
 
@@ -244,18 +228,6 @@ const App = {
             observacoes: form.observacoes.value || null,
             estado: 'EM_CRESCIMENTO'
         };
-
-        if (!navigator.onLine) {
-            await AgriDB.addToSyncQueue('novo_lote', data);
-            if (typeof window.showToast === 'function') {
-                window.showToast('Produto guardado offline! Será sincronizado quando houver rede.', 'info');
-            } else {
-                alert('Produto guardado offline! Será sincronizado quando houver rede.');
-            }
-            SyncManager.updateBar();
-            fecharModal('modal-novo-lote');
-            return;
-        }
 
         try {
             await Api.criarLote(data);

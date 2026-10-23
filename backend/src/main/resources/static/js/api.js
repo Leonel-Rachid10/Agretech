@@ -103,9 +103,6 @@ const Api = {
     // Reservas
     registarContacto(data) { return this.post('/reservas', data); },
 
-    // Sincronização Offline
-    sincronizar(batch) { return this.post('/sync', batch); },
-
     // Relatório PDF
     async downloadRelatorioPdf() {
         const res = await fetch(API_BASE + '/relatorios/producao/pdf', { headers: this.headers(false) });

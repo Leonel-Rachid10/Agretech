@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agritech-dondo-v4';
+const CACHE_NAME = 'agritech-dondo-v5';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -7,8 +7,6 @@ const ASSETS_TO_CACHE = [
     '/css/style.css',
     '/js/api.js',
     '/js/locations.js',
-    '/js/db.js',
-    '/js/sync.js',
     '/js/app.js',
     '/manifest.json',
     '/favicon.svg',
@@ -16,7 +14,6 @@ const ASSETS_TO_CACHE = [
     '/apple-touch-icon.png',
     '/img/logo.svg',
     '/img/logo-icon.svg',
-    '/img/instagram-qr.png',
     '/icons/icon-192.png',
     '/icons/icon-512.png'
 ];

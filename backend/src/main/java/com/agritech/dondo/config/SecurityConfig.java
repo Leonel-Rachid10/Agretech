@@ -57,13 +57,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/lotes/catalogo/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/associacoes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/produtores/**").permitAll()
-                        // Sincronização offline e relatórios
-                        .requestMatchers("/api/sync/**").permitAll()
+                        // Relatórios de produção
                         .requestMatchers("/api/relatorios/**").permitAll()
                         // Swagger e documentação OpenAPI
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/v3/api-docs/**").permitAll()
-                        // Ficheiros estáticos do frontend PWA
-                        .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/manifest.json", "/sw.js", "/icons/**").permitAll()
+                        // Ficheiros estáticos do frontend PWA (imagens, ícones, favicons, estilos e scripts)
+                        .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/img/**", "/icons/**", "/manifest.json", "/sw.js", "/favicon*", "/apple-touch-icon*").permitAll()
                         // Quaisquer outras rotas requerem autenticação
                         .anyRequest().authenticated()
                 )

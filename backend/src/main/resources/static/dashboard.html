@@ -7,27 +7,54 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="alternate icon" type="image/png" href="/favicon-32x32.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" integrity="sha384-XGjxtQfXaH2tnPFa9x+cqJURcUJaYZ9tJ2V50C2Dq+5A82sX8p7w/j9m4F3M4v" crossorigin="anonymous">
-    <link rel="manifest" href="/manifest.json">
+    <script>
+        (function() {
+            const saved = localStorage.getItem('agritech_theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <style>
         :root {
+            /* Modo Claro: Branco e Verde */
             --agri-dark: #15241C;
             --agri-primary: #2D6A4F;
             --agri-primary-hover: #1B4332;
             --agri-primary-light: #E8F5E9;
             --agri-accent: #52B788;
-            --agri-bg: #F4F6F4;
+            --agri-bg: #F7FAF8;
             --agri-surface: #FFFFFF;
-            --agri-border: #E5EAE5;
-            --agri-border-subtle: #F0F4F1;
-            --agri-text: #1C2826;
-            --agri-muted: #64746A;
+            --agri-border: #E2ECE5;
+            --agri-border-subtle: #ECF3EE;
+            --agri-text: #15241C;
+            --agri-muted: #55685E;
             --agri-shadow-sm: 0 1px 3px 0 rgba(21, 36, 28, 0.05);
             --agri-shadow: 0 4px 16px -2px rgba(21, 36, 28, 0.07), 0 2px 4px -2px rgba(21, 36, 28, 0.04);
             --agri-shadow-lg: 0 12px 28px -4px rgba(21, 36, 28, 0.10), 0 4px 8px -2px rgba(21, 36, 28, 0.04);
             --agri-radius: 14px;
             --agri-radius-sm: 10px;
+        }
+
+        [data-theme="dark"] {
+            /* Modo Escuro: Preto e Verde */
+            --agri-dark: #FFFFFF;
+            --agri-primary: #52B788;
+            --agri-primary-hover: #74C69D;
+            --agri-primary-light: #162B20;
+            --agri-accent: #74C69D;
+            --agri-bg: #0B120E;
+            --agri-surface: #14221A;
+            --agri-border: #23382D;
+            --agri-border-subtle: #192A20;
+            --agri-text: #FFFFFF;
+            --agri-muted: #9BB3A5;
+            --agri-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+            --agri-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+            --agri-shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.6);
         }
 
         body {
@@ -125,9 +152,9 @@
             opacity: 1;
         }
         .kpi-card.kpi-emerald::before { background: #2D6A4F; }
-        .kpi-card.kpi-indigo::before { background: #4F46E5; }
-        .kpi-card.kpi-amber::before { background: #D97706; }
-        .kpi-card.kpi-teal::before { background: #0D9488; }
+        .kpi-card.kpi-forest::before { background: #1B4332; }
+        .kpi-card.kpi-mint::before { background: #40916C; }
+        .kpi-card.kpi-sage::before { background: #52B788; }
 
         .kpi-top {
             display: flex;
@@ -143,11 +170,13 @@
             align-items: center;
             justify-content: center;
             font-size: 1.25rem;
+            background: var(--agri-primary-light);
+            color: var(--agri-primary);
         }
-        .kpi-emerald .kpi-icon { background: #E8F5E9; color: #2D6A4F; }
-        .kpi-indigo .kpi-icon { background: #EEF2FF; color: #4F46E5; }
-        .kpi-amber .kpi-icon { background: #FEF3C7; color: #D97706; }
-        .kpi-teal .kpi-icon { background: #CCFBF1; color: #0D9488; }
+        .kpi-emerald .kpi-icon { background: var(--agri-primary-light); color: var(--agri-primary); }
+        .kpi-forest .kpi-icon { background: var(--agri-primary-light); color: var(--agri-primary-hover); }
+        .kpi-mint .kpi-icon { background: var(--agri-primary-light); color: var(--agri-accent); }
+        .kpi-sage .kpi-icon { background: var(--agri-primary-light); color: var(--agri-primary); }
 
         .kpi-micro-badge {
             font-size: 0.68rem;
@@ -155,11 +184,13 @@
             padding: 3px 8px;
             border-radius: 12px;
             letter-spacing: 0.02em;
+            background: var(--agri-primary-light);
+            color: var(--agri-primary);
         }
-        .kpi-emerald .kpi-micro-badge { background: #E8F5E9; color: #2D6A4F; }
-        .kpi-indigo .kpi-micro-badge { background: #EEF2FF; color: #4F46E5; }
-        .kpi-amber .kpi-micro-badge { background: #FEF3C7; color: #B45309; }
-        .kpi-teal .kpi-micro-badge { background: #CCFBF1; color: #0F766E; }
+        .kpi-emerald .kpi-micro-badge { background: var(--agri-primary-light); color: var(--agri-primary); }
+        .kpi-forest .kpi-micro-badge { background: var(--agri-primary-light); color: var(--agri-primary-hover); }
+        .kpi-mint .kpi-micro-badge { background: var(--agri-primary-light); color: var(--agri-accent); }
+        .kpi-sage .kpi-micro-badge { background: var(--agri-primary-light); color: var(--agri-primary); }
 
         .kpi-valor {
             font-size: clamp(1.6rem, 2.4vw, 2.1rem);
@@ -323,10 +354,10 @@
             border-radius: 50%;
             display: inline-block;
         }
-        .chip-dot-all { background: #64746A; }
-        .chip-dot-pronto { background: #10B981; }
-        .chip-dot-crescimento { background: #0EA5E9; }
-        .chip-dot-reservado { background: #F59E0B; }
+        .chip-dot-all { background: var(--agri-muted); }
+        .chip-dot-pronto { background: var(--agri-primary); }
+        .chip-dot-crescimento { background: var(--agri-accent); }
+        .chip-dot-reservado { background: var(--agri-primary-hover); }
         .btn-chip.active .chip-dot { background: #FFFFFF; }
 
         /* === CARD SECTIONS & TABLES === */
@@ -338,9 +369,10 @@
         }
         .table-agri {
             margin-bottom: 0;
+            color: var(--agri-text);
         }
         .table-agri thead th {
-            background: #F8FAF8;
+            background: var(--agri-border-subtle);
             color: var(--agri-muted);
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -355,15 +387,16 @@
             font-size: 0.9rem;
             padding: 14px 16px;
             border-bottom: 1px solid var(--agri-border-subtle);
+            color: var(--agri-text);
         }
         .table-agri tbody tr:hover {
-            background: #F8FAF7;
+            background: var(--agri-primary-light);
         }
         .table-agri tbody tr:last-child td {
             border-bottom: none;
         }
 
-        /* === BADGES DE ESTADO MODERNOS === */
+        /* === BADGES DE ESTADO (VERDE & MONOCROMO) === */
         .badge-estado {
             font-size: 0.72rem;
             font-weight: 700;
@@ -372,6 +405,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            border: 1px solid transparent;
         }
         .badge-estado::before {
             content: '';
@@ -380,39 +414,38 @@
             border-radius: 50%;
         }
         .badge-pronto {
-            background: #E8F5E9;
-            color: #1B4332;
-            border: 1px solid #C8E6C9;
+            background: var(--agri-primary);
+            color: #FFFFFF;
         }
-        .badge-pronto::before { background: #2D6A4F; }
+        .badge-pronto::before { background: #FFFFFF; }
 
         .badge-crescimento {
-            background: #E0F2FE;
-            color: #0369A1;
-            border: 1px solid #BAE6FD;
+            background: var(--agri-primary-light);
+            color: var(--agri-primary);
+            border-color: var(--agri-border);
         }
-        .badge-crescimento::before { background: #0284C7; }
+        .badge-crescimento::before { background: var(--agri-primary); }
 
         .badge-reservado {
-            background: #FEF3C7;
-            color: #92400E;
-            border: 1px solid #FDE68A;
+            background: var(--agri-border-subtle);
+            color: var(--agri-text);
+            border-color: var(--agri-border);
         }
-        .badge-reservado::before { background: #D97706; }
+        .badge-reservado::before { background: var(--agri-muted); }
 
         .badge-vendido {
-            background: #F3E8FF;
-            color: #6B21A8;
-            border: 1px solid #E9D5FF;
+            background: var(--agri-border-subtle);
+            color: var(--agri-muted);
+            border-color: var(--agri-border);
         }
-        .badge-vendido::before { background: #9333EA; }
+        .badge-vendido::before { background: var(--agri-border); }
 
-        .badge-sucesso { background: #E8F5E9; color: #1B4332; }
-        .badge-erro { background: #FEE2E2; color: #991B1B; }
+        .badge-sucesso { background: var(--agri-primary-light); color: var(--agri-primary); }
+        .badge-erro { background: var(--agri-border-subtle); color: var(--agri-text); border: 1px solid var(--agri-border); }
 
         /* === CARTÕES MOBILE MODERNOS === */
         .mobile-produto-card {
-            background: #FFFFFF;
+            background: var(--agri-surface);
             border: 1px solid var(--agri-border);
             border-radius: var(--agri-radius);
             padding: 16px;
@@ -429,11 +462,12 @@
             bottom: 14px;
             width: 4px;
             border-radius: 0 4px 4px 0;
+            background: var(--agri-primary);
         }
-        .mobile-produto-card[data-estado="PRONTO_PARA_COLHEITA"]::before { background: #2D6A4F; }
-        .mobile-produto-card[data-estado="EM_CRESCIMENTO"]::before { background: #0284C7; }
-        .mobile-produto-card[data-estado="RESERVADO"]::before { background: #D97706; }
-        .mobile-produto-card[data-estado="VENDIDO"]::before { background: #9333EA; }
+        .mobile-produto-card[data-estado="PRONTO_PARA_COLHEITA"]::before { background: var(--agri-primary); }
+        .mobile-produto-card[data-estado="EM_CRESCIMENTO"]::before { background: var(--agri-accent); }
+        .mobile-produto-card[data-estado="RESERVADO"]::before { background: var(--agri-muted); }
+        .mobile-produto-card[data-estado="VENDIDO"]::before { background: var(--agri-border); }
 
         .mobile-produto-card .card-top {
             display: flex;
@@ -642,7 +676,7 @@
             .search-kbd { display: none; }
         }
 
-        /* === RODAPÉ FIXO & MODAL INSTAGRAM === */
+        /* === RODAPÉ FIXO === */
         body {
             padding-bottom: 60px !important;
         }
@@ -719,177 +753,148 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #FCB045 100%);
+            background: var(--agri-primary);
             color: #FFFFFF !important;
             text-decoration: none !important;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.78rem;
             font-weight: 700;
-            border: none;
-            box-shadow: 0 2px 6px rgba(225, 48, 108, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+            transition: all 0.2s ease;
         }
 
         .btn-instagram-creator:hover {
-            transform: translateY(-1px) scale(1.02);
-            box-shadow: 0 4px 12px rgba(225, 48, 108, 0.45);
-            filter: brightness(1.08);
+            background: var(--agri-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
         }
 
         .btn-instagram-creator .creator-handle {
             letter-spacing: 0.02em;
         }
 
-        .btn-instagram-creator .qr-pill {
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 10px;
-            padding: 1px 6px;
-            font-size: 0.7rem;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        /* Modal Instagram QR */
-        .modal-instagram-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(14, 25, 19, 0.75);
-            backdrop-filter: blur(6px);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-        }
-
-        .modal-instagram-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-instagram-card {
-            background: #FFFFFF;
-            border-radius: 20px;
-            max-width: 380px;
-            width: 100%;
-            padding: 24px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-            transform: scale(0.9);
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-        }
-
-        .modal-instagram-overlay.active .modal-instagram-card {
-            transform: scale(1);
-        }
-
-        .modal-instagram-close {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            background: #F1F4F1;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            color: #4A5568;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.15s ease;
-        }
-
-        .modal-instagram-close:hover {
-            background: #E2E8F0;
-            color: #1A202C;
-        }
-
-        .modal-instagram-img {
-            width: 220px;
-            height: auto;
-            border-radius: 14px;
-            margin: 14px auto;
-            display: block;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-        }
-
-        .modal-instagram-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #FCB045 100%);
-            padding: 2px;
+        .btn-theme-toggle {
+            width: 36px;
+            height: 36px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
+            padding: 0;
+            border-radius: 50% !important;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .btn-theme-toggle:hover {
+            transform: rotate(20deg);
+            background-color: rgba(255, 255, 255, 0.15) !important;
         }
 
-        .modal-instagram-avatar-inner {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            color: #E1306C;
+        /* === ESTILOS TEMA ESCURO COMPLEMENTARES === */
+        [data-theme="dark"] .greeting-banner {
+            background: linear-gradient(135deg, #14221A 0%, #101C15 100%);
         }
-
-        .modal-instagram-title {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: #1A202C;
-            margin: 0;
+        [data-theme="dark"] .tabs-container {
+            background: #101C15;
+            border-color: #23382D;
         }
-
-        .modal-instagram-subtitle {
-            font-size: 0.85rem;
-            color: #E1306C;
-            font-weight: 700;
-            margin: 2px 0 10px;
+        [data-theme="dark"] .tabs-container .nav-link {
+            color: #9BB3A5;
         }
-
-        .modal-instagram-hint {
-            font-size: 0.8rem;
-            color: #718096;
-            margin: 8px 0 14px;
+        [data-theme="dark"] .tabs-container .nav-link:hover {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.05);
         }
-
-        .btn-open-instagram {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            background: linear-gradient(135deg, #833AB4 0%, #FD1D1D 50%, #FCB045 100%);
+        [data-theme="dark"] .tabs-container .nav-link.active {
+            background: #1E3326;
+            color: #FFFFFF;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+        [data-theme="dark"] .search-box input {
+            background: #0B120E;
+            border-color: #23382D;
+            color: #FFFFFF;
+        }
+        [data-theme="dark"] .search-kbd {
+            background: #192A20;
+            border-color: #23382D;
+            color: #9BB3A5;
+        }
+        [data-theme="dark"] .btn-chip {
+            background: #14221A;
+            border-color: #23382D;
+            color: #9BB3A5;
+        }
+        [data-theme="dark"] .btn-chip:hover {
+            background: #1E3326;
+            color: #52B788;
+            border-color: #52B788;
+        }
+        [data-theme="dark"] .btn-action-icon {
+            background: #14221A;
+            border-color: #23382D;
+            color: #9BB3A5;
+        }
+        [data-theme="dark"] .btn-action-icon:hover {
+            background: #1E3326;
+            border-color: #52B788;
+            color: #52B788;
+        }
+        [data-theme="dark"] .btn-agri-secondary {
+            background: #14221A;
+            border-color: #23382D;
+            color: #52B788;
+        }
+        [data-theme="dark"] .btn-agri-secondary:hover {
+            background: #1E3326;
+            border-color: #52B788;
+            color: #74C69D;
+        }
+        [data-theme="dark"] .modal-content {
+            background: #14221A;
+            color: #FFFFFF;
+            border: 1px solid #23382D !important;
+        }
+        [data-theme="dark"] .modal-footer.bg-light {
+            background: #101C15 !important;
+        }
+        [data-theme="dark"] .form-control,
+        [data-theme="dark"] .form-select {
+            background-color: #0B120E;
+            border-color: #23382D;
+            color: #FFFFFF;
+        }
+        [data-theme="dark"] .form-control:focus,
+        [data-theme="dark"] .form-select:focus {
+            background-color: #0B120E;
+            border-color: #52B788;
+            color: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.25);
+        }
+        [data-theme="dark"] .mobile-produto-card .prod-details-grid {
+            background: #101C15;
+            border-color: #1F3327;
+        }
+        [data-theme="dark"] .agri-toast {
+            background: #14221A;
+            border-color: #23382D;
+            color: #FFFFFF;
+        }
+        [data-theme="dark"] .card {
+            background: #14221A;
+            border-color: #23382D;
+            color: #FFFFFF;
+        }
+        [data-theme="dark"] .card-header.bg-white {
+            background: #14221A !important;
+            border-bottom-color: #23382D !important;
             color: #FFFFFF !important;
-            text-decoration: none !important;
-            font-weight: 700;
-            font-size: 0.88rem;
-            padding: 10px 16px;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(225, 48, 108, 0.35);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
-
-        .btn-open-instagram:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(225, 48, 108, 0.5);
+        [data-theme="dark"] .card-footer.bg-light {
+            background: #101C15 !important;
+            border-top-color: #23382D !important;
         }
 
         @media (max-width: 576px) {
@@ -900,9 +905,6 @@
                 display: none;
             }
             .agri-footer-fixed .footer-dev-by {
-                display: none;
-            }
-            .btn-instagram-creator .qr-pill {
                 display: none;
             }
         }
@@ -932,6 +934,9 @@
                     </li>
                 </ul>
                 <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+                    <button type="button" class="btn btn-outline-light btn-sm btn-theme-toggle" onclick="alternarTema()" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+                        <span id="theme-icon">🌙</span>
+                    </button>
                     <div class="user-avatar" id="user-avatar">U</div>
                     <div class="d-none d-sm-block text-start lh-1">
                         <div class="text-white fw-semibold small" id="user-nome-nav">Utilizador</div>
@@ -980,7 +985,7 @@
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <div class="kpi-card kpi-indigo">
+                <div class="kpi-card kpi-forest">
                     <div class="kpi-top">
                         <div class="kpi-icon"><i class="bi bi-people-fill"></i></div>
                         <span class="kpi-micro-badge" id="kpi-produtores-micro">Produtores</span>
@@ -992,7 +997,7 @@
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <div class="kpi-card kpi-amber">
+                <div class="kpi-card kpi-mint">
                     <div class="kpi-top">
                         <div class="kpi-icon"><i class="bi bi-flower1"></i></div>
                         <span class="kpi-micro-badge">Catálogo</span>
@@ -1004,7 +1009,7 @@
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <div class="kpi-card kpi-teal">
+                <div class="kpi-card kpi-sage">
                     <div class="kpi-top">
                         <div class="kpi-icon"><i class="bi bi-calendar-check"></i></div>
                         <span class="kpi-micro-badge">Previsão</span>
@@ -1028,9 +1033,6 @@
                 </button>
                 <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-utilizadores" type="button" role="tab">
                     <i class="bi bi-people-fill"></i> Utilizadores <span class="tab-badge" id="badge-tab-utilizadores">0</span>
-                </button>
-                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-sync" type="button" role="tab">
-                    <i class="bi bi-arrow-repeat"></i> Sincronizações
                 </button>
             </div>
         </div>
@@ -1111,21 +1113,6 @@
                             <div class="spinner-border text-success spinner-border-sm" role="status"></div>
                             <p class="mt-2 mb-0">A carregar utilizadores...</p>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABA SINCRONIZAÇÕES -->
-            <div class="tab-pane fade" id="tab-sync" role="tabpanel">
-                <div class="card-section p-3 p-md-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-arrow-repeat text-success me-2"></i>Histórico de Sincronizações</h6>
-                        <button class="btn btn-agri-secondary btn-sm rounded-pill" onclick="carregarHistoricoSync()">
-                            <i class="bi bi-arrow-clockwise me-1"></i>Atualizar
-                        </button>
-                    </div>
-                    <div class="table-responsive" id="sync-lista">
-                        <div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronização registada ainda.</p></div>
                     </div>
                 </div>
             </div>
@@ -1319,54 +1306,39 @@
             </div>
             <div class="footer-dev-side">
                 <span class="footer-dev-by">Desenvolvido por</span>
-                <button type="button" class="btn-instagram-creator" onclick="abrirModalInstagram()" aria-label="Ver perfil Instagram de Leonel Rachid">
+                <a href="https://www.instagram.com/leonel_rachid_10/" target="_blank" rel="noopener noreferrer" class="btn-instagram-creator" aria-label="Ver perfil Instagram de Leonel Rachid">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                     </svg>
                     <span class="creator-handle">@LEONEL_RACHID_10</span>
-                    <span class="qr-pill">QR</span>
-                </button>
+                </a>
             </div>
         </div>
     </footer>
 
-    <!-- MODAL INSTAGRAM QR CODE -->
-    <div id="modal-instagram-qr" class="modal-instagram-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-insta-title" onclick="fecharModalInstagram(event)">
-        <div class="modal-instagram-card" onclick="event.stopPropagation()">
-            <button type="button" class="modal-instagram-close" onclick="fecharModalInstagram()" aria-label="Fechar">&times;</button>
-            <div class="modal-instagram-avatar">
-                <div class="modal-instagram-avatar-inner">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                </div>
-            </div>
-            <h3 id="modal-insta-title" class="modal-instagram-title">Leonel Rachid</h3>
-            <div class="modal-instagram-subtitle">@leonel_rachid_10</div>
-            <img src="/img/instagram-qr.png" alt="Código QR do Instagram de Leonel Rachid" class="modal-instagram-img">
-            <p class="modal-instagram-hint">Aponte a câmara do telemóvel para aceder diretamente ao perfil.</p>
-            <a href="https://www.instagram.com/leonel_rachid_10/" target="_blank" rel="noopener noreferrer" class="btn-open-instagram">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-                Abrir no Instagram
-            </a>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="/js/api.js"></script>
     <script src="/js/locations.js"></script>
-    <script src="/js/db.js"></script>
-    <script src="/js/sync.js"></script>
     <script src="/js/app.js"></script>
     <script>
+        // Gestão de Tema Claro / Escuro
+        function alternarTema() {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const novo = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', novo);
+            localStorage.setItem('agritech_theme', novo);
+            atualizarIconeTema(novo);
+        }
+
+        function atualizarIconeTema(tema) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.textContent = tema === 'dark' ? '☀️' : '🌙';
+            }
+        }
+
         populateProvinces('produtor-provincia', 'Selecione...');
         if (!Api.isLoggedIn()) window.location.href = '/login.html';
 
@@ -1419,6 +1391,7 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+            atualizarIconeTema(document.documentElement.getAttribute('data-theme') || 'light');
 
             // Atalho de teclado Ctrl + K para focar na pesquisa
             document.addEventListener('keydown', (e) => {
@@ -1469,7 +1442,6 @@
                 isAdmin ? carregarUtilizadores() : Promise.resolve()
             ]);
             atualizarKPIs();
-            if (isAdmin) carregarHistoricoSync();
 
             // Configurar barra de pesquisa unificada entre as abas
             configurarPesquisaUnificada();
@@ -1496,9 +1468,6 @@
                     } else if (target === 'tab-utilizadores') {
                         if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar utilizadores por nome, telemóvel, perfil ou distrito...';
-                    } else if (target === 'tab-sync') {
-                        if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
-                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar histórico de sincronizações por telemóvel...';
                     }
 
                     if (inputPesquisa) executarPesquisaUnificada(inputPesquisa.value);
@@ -1523,8 +1492,6 @@
                 filtrarCards('produtores-lista', termo);
             } else if (abaAtiva === 'tab-utilizadores') {
                 filtrarUtilizadores(termo);
-            } else if (abaAtiva === 'tab-sync') {
-                filtrarTabela('tabela-sync', termo);
             }
         }
 
@@ -1953,41 +1920,6 @@
             }
         }
 
-        // ---- RF08: HISTORICO DE SINCRONIZACOES ----
-        async function carregarHistoricoSync() {
-            const lista = document.getElementById('sync-lista');
-            if (!lista) return;
-            try {
-                const historico = await Api.get('/sync/historico');
-                if (!historico || historico.length === 0) {
-                    lista.innerHTML = '<div class="empty-state"><i class="bi bi-arrow-repeat"></i><p>Nenhuma sincronização registada ainda.</p></div>';
-                    return;
-                }
-                let html = `<table class="table table-agri table-hover mb-0" id="tabela-sync">
-                    <thead><tr>
-                        <th>Data / Hora</th><th>Ponto Focal</th><th>Agricultores</th><th>Produtos</th><th>Estado</th><th>Erros</th>
-                    </tr></thead><tbody>`;
-                historico.forEach(s => {
-                    const data = s.dataRecepcao ? new Date(s.dataRecepcao).toLocaleString('pt-MZ') : '-';
-                    const estadoBadge = s.sucesso
-                        ? '<span class="badge badge-estado badge-sucesso">Sucesso</span>'
-                        : '<span class="badge badge-estado badge-erro">Com Erros</span>';
-                    html += `<tr>
-                        <td>${data}</td>
-                        <td>${s.pontoFocalTelemovel || '-'}</td>
-                        <td class="text-center font-monospace">${s.produtoresSincronizados}</td>
-                        <td class="text-center font-monospace">${s.lotesSincronizados}</td>
-                        <td>${estadoBadge}</td>
-                        <td><small class="text-muted">${s.erros || '-'}</small></td>
-                    </tr>`;
-                });
-                html += '</tbody></table>';
-                lista.innerHTML = html;
-            } catch (e) {
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>Erro ao carregar histórico.</p></div>';
-            }
-        }
-
         async function submeterNovoProdutor(form) {
             const btn = document.getElementById('btn-salvar-novo-produtor');
             if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>A guardar...'; }
@@ -2032,22 +1964,6 @@
                 : 'Selecione o distrito primeiro';
             datalist.innerHTML = zonas.map(z => `<option value="${z}">`).join('');
         }
-
-        // ---- MODAL INSTAGRAM CREATOR ----
-        function abrirModalInstagram() {
-            const modal = document.getElementById('modal-instagram-qr');
-            if (modal) modal.classList.add('active');
-        }
-
-        function fecharModalInstagram(event) {
-            if (event && event.target && event.target !== event.currentTarget && !event.target.classList.contains('modal-instagram-close')) return;
-            const modal = document.getElementById('modal-instagram-qr');
-            if (modal) modal.classList.remove('active');
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') fecharModalInstagram();
-        });
     </script>
 </body>
 </html>
