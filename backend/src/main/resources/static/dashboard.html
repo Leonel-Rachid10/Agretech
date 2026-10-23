@@ -717,11 +717,6 @@
             font-weight: 600;
         }
 
-        .agri-footer-fixed .footer-logo {
-            border-radius: 6px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .agri-footer-fixed .footer-brand-text {
             font-weight: 750;
             color: #FFFFFF;
@@ -1177,7 +1172,7 @@
                             <p class="mt-2 mb-0">A carregar produtos...</p>
                         </div>
                     </div>
-                    <div id="lotes-paginacao" class="paginacao-container" aria-label="Navegação da paginação"></div>
+                    <nav id="lotes-paginacao" class="paginacao-container" aria-label="Paginação de produtos agrícolas"></nav>
                 </div>
             </div>
 
@@ -1764,26 +1759,29 @@
 
             paginaLotes.forEach(l => {
                 const preco = l.precoPorUnidade ? Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT' : '-';
-                const qty = Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (l.unidadeMedida || 'KG');
+                const qty = Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (App.escapeHtml(l.unidadeMedida) || 'KG');
+                const culturaNomeEsc = App.escapeHtml(l.culturaNome || '');
+                const produtorNomeEsc = App.escapeHtml(l.produtorNome || '-');
                 
                 let actions = '';
                 if (isAdmin || isProdutor) {
-                    actions += `<button class="btn-action-icon me-1" onclick="abrirEdicaoLote(${l.id}, ${l.precoPorUnidade||0}, ${l.quantidadeEstimada}, '${l.estado}', '${l.unidadeMedida || 'unidade'}')" title="Editar produto" aria-label="Editar produto ${l.culturaNome}"><i class="bi bi-pencil"></i></button>`;
+                    actions += `<button class="btn-action-icon me-1" onclick="abrirEdicaoLote(${l.id})" title="Editar produto" aria-label="Editar produto ${culturaNomeEsc}"><i class="bi bi-pencil"></i></button>`;
                 }
                 if (isAdmin) {
-                    actions += `<button class="btn-action-icon btn-action-danger" onclick="confirmarRemoverLote(${l.id}, '${l.culturaNome}')" title="Remover produto" aria-label="Remover produto ${l.culturaNome}"><i class="bi bi-trash3"></i></button>`;
+                    actions += `<button class="btn-action-icon btn-action-danger" onclick="confirmarRemoverLote(${l.id})" title="Remover produto" aria-label="Remover produto ${culturaNomeEsc}"><i class="bi bi-trash3"></i></button>`;
                 }
-                const localidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade || '';
+                const rawLocalidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade || '';
+                const localidade = App.escapeHtml(rawLocalidade);
 
                 // Linha Desktop
                 htmlTable += `<tr data-estado="${l.estado}">
                     <td>
-                        <div class="fw-bold text-dark">${l.culturaNome}</div>
+                        <div class="fw-bold text-dark">${culturaNomeEsc}</div>
                     </td>
-                    ${mostrarAgricultor ? `<td><div class="fw-semibold">${l.produtorNome || '-'}</div>${localidade ? '<small class="text-muted"><i class="bi bi-geo-alt"></i> ' + localidade + '</small>' : ''}</td>` : ''}
+                    ${mostrarAgricultor ? `<td><div class="fw-semibold">${produtorNomeEsc}</div>${localidade ? '<small class="text-muted"><i class="bi bi-geo-alt"></i> ' + localidade + '</small>' : ''}</td>` : ''}
                     <td><span class="fw-bold">${qty}</span></td>
                     <td><span class="badge bg-light text-dark border">${preco}</span></td>
-                    <td><small class="text-muted"><i class="bi bi-calendar3 me-1"></i>${l.dataColheitaPrevista || '-'}</small></td>
+                    <td><small class="text-muted"><i class="bi bi-calendar3 me-1"></i>${App.escapeHtml(l.dataColheitaPrevista) || '-'}</small></td>
                     <td><span class="badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span></td>
                     <td class="text-end">${actions}</td>
                 </tr>`;
@@ -1792,8 +1790,8 @@
                 htmlCards += `<div class="mobile-produto-card" data-estado="${l.estado}">
                     <div class="card-top">
                         <div>
-                            <div class="prod-nome">${l.culturaNome}</div>
-                            ${mostrarAgricultor ? `<div class="prod-meta"><i class="bi bi-person text-success"></i> ${l.produtorNome || '-'}${localidade ? ' · ' + localidade : ''}</div>` : ''}
+                            <div class="prod-nome">${culturaNomeEsc}</div>
+                            ${mostrarAgricultor ? `<div class="prod-meta"><i class="bi bi-person text-success"></i> ${produtorNomeEsc}${localidade ? ' · ' + localidade : ''}</div>` : ''}
                         </div>
                         <span class="badge-estado ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
                     </div>
@@ -1808,7 +1806,7 @@
                         </div>
                         <div class="prod-detail-item">
                             <div class="label">Colheita</div>
-                            <div class="value">${l.dataColheitaPrevista || '-'}</div>
+                            <div class="value">${App.escapeHtml(l.dataColheitaPrevista) || '-'}</div>
                         </div>
                     </div>
                     ${actions ? `<div class="card-actions">${actions}</div>` : ''}
@@ -1821,47 +1819,8 @@
             lista.innerHTML = htmlTable + htmlCards;
 
             if (paginacao) {
-                paginacao.innerHTML = gerarHtmlPaginacaoDashboard(totalPaginas, paginaAtualLotes, total, 'mudarPaginaLotes');
+                paginacao.innerHTML = App.gerarHtmlPaginacao(totalPaginas, paginaAtualLotes, total, 'mudarPaginaLotes');
             }
-        }
-
-        function gerarHtmlPaginacaoDashboard(totalPaginas, paginaAtual, totalItens, nomeFuncao) {
-            if (totalPaginas <= 1) {
-                return `<div class="paginacao-info">${totalItens} produto(s) no total</div>`;
-            }
-
-            let botoesHtml = '';
-            const desabilitarAnterior = paginaAtual === 1;
-            botoesHtml += `<button type="button" class="btn-paginacao" ${desabilitarAnterior ? 'disabled' : ''} onclick="${nomeFuncao}(${paginaAtual - 1})" aria-label="Página anterior">← Anterior</button>`;
-
-            const delta = 2;
-            const alcance = [];
-            for (let i = Math.max(2, paginaAtual - delta); i <= Math.min(totalPaginas - 1, paginaAtual + delta); i++) {
-                alcance.push(i);
-            }
-
-            if (paginaAtual - delta > 2) alcance.unshift('...');
-            if (paginaAtual + delta < totalPaginas - 1) alcance.push('...');
-
-            alcance.unshift(1);
-            if (totalPaginas > 1) alcance.push(totalPaginas);
-
-            alcance.forEach(item => {
-                if (item === '...') {
-                    botoesHtml += `<span class="paginacao-pontos">…</span>`;
-                } else {
-                    const ativa = item === paginaAtual;
-                    botoesHtml += `<button type="button" class="btn-paginacao ${ativa ? 'ativa' : ''}" ${ativa ? 'aria-current="page"' : ''} onclick="${nomeFuncao}(${item})">${item}</button>`;
-                }
-            });
-
-            const desabilitarSeguinte = paginaAtual === totalPaginas;
-            botoesHtml += `<button type="button" class="btn-paginacao" ${desabilitarSeguinte ? 'disabled' : ''} onclick="${nomeFuncao}(${paginaAtual + 1})" aria-label="Página seguinte">Seguinte →</button>`;
-
-            return `
-                <div class="paginacao-info">Página ${paginaAtual} de ${totalPaginas} (${totalItens} produtos)</div>
-                <div class="paginacao-botoes">${botoesHtml}</div>
-            `;
         }
 
         // ---- CARREGAR PRODUTOS (TABELA DESKTOP + CARTOES MOBILE) ----
@@ -1910,13 +1869,16 @@
             document.getElementById('lote-preco-unidade-label').textContent = unidade;
         }
 
-        function abrirEdicaoLote(id, preco, quantidade, estado, unidade) {
+        function abrirEdicaoLote(id) {
+            const l = cacheLotes.find(item => item.id === id);
+            if (!l) return;
             document.getElementById('edit-lote-id').value = id;
-            document.getElementById('edit-preco').value = preco || '';
-            document.getElementById('edit-quantidade').value = quantidade || '';
-            document.getElementById('edit-estado').value = estado || 'EM_CRESCIMENTO';
-            document.getElementById('edit-unidade-label').textContent = unidade || 'unidade';
-            document.getElementById('edit-preco-unidade-label').textContent = unidade || 'unidade';
+            document.getElementById('edit-preco').value = l.precoPorUnidade || '';
+            document.getElementById('edit-quantidade').value = l.quantidadeEstimada || '';
+            document.getElementById('edit-estado').value = l.estado || 'EM_CRESCIMENTO';
+            const unidade = l.unidadeMedida || 'unidade';
+            document.getElementById('edit-unidade-label').textContent = unidade;
+            document.getElementById('edit-preco-unidade-label').textContent = unidade;
             new bootstrap.Modal(document.getElementById('modal-editar-lote')).show();
         }
 
@@ -1942,8 +1904,10 @@
 
         // Confirmação Moderna de Remoção
         let idLoteParaRemover = null;
-        function confirmarRemoverLote(id, nome) {
+        function confirmarRemoverLote(id) {
             idLoteParaRemover = id;
+            const l = cacheLotes.find(item => item.id === id);
+            const nome = l ? App.escapeHtml(l.culturaNome) : 'produto';
             document.getElementById('confirmar-remover-msg').textContent = `Tem certeza que deseja remover o produto "${nome}" do sistema?`;
             const modal = new bootstrap.Modal(document.getElementById('modal-confirmar-remover'));
             

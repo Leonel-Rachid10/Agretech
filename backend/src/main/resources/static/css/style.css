@@ -773,10 +773,6 @@ button, input, select, textarea {
     font-weight: 600;
 }
 
-.agri-footer-fixed .footer-logo {
-    border-radius: 6px;
-}
-
 .agri-footer-fixed .footer-brand-text {
     font-weight: 800;
     color: #FFFFFF;

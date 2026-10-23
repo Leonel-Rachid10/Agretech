@@ -142,7 +142,7 @@ const App = {
 
         alcance.forEach(item => {
             if (item === '...') {
-                botoesHtml += `<span class="paginacao-pontos">…</span>`;
+                botoesHtml += `<span class="paginacao-pontos" aria-hidden="true">…</span>`;
             } else {
                 const ativa = item === paginaAtual;
                 botoesHtml += `<button type="button" class="btn-paginacao ${ativa ? 'ativa' : ''}" ${ativa ? 'aria-current="page"' : ''} onclick="${nomeFuncao}(${item})">${item}</button>`;
@@ -159,28 +159,42 @@ const App = {
         `;
     },
 
+    escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    },
+
     renderLoteCard(l) {
         const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
         const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto p/ Colheita', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
         
         // SonarLint S7781: replaceAll em vez de replace com regex
         const tel = (l.produtorTelemovel || '').replaceAll('+', '');
-        const localidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade;
-        const msgWa = encodeURIComponent('Olá, vi o produto ' + l.culturaNome + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgreTech e tenho interesse. Podemos negociar?');
+        const rawLocalidade = [l.provincia, l.distrito, l.bairro].filter(Boolean).join(' · ') || l.associacaoLocalidade;
+        const localidade = this.escapeHtml(rawLocalidade);
+        const nomeCultura = this.escapeHtml(l.culturaNome || '');
+        const nomeProdutor = this.escapeHtml(l.produtorNome || 'N/D');
+        const observacoes = this.escapeHtml(l.observacoes || '');
+        const msgWa = encodeURIComponent('Olá, vi o produto ' + (l.culturaNome || '') + ' (' + l.quantidadeEstimada + ' ' + (l.unidadeMedida||'KG') + ') na plataforma AgreTech e tenho interesse. Podemos negociar?');
 
         // SonarLint S7773: Number.parseFloat
         return `<div class="card produto-card">
             <div class="card-header">
-                <h3> ${l.culturaNome}</h3>
+                <h3> ${nomeCultura}</h3>
                 <span class="badge ${badgeClass[l.estado] || ''}">${badgeLabel[l.estado] || l.estado}</span>
             </div>
             <div class="card-body">
-                <p class="destaque">${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${l.unidadeMedida || 'KG'}</p>
-                ${l.precoPorUnidade ? '<p> Preço: <strong>' + Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (l.unidadeMedida||'KG') + '</strong></p>' : ''}
-                <p> Agricultor: <strong>${l.produtorNome || 'N/D'}</strong></p>
+                <p class="destaque">${Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ')} ${this.escapeHtml(l.unidadeMedida || 'KG')}</p>
+                ${l.precoPorUnidade ? '<p> Preço: <strong>' + Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + this.escapeHtml(l.unidadeMedida||'KG') + '</strong></p>' : ''}
+                <p> Agricultor: <strong>${nomeProdutor}</strong></p>
                 ${localidade ? '<p> Localidade: <strong>' + localidade + '</strong></p>' : ''}
-                <p> Colheita prevista: <strong>${l.dataColheitaPrevista || 'N/D'}</strong></p>
-                ${l.observacoes ? '<p> ' + l.observacoes + '</p>' : ''}
+                <p> Colheita prevista: <strong>${this.escapeHtml(l.dataColheitaPrevista || 'N/D')}</strong></p>
+                ${observacoes ? '<p> ' + observacoes + '</p>' : ''}
             </div>
             <div class="botoes-contacto">
                 ${tel ? '<a href="https://wa.me/' + tel + '?text=' + msgWa + '" target="_blank" class="btn btn-whatsapp"> WhatsApp</a>' : ''}
