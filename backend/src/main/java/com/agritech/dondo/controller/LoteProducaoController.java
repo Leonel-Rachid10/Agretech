@@ -38,7 +38,11 @@ public class LoteProducaoController {
 
     @GetMapping
     public ResponseEntity<List<LoteProducaoDTO>> listarTodos(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(loteProducaoService.listarVisiveisPara(userDetails.getUsername()));
+        String username = userDetails != null ? userDetails.getUsername() : null;
+        if (username == null) {
+            return ResponseEntity.ok(loteProducaoService.listarTodos());
+        }
+        return ResponseEntity.ok(loteProducaoService.listarVisiveisPara(username));
     }
 
     @GetMapping("/{id}")

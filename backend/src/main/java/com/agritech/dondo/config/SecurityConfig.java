@@ -54,7 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         // Rotas públicas para compradores e consulta ao catálogo agrícola do Dondo (RF04)
                         .requestMatchers(HttpMethod.GET, "/api/culturas/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/lotes/catalogo/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/lotes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/associacoes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/produtores/**").permitAll()
                         // Relatórios de produção

@@ -27,7 +27,10 @@ const App = {
     },
 
     // === CATÁLOGO (index.html) ===
-    async carregarCatalogo(pagina = 1) {
+    _cacheCatalogoBruto: null,
+    _ultimoParamFiltros: null,
+
+    async carregarCatalogo(pagina = 1, apenasFiltroLocal = false) {
         const lista = document.getElementById('catalogo-lista');
         const kpiTotal = document.getElementById('kpi-total');
         const kpiQuantidade = document.getElementById('kpi-quantidade');
@@ -35,28 +38,75 @@ const App = {
         const containerPaginacao = document.getElementById('catalogo-paginacao');
         if (!lista) return;
 
+        const filtroCultura = document.getElementById('filtro-cultura')?.value;
+        const filtroProvincia = document.getElementById('filtro-provincia')?.value;
+        const filtroLocalidade = document.getElementById('filtro-localidade')?.value;
+        const filtroBairro = document.getElementById('filtro-bairro')?.value;
+        const filtroEstado = document.getElementById('filtro-estado')?.value;
+        const filtroQuantidade = document.getElementById('filtro-quantidade')?.value;
+        const termoBusca = (document.getElementById('pesquisa-catalogo')?.value || '').trim().toLowerCase();
+
+        const params = {};
+        if (filtroCultura) params.culturaId = filtroCultura;
+        if (filtroProvincia) params.provincia = filtroProvincia;
+        if (filtroLocalidade) params.localidade = filtroLocalidade;
+        if (filtroEstado) params.estado = filtroEstado;
+        if (filtroQuantidade) params.quantidadeMinima = filtroQuantidade;
+
+        const paramsStr = JSON.stringify(params);
+
         let lotes;
-        try {
-            lotes = await Api.getCatalogo({});
-        } catch (e) {
-            console.warn('Falha ao carregar catálogo online:', e);
-            lotes = [];
+        if (apenasFiltroLocal && this._cacheCatalogoBruto && this._ultimoParamFiltros === paramsStr) {
+            lotes = this._cacheCatalogoBruto;
+        } else {
+            try {
+                lotes = await Api.getCatalogo(params);
+            } catch (e) {
+                console.warn('Falha ao carregar catálogo online:', e);
+                lotes = [];
+            }
+            this._cacheCatalogoBruto = lotes || [];
+            this._ultimoParamFiltros = paramsStr;
         }
 
-        this.catalogoLotes = lotes || [];
+        let listaFiltrada = Array.isArray(lotes) ? lotes : [];
+
+        // Filtro adicional por bairro/zona
+        if (filtroBairro) {
+            const bairroBusca = filtroBairro.toLowerCase();
+            listaFiltrada = listaFiltrada.filter(l => (l.bairro || '').toLowerCase().includes(bairroBusca));
+        }
+
+        // Filtro por texto livre da pesquisa (produto, agricultor, província, localidade/distrito, bairro)
+        if (termoBusca) {
+            listaFiltrada = listaFiltrada.filter(l => {
+                const cultura = (l.culturaNome || '').toLowerCase();
+                const produtor = (l.produtorNome || '').toLowerCase();
+                const prov = (l.provincia || '').toLowerCase();
+                const dist = (l.distrito || l.localidade || '').toLowerCase();
+                const bairro = (l.bairro || '').toLowerCase();
+                return cultura.includes(termoBusca) ||
+                       produtor.includes(termoBusca) ||
+                       prov.includes(termoBusca) ||
+                       dist.includes(termoBusca) ||
+                       bairro.includes(termoBusca);
+            });
+        }
+
+        this.catalogoLotes = listaFiltrada;
 
         if (!this.catalogoLotes || this.catalogoLotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto disponível no catálogo de momento.<br>Aguarde novas publicações de agricultores.</p></div>';
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto disponível com os filtros selecionados.<br>Tente ajustar ou limpar os filtros para ver mais produtos.</p></div>';
             if (kpiTotal) kpiTotal.textContent = '0';
             if (kpiQuantidade) kpiQuantidade.textContent = '0';
             if (kpiProntos) kpiProntos.textContent = '0';
             if (containerPaginacao) containerPaginacao.innerHTML = '';
             const res = document.getElementById('catalogo-resultados');
-            if (res) res.textContent = '';
+            if (res) res.textContent = 'Nenhum resultado encontrado.';
             return;
         }
 
-        // KPIs calculados com base em todos os produtos do catálogo
+        // KPIs calculados com base em todos os produtos filtrados do catálogo
         if (kpiTotal) kpiTotal.textContent = this.catalogoLotes.length;
         if (kpiQuantidade) {
             const quantidadesPorUnidade = this.catalogoLotes.reduce((totais, produto) => {
@@ -75,6 +125,22 @@ const App = {
         }
 
         this.renderizarPaginaCatalogo(pagina);
+    },
+
+    preencherFiltros() {
+        const select = document.getElementById('filtro-cultura');
+        if (!select || !this.culturas || this.culturas.length === 0) return;
+        const valorAtual = select.value;
+        select.innerHTML = '<option value="">Todos</option>' +
+            this.culturas.map(c => `<option value="${c.id}">${this.escapeHtml(c.nome)}</option>`).join('');
+        if (valorAtual) select.value = valorAtual;
+    },
+
+    filtrarCatalogoTexto(termo) {
+        clearTimeout(this._timerPesquisa);
+        this._timerPesquisa = setTimeout(() => {
+            this.carregarCatalogo(1, true);
+        }, 150);
     },
 
     renderizarPaginaCatalogo(pagina) {
@@ -203,10 +269,6 @@ const App = {
         </div>`;
     },
 
-    preencherFiltros() {
-        // Método mantido para compatibilidade
-    },
-
     // === DASHBOARD (dashboard.html) ===
     async carregarLotesDashboard() {
         const lista = document.getElementById('lotes-lista');
@@ -216,9 +278,14 @@ const App = {
         try {
             lotes = await Api.getLotes();
         } catch (e) {
-            console.warn('Falha ao carregar produtos do dashboard:', e);
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Sem conexão de rede. Verifique a sua ligação.</p></div>';
-            return;
+            console.warn('Falha em Api.getLotes(), tentando fallback para catálogo:', e);
+            try {
+                lotes = await Api.getCatalogo({});
+            } catch (e2) {
+                console.warn('Falha em Api.getCatalogo():', e2);
+                lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Não foi possível carregar os produtos de momento.</p><button type="button" class="btn btn-sm btn-primario" onclick="App.carregarLotesDashboard()">Tentar novamente</button></div>';
+                return;
+            }
         }
 
         if (!lotes || lotes.length === 0) {
