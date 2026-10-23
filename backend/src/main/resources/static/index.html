@@ -43,6 +43,7 @@
             <div>
                 <h1>Catálogo Agrícola</h1>
             </div>
+            <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-pdf" title="Descarregar relatório em PDF">Relatório PDF</a>
         </div>
 
         <!-- KPIs -->
@@ -61,74 +62,20 @@
             </div>
         </div>
 
-        <!-- FILTROS (RF04) -->
-        <div class="filtros">
-            <h2>Filtros do catálogo</h2>
-            <div class="catalog-search">
-                <label for="pesquisa-catalogo">Pesquisar produtos agrícolas</label>
-                <input type="search" id="pesquisa-catalogo" autocomplete="off"
-                    placeholder="Nome do produto, agricultor ou localização"
-                    aria-describedby="pesquisa-catalogo-ajuda"
-                    oninput="filtrarCatalogo(this.value)">
-                <p id="pesquisa-catalogo-ajuda" class="catalog-search-help">Pesquise por produto, agricultor, província, distrito ou zona.</p>
-            </div>
-            <div class="filtros-grid">
-                <div>
-                    <label>Produto Agrícola</label>
-                    <select id="filtro-cultura" onchange="App.carregarCatalogo()">
-                        <option value="">Todos</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Província</label>
-                    <select id="filtro-provincia" onchange="populateDistricts('filtro-provincia', 'filtro-localidade'); atualizarBairrosFiltro(''); App.carregarCatalogo()">
-                        <option value="">Todas as Províncias</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Distrito</label>
-                    <select id="filtro-localidade" disabled onchange="atualizarBairrosFiltro(this.value); App.carregarCatalogo()">
-                        <option value="">Todos os Distritos</option>
-                    </select>
-                </div>
-                <div id="col-filtro-bairro" style="display: none;">
-                    <label>Bairro / Zona</label>
-                    <select id="filtro-bairro" onchange="App.carregarCatalogo()">
-                        <option value="">Todos os Bairros</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Estado</label>
-                    <select id="filtro-estado" onchange="App.carregarCatalogo()">
-                        <option value="">Todos</option>
-                        <option value="PRONTO_PARA_COLHEITA">Pronto p/ Colheita</option>
-                        <option value="EM_CRESCIMENTO">Em Crescimento</option>
-                        <option value="RESERVADO">Reservado</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Quantidade mínima</label>
-                    <input type="number" id="filtro-quantidade" placeholder="Ex: 100" onchange="App.carregarCatalogo()">
-                </div>
-            </div>
-            <div class="action-row">
-                <button class="btn btn-primario" onclick="App.carregarCatalogo()">Aplicar filtros</button>
-                <a href="/api/relatorios/producao/pdf" target="_blank" class="btn btn-pdf"> Relatório PDF</a>
-            </div>
-        </div>
-
         <!-- LISTA DE PRODUTOS (CATÁLOGO) -->
         <p id="catalogo-resultados" class="catalogo-resultados" role="status" aria-live="polite"></p>
         <div id="catalogo-lista">
             <div class="empty-state"><div class="icone"></div><p>A carregar catálogo...</p></div>
         </div>
+
+        <!-- PAGINAÇÃO -->
+        <div id="catalogo-paginacao" class="paginacao-container" aria-label="Navegação da paginação"></div>
     </main>
 
     <!-- RODAPÉ FIXO -->
     <footer class="agri-footer-fixed" role="contentinfo">
         <div class="footer-container">
             <div class="footer-brand-side">
-                <img src="/img/logo-icon.svg" alt="AgreTech" width="22" height="22" class="footer-logo">
                 <span class="footer-brand-text">AgreTech</span>
                 <span class="footer-separator">·</span>
                 <span class="footer-region">Moçambique</span>
@@ -153,12 +100,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             atualizarIconeTema();
-            populateProvinces('filtro-provincia', 'Todas as Províncias');
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW erro:', err));
             }
             await App.init();
-            App.preencherFiltros();
             await App.carregarCatalogo();
 
             if (Api.isLoggedIn()) {
@@ -179,53 +124,6 @@
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             const icon = document.getElementById('theme-icon');
             if (icon) icon.textContent = isDark ? '☀️' : '🌙';
-        }
-
-        function atualizarBairrosFiltro(distrito) {
-            const col = document.getElementById('col-filtro-bairro');
-            const sel = document.getElementById('filtro-bairro');
-            if (!col || !sel) return;
-            const zonas = AgriLocations.neighborhoods[distrito];
-            if (zonas && zonas.length > 0) {
-                sel.innerHTML = '<option value="">Todos os Bairros</option>' +
-                                zonas.map(z => `<option value="${z}">${z}</option>`).join('');
-                col.style.display = 'block';
-            } else {
-                sel.innerHTML = '<option value="">Todos os Bairros</option>';
-                col.style.display = 'none';
-            }
-        }
-
-        function normalizarPesquisa(termo) {
-            return String(termo || '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLocaleLowerCase('pt-MZ')
-                .trim();
-        }
-
-        function filtrarCatalogo(termo) {
-            const cards = document.querySelectorAll('#catalogo-lista .produto-card');
-            const t = normalizarPesquisa(termo);
-            let encontrados = 0;
-            cards.forEach(card => {
-                const corresponde = !t || normalizarPesquisa(card.textContent).includes(t);
-                card.hidden = !corresponde;
-                if (corresponde) encontrados += 1;
-            });
-            const resultado = document.getElementById('catalogo-resultados');
-            if (!resultado) return;
-            if (!cards.length) {
-                resultado.textContent = '';
-            } else if (t) {
-                resultado.textContent = encontrados === 1
-                    ? '1 produto encontrado.'
-                    : `${encontrados} produtos encontrados.`;
-            } else {
-                resultado.textContent = encontrados === 1
-                    ? '1 produto apresentado.'
-                    : `${encontrados} produtos apresentados.`;
-            }
         }
     </script>
 </body>

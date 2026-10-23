@@ -792,6 +792,101 @@
             background-color: rgba(255, 255, 255, 0.15) !important;
         }
 
+        /* === PAGINAÇÃO MODERNA (DASHBOARD) === */
+        .paginacao-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--agri-border-subtle);
+        }
+        .paginacao-info {
+            color: var(--agri-muted);
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        .paginacao-botoes {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .btn-paginacao {
+            min-width: 34px;
+            height: 34px;
+            padding: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--agri-radius-sm);
+            border: 1px solid var(--agri-border);
+            background: var(--agri-surface);
+            color: var(--agri-text);
+            font-weight: 700;
+            font-size: 0.82rem;
+            font-variant-numeric: tabular-nums;
+            cursor: pointer;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            user-select: none;
+        }
+        .btn-paginacao:hover:not(:disabled) {
+            background: var(--agri-primary-light);
+            color: var(--agri-primary);
+            border-color: var(--agri-primary);
+            transform: translateY(-1px);
+        }
+        .btn-paginacao:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+        .btn-paginacao.ativa {
+            background: var(--agri-primary) !important;
+            color: #FFFFFF !important;
+            border-color: var(--agri-primary) !important;
+            box-shadow: 0 2px 6px rgba(45, 106, 79, 0.25);
+            cursor: default;
+        }
+        .btn-paginacao:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            background: var(--agri-bg);
+            border-color: var(--agri-border-subtle);
+            color: var(--agri-muted);
+        }
+        .paginacao-pontos {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 34px;
+            color: var(--agri-muted);
+            font-weight: 700;
+        }
+        [data-theme="dark"] .btn-paginacao {
+            background: #14221A;
+            border-color: #23382D;
+            color: #FFFFFF;
+        }
+        [data-theme="dark"] .btn-paginacao:hover:not(:disabled) {
+            background: #1E382A;
+            border-color: #52B788;
+            color: #52B788;
+        }
+        [data-theme="dark"] .btn-paginacao.ativa {
+            background: #52B788 !important;
+            color: #0B120E !important;
+            border-color: #52B788 !important;
+        }
+        [data-theme="dark"] .btn-paginacao:disabled {
+            background: #101C15;
+            border-color: #192A20;
+            color: #55685E;
+        }
+
         /* === ESTILOS TEMA ESCURO COMPLEMENTARES === */
         [data-theme="dark"] .greeting-banner {
             background: linear-gradient(135deg, #14221A 0%, #101C15 100%);
@@ -1082,6 +1177,7 @@
                             <p class="mt-2 mb-0">A carregar produtos...</p>
                         </div>
                     </div>
+                    <div id="lotes-paginacao" class="paginacao-container" aria-label="Navegação da paginação"></div>
                 </div>
             </div>
 
@@ -1299,7 +1395,6 @@
     <footer class="agri-footer-fixed" role="contentinfo">
         <div class="footer-container">
             <div class="footer-brand-side">
-                <img src="/img/logo-icon.svg" alt="AgreTech" width="22" height="22" class="footer-logo">
                 <span class="footer-brand-text">AgreTech</span>
                 <span class="footer-separator">·</span>
                 <span class="footer-region">Moçambique</span>
@@ -1583,62 +1678,72 @@
             }
         }
 
-        function filtrarProdutos(termo, estado = filtroEstadoAtivo) {
-            const container = document.getElementById('lotes-lista');
-            const contador = document.getElementById('lotes-count-label');
-            if (!container || !contador) return;
+        let cacheLotes = [];
+        let paginaAtualLotes = 1;
+        const lotesPorPagina = 10;
 
-            const t = normalizarBusca(termo);
-
-            // Filtrar linhas na tabela Desktop
-            const rows = [...container.querySelectorAll('#tabela-lotes tbody tr')];
-            let encontrados = 0;
-            rows.forEach(row => {
-                const matchTexto = !t || normalizarBusca(row.textContent).includes(t);
-                const matchEstado = !estado || row.getAttribute('data-estado') === estado;
-                const visivel = matchTexto && matchEstado;
-                row.hidden = !visivel;
-                if (visivel) encontrados++;
-            });
-
-            // Filtrar cartões Mobile
-            const cards = [...container.querySelectorAll('.mobile-produto-card')];
-            cards.forEach(card => {
-                const matchTexto = !t || normalizarBusca(card.textContent).includes(t);
-                const matchEstado = !estado || card.getAttribute('data-estado') === estado;
-                card.hidden = !(matchTexto && matchEstado);
-            });
-
-            const total = rows.length || cards.length;
-            contador.textContent = (t || estado) ? `${encontrados} de ${total} produto(s)` : `${total} produto(s)`;
+        function mudarPaginaLotes(novaPagina) {
+            paginaAtualLotes = novaPagina;
+            renderizarLotesPaginados();
+            const el = document.getElementById('tab-lotes');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // ---- CARREGAR PRODUTOS (TABELA DESKTOP + CARTOES MOBILE) ----
-        async function carregarLotes() {
+        function filtrarProdutos(termo, estado = filtroEstadoAtivo) {
+            paginaAtualLotes = 1;
+            renderizarLotesPaginados();
+        }
+
+        function renderizarLotesPaginados() {
             const lista = document.getElementById('lotes-lista');
+            const contador = document.getElementById('lotes-count-label');
+            const paginacao = document.getElementById('lotes-paginacao');
             if (!lista) return;
 
-            let lotes;
-            try {
-                lotes = await Api.getLotes();
-            } catch (e) {
-                lista.innerHTML = '<div class="empty-state"><i class="bi bi-wifi-off"></i><p>Sem conexão de rede.</p></div>';
-                return;
-            }
-
-            if (!lotes || lotes.length === 0) {
+            if (!cacheLotes || cacheLotes.length === 0) {
                 const acaoVazia = (isAdmin || isProdutor)
                     ? '<button type="button" class="btn btn-agri-primary btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#modal-novo-lote" onclick="App.preencherFormLote()"><i class="bi bi-plus-lg me-1"></i>Registar primeiro produto</button>'
                     : '';
                 lista.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-3">Ainda não há produtos registados no sistema.</p>' + acaoVazia + '</div>';
-                document.getElementById('lotes-count-label').textContent = '0 produto(s)';
+                if (contador) contador.textContent = '0 produto(s)';
+                if (paginacao) paginacao.innerHTML = '';
                 return;
             }
 
-            document.getElementById('lotes-count-label').textContent = lotes.length + ' produto(s)';
+            const t = normalizarBusca(document.getElementById('pesquisa-unificada')?.value || '');
+            const estado = filtroEstadoAtivo;
+
+            // Filtragem por texto e estado
+            const filtrados = cacheLotes.filter(l => {
+                const textoCompleto = `${l.culturaNome || ''} ${l.produtorNome || ''} ${l.provincia || ''} ${l.distrito || ''} ${l.bairro || ''} ${l.associacaoLocalidade || ''}`;
+                const matchTexto = !t || normalizarBusca(textoCompleto).includes(t);
+                const matchEstado = !estado || l.estado === estado;
+                return matchTexto && matchEstado;
+            });
+
+            const total = filtrados.length;
+            const totalPaginas = Math.max(1, Math.ceil(total / lotesPorPagina));
+            paginaAtualLotes = Math.max(1, Math.min(paginaAtualLotes, totalPaginas));
+
+            if (total === 0) {
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-search"></i><p class="mb-0">Nenhum produto encontrado com os critérios indicados.</p></div>';
+                if (contador) contador.textContent = (t || estado) ? `0 de ${cacheLotes.length} produto(s)` : '0 produto(s)';
+                if (paginacao) paginacao.innerHTML = '';
+                return;
+            }
+
+            const inicio = (paginaAtualLotes - 1) * lotesPorPagina;
+            const fim = Math.min(inicio + lotesPorPagina, total);
+            const paginaLotes = filtrados.slice(inicio, fim);
+
+            if (contador) {
+                contador.textContent = (t || estado)
+                    ? `A apresentar ${inicio + 1} a ${fim} de ${total} (total: ${cacheLotes.length})`
+                    : `A apresentar ${inicio + 1} a ${fim} de ${total} produto(s)`;
+            }
+
             const badgeClass = { EM_CRESCIMENTO: 'badge-crescimento', PRONTO_PARA_COLHEITA: 'badge-pronto', RESERVADO: 'badge-reservado', VENDIDO: 'badge-vendido' };
             const badgeLabel = { EM_CRESCIMENTO: 'Em Crescimento', PRONTO_PARA_COLHEITA: 'Pronto p/ Colheita', RESERVADO: 'Reservado', VENDIDO: 'Vendido' };
-
             const mostrarAgricultor = !isProdutor;
 
             // 1. Tabela Desktop / Tablet
@@ -1657,7 +1762,7 @@
             // 2. Cartões Mobile para Smartphones
             let htmlCards = `<div class="d-md-none" id="cards-lotes">`;
 
-            lotes.forEach(l => {
+            paginaLotes.forEach(l => {
                 const preco = l.precoPorUnidade ? Number.parseFloat(l.precoPorUnidade).toLocaleString('pt-MZ') + ' MT' : '-';
                 const qty = Number.parseFloat(l.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (l.unidadeMedida || 'KG');
                 
@@ -1714,7 +1819,65 @@
             htmlCards += '</div>';
 
             lista.innerHTML = htmlTable + htmlCards;
-            filtrarProdutos(document.getElementById('pesquisa-unificada')?.value || '', filtroEstadoAtivo);
+
+            if (paginacao) {
+                paginacao.innerHTML = gerarHtmlPaginacaoDashboard(totalPaginas, paginaAtualLotes, total, 'mudarPaginaLotes');
+            }
+        }
+
+        function gerarHtmlPaginacaoDashboard(totalPaginas, paginaAtual, totalItens, nomeFuncao) {
+            if (totalPaginas <= 1) {
+                return `<div class="paginacao-info">${totalItens} produto(s) no total</div>`;
+            }
+
+            let botoesHtml = '';
+            const desabilitarAnterior = paginaAtual === 1;
+            botoesHtml += `<button type="button" class="btn-paginacao" ${desabilitarAnterior ? 'disabled' : ''} onclick="${nomeFuncao}(${paginaAtual - 1})" aria-label="Página anterior">← Anterior</button>`;
+
+            const delta = 2;
+            const alcance = [];
+            for (let i = Math.max(2, paginaAtual - delta); i <= Math.min(totalPaginas - 1, paginaAtual + delta); i++) {
+                alcance.push(i);
+            }
+
+            if (paginaAtual - delta > 2) alcance.unshift('...');
+            if (paginaAtual + delta < totalPaginas - 1) alcance.push('...');
+
+            alcance.unshift(1);
+            if (totalPaginas > 1) alcance.push(totalPaginas);
+
+            alcance.forEach(item => {
+                if (item === '...') {
+                    botoesHtml += `<span class="paginacao-pontos">…</span>`;
+                } else {
+                    const ativa = item === paginaAtual;
+                    botoesHtml += `<button type="button" class="btn-paginacao ${ativa ? 'ativa' : ''}" ${ativa ? 'aria-current="page"' : ''} onclick="${nomeFuncao}(${item})">${item}</button>`;
+                }
+            });
+
+            const desabilitarSeguinte = paginaAtual === totalPaginas;
+            botoesHtml += `<button type="button" class="btn-paginacao" ${desabilitarSeguinte ? 'disabled' : ''} onclick="${nomeFuncao}(${paginaAtual + 1})" aria-label="Página seguinte">Seguinte →</button>`;
+
+            return `
+                <div class="paginacao-info">Página ${paginaAtual} de ${totalPaginas} (${totalItens} produtos)</div>
+                <div class="paginacao-botoes">${botoesHtml}</div>
+            `;
+        }
+
+        // ---- CARREGAR PRODUTOS (TABELA DESKTOP + CARTOES MOBILE) ----
+        async function carregarLotes() {
+            const lista = document.getElementById('lotes-lista');
+            if (!lista) return;
+
+            try {
+                cacheLotes = await Api.getLotes() || [];
+            } catch (e) {
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-wifi-off"></i><p>Sem conexão de rede.</p></div>';
+                cacheLotes = [];
+                return;
+            }
+
+            renderizarLotesPaginados();
         }
 
         // Submissão de Novo Produto com Feedback Moderno

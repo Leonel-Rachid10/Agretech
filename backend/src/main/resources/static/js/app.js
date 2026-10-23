@@ -1,6 +1,9 @@
 // === AgreTech: Lógica de Interface ===
 const App = {
     culturas: [],
+    catalogoLotes: [],
+    catalogoPagina: 1,
+    itensPorPaginaCatalogo: 9,
 
     async init() {
         await this.carregarDadosBase();
@@ -24,49 +27,39 @@ const App = {
     },
 
     // === CATÁLOGO (index.html) ===
-    async carregarCatalogo() {
+    async carregarCatalogo(pagina = 1) {
         const lista = document.getElementById('catalogo-lista');
         const kpiTotal = document.getElementById('kpi-total');
         const kpiQuantidade = document.getElementById('kpi-quantidade');
         const kpiProntos = document.getElementById('kpi-prontos');
+        const containerPaginacao = document.getElementById('catalogo-paginacao');
         if (!lista) return;
-
-        const filtros = {
-            culturaId: document.getElementById('filtro-cultura')?.value || null,
-            provincia: document.getElementById('filtro-provincia')?.value || null,
-            localidade: document.getElementById('filtro-localidade')?.value || null,
-            estado: document.getElementById('filtro-estado')?.value || null,
-            quantidadeMinima: document.getElementById('filtro-quantidade')?.value || null
-        };
 
         let lotes;
         try {
-            lotes = await Api.getCatalogo(filtros);
+            lotes = await Api.getCatalogo({});
         } catch (e) {
             console.warn('Falha ao carregar catálogo online:', e);
             lotes = [];
         }
 
-        const bairroFiltro = document.getElementById('filtro-bairro')?.value || null;
-        if (bairroFiltro && lotes && lotes.length > 0) {
-            const bF = bairroFiltro.toLowerCase();
-            lotes = lotes.filter(l => (l.bairro && l.bairro.toLowerCase().includes(bF)) ||
-                                     (l.associacaoLocalidade && l.associacaoLocalidade.toLowerCase().includes(bF)) || 
-                                     (l.associacaoNome && l.associacaoNome.toLowerCase().includes(bF)));
-        }
+        this.catalogoLotes = lotes || [];
 
-        if (!lotes || lotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto encontrado no catálogo.<br>Ajuste os filtros ou aguarde novas publicações.</p></div>';
+        if (!this.catalogoLotes || this.catalogoLotes.length === 0) {
+            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto disponível no catálogo de momento.<br>Aguarde novas publicações de agricultores.</p></div>';
             if (kpiTotal) kpiTotal.textContent = '0';
             if (kpiQuantidade) kpiQuantidade.textContent = '0';
             if (kpiProntos) kpiProntos.textContent = '0';
+            if (containerPaginacao) containerPaginacao.innerHTML = '';
+            const res = document.getElementById('catalogo-resultados');
+            if (res) res.textContent = '';
             return;
         }
 
-        // KPIs
-        if (kpiTotal) kpiTotal.textContent = lotes.length;
+        // KPIs calculados com base em todos os produtos do catálogo
+        if (kpiTotal) kpiTotal.textContent = this.catalogoLotes.length;
         if (kpiQuantidade) {
-            const quantidadesPorUnidade = lotes.reduce((totais, produto) => {
+            const quantidadesPorUnidade = this.catalogoLotes.reduce((totais, produto) => {
                 const unidade = produto.unidadeMedida || 'un.';
                 totais.set(unidade, (totais.get(unidade) || 0) + Number.parseFloat(produto.quantidadeEstimada || 0));
                 return totais;
@@ -77,13 +70,93 @@ const App = {
             kpiQuantidade.textContent = quantidadeTotal || '0';
             kpiQuantidade.title = quantidadeTotal;
         }
-        if (kpiProntos) kpiProntos.textContent = lotes.filter(l => l.estado === 'PRONTO_PARA_COLHEITA').length;
-
-        lista.innerHTML = lotes.map(l => this.renderLoteCard(l)).join('');
-        const pesquisaCatalogo = document.getElementById('pesquisa-catalogo');
-        if (pesquisaCatalogo && typeof window.filtrarCatalogo === 'function') {
-            window.filtrarCatalogo(pesquisaCatalogo.value);
+        if (kpiProntos) {
+            kpiProntos.textContent = this.catalogoLotes.filter(l => l.estado === 'PRONTO_PARA_COLHEITA').length;
         }
+
+        this.renderizarPaginaCatalogo(pagina);
+    },
+
+    renderizarPaginaCatalogo(pagina) {
+        const lista = document.getElementById('catalogo-lista');
+        const containerPaginacao = document.getElementById('catalogo-paginacao');
+        const res = document.getElementById('catalogo-resultados');
+        if (!lista) return;
+
+        const totalItens = this.catalogoLotes.length;
+        const totalPaginas = Math.max(1, Math.ceil(totalItens / this.itensPorPaginaCatalogo));
+        this.catalogoPagina = Math.max(1, Math.min(pagina, totalPaginas));
+
+        const inicio = (this.catalogoPagina - 1) * this.itensPorPaginaCatalogo;
+        const fim = Math.min(inicio + this.itensPorPaginaCatalogo, totalItens);
+        const lotesPagina = this.catalogoLotes.slice(inicio, fim);
+
+        if (res) {
+            res.textContent = `A apresentar ${inicio + 1} a ${fim} de ${totalItens} produto(s)`;
+        }
+
+        lista.innerHTML = lotesPagina.map(l => this.renderLoteCard(l)).join('');
+
+        if (containerPaginacao) {
+            containerPaginacao.innerHTML = this.gerarHtmlPaginacao(totalPaginas, this.catalogoPagina, totalItens, 'App.irParaPaginaCatalogo');
+        }
+    },
+
+    irParaPaginaCatalogo(pagina) {
+        App.renderizarPaginaCatalogo(pagina);
+        const topo = document.getElementById('catalogo-lista');
+        if (topo) {
+            topo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    },
+
+    gerarHtmlPaginacao(totalPaginas, paginaAtual, totalItens, nomeFuncao) {
+        if (totalPaginas <= 1) {
+            return `<div class="paginacao-info">${totalItens} produto(s) no total</div>`;
+        }
+
+        let botoesHtml = '';
+
+        // Botão Anterior
+        const desabilitarAnterior = paginaAtual === 1;
+        botoesHtml += `<button type="button" class="btn-paginacao" ${desabilitarAnterior ? 'disabled' : ''} onclick="${nomeFuncao}(${paginaAtual - 1})" aria-label="Página anterior">← Anterior</button>`;
+
+        // Números de Página
+        const delta = 2;
+        const alcance = [];
+        for (let i = Math.max(2, paginaAtual - delta); i <= Math.min(totalPaginas - 1, paginaAtual + delta); i++) {
+            alcance.push(i);
+        }
+
+        if (paginaAtual - delta > 2) {
+            alcance.unshift('...');
+        }
+        if (paginaAtual + delta < totalPaginas - 1) {
+            alcance.push('...');
+        }
+
+        alcance.unshift(1);
+        if (totalPaginas > 1) {
+            alcance.push(totalPaginas);
+        }
+
+        alcance.forEach(item => {
+            if (item === '...') {
+                botoesHtml += `<span class="paginacao-pontos">…</span>`;
+            } else {
+                const ativa = item === paginaAtual;
+                botoesHtml += `<button type="button" class="btn-paginacao ${ativa ? 'ativa' : ''}" ${ativa ? 'aria-current="page"' : ''} onclick="${nomeFuncao}(${item})">${item}</button>`;
+            }
+        });
+
+        // Botão Seguinte
+        const desabilitarSeguinte = paginaAtual === totalPaginas;
+        botoesHtml += `<button type="button" class="btn-paginacao" ${desabilitarSeguinte ? 'disabled' : ''} onclick="${nomeFuncao}(${paginaAtual + 1})" aria-label="Página seguinte">Seguinte →</button>`;
+
+        return `
+            <div class="paginacao-info">Página ${paginaAtual} de ${totalPaginas} (${totalItens} produtos)</div>
+            <div class="paginacao-botoes">${botoesHtml}</div>
+        `;
     },
 
     renderLoteCard(l) {
@@ -117,11 +190,7 @@ const App = {
     },
 
     preencherFiltros() {
-        const selCultura = document.getElementById('filtro-cultura');
-        if (selCultura && this.culturas) {
-            selCultura.innerHTML = '<option value="">Todos os produtos agrícolas</option>' +
-                this.culturas.map(c => '<option value="' + c.id + '">' + c.nome + '</option>').join('');
-        }
+        // Método mantido para compatibilidade
     },
 
     // === DASHBOARD (dashboard.html) ===
