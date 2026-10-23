@@ -267,10 +267,23 @@ const App = {
                 ${observacoes ? '<p> ' + observacoes + '</p>' : ''}
             </div>
             <div class="botoes-contacto">
-                ${tel ? '<a href="https://wa.me/' + tel + '?text=' + msgWa + '" target="_blank" class="btn btn-whatsapp"> WhatsApp</a>' : ''}
-                ${l.produtorTelemovel ? '<a href="tel:' + l.produtorTelemovel + '" class="btn btn-chamada"> Ligar</a>' : ''}
+                ${tel ? '<a href="https://wa.me/' + tel + '?text=' + msgWa + '" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" onclick="App.registarIntencaoNegocio(' + l.id + ', \'WHATSAPP\')"> WhatsApp</a>' : ''}
+                ${l.produtorTelemovel ? '<a href="tel:' + l.produtorTelemovel + '" class="btn btn-chamada" onclick="App.registarIntencaoNegocio(' + l.id + ', \'TELEFONE\')"> Ligar</a>' : ''}
             </div>
         </div>`;
+    },
+
+    async registarIntencaoNegocio(loteId, canal = 'WHATSAPP') {
+        if (!Api.isLoggedIn()) return;
+        try {
+            await Api.registarContacto({
+                loteId: loteId,
+                canal: canal,
+                notas: 'Intenção iniciada via catálogo (' + (canal === 'WHATSAPP' ? 'WhatsApp' : 'Chamada telefónica') + ')'
+            });
+        } catch (e) {
+            console.debug('Registo de intenção de negócio:', e);
+        }
     },
 
     // === DASHBOARD (dashboard.html) ===

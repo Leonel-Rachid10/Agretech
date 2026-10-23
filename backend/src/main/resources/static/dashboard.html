@@ -443,6 +443,52 @@
         .badge-sucesso { background: var(--agri-primary-light); color: var(--agri-primary); }
         .badge-erro { background: var(--agri-border-subtle); color: var(--agri-text); border: 1px solid var(--agri-border); }
 
+        /* Badges de Negociação (Verde & Monocromo) */
+        .badge-negocio-INICIADO {
+            background: var(--agri-primary-light);
+            color: var(--agri-primary);
+            border: 1px solid var(--agri-border);
+        }
+        .badge-negocio-INICIADO::before { background: var(--agri-primary); }
+
+        .badge-negocio-EM_NEGOCIACAO {
+            background: var(--agri-primary);
+            color: #FFFFFF;
+        }
+        .badge-negocio-EM_NEGOCIACAO::before { background: #FFFFFF; }
+
+        .badge-negocio-CONCLUIDO {
+            background: #14221A;
+            color: #52B788;
+            border: 1px solid #52B788;
+        }
+        .badge-negocio-CONCLUIDO::before { background: #52B788; }
+
+        .badge-negocio-CANCELADO {
+            background: var(--agri-border-subtle);
+            color: var(--agri-muted);
+            border: 1px solid var(--agri-border);
+        }
+        .badge-negocio-CANCELADO::before { background: var(--agri-muted); }
+
+        /* Select de Estado de Negociação */
+        .select-estado-negocio {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--agri-radius-sm);
+            border: 1px solid var(--agri-border);
+            background: var(--agri-surface);
+            color: var(--agri-text);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .select-estado-negocio:focus {
+            border-color: var(--agri-primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.15);
+        }
+
         /* === CARTÕES MOBILE MODERNOS === */
         .mobile-produto-card {
             background: var(--agri-surface);
@@ -468,6 +514,10 @@
         .mobile-produto-card[data-estado="EM_CRESCIMENTO"]::before { background: var(--agri-accent); }
         .mobile-produto-card[data-estado="RESERVADO"]::before { background: var(--agri-muted); }
         .mobile-produto-card[data-estado="VENDIDO"]::before { background: var(--agri-border); }
+        .mobile-produto-card[data-estado-negocio="INICIADO"]::before { background: var(--agri-accent); }
+        .mobile-produto-card[data-estado-negocio="EM_NEGOCIACAO"]::before { background: var(--agri-primary); }
+        .mobile-produto-card[data-estado-negocio="CONCLUIDO"]::before { background: #52B788; }
+        .mobile-produto-card[data-estado-negocio="CANCELADO"]::before { background: var(--agri-muted); }
 
         .mobile-produto-card .card-top {
             display: flex;
@@ -1073,13 +1123,16 @@
         <!-- SEGMENTED TABS -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="tabs-container" id="pills-tab" role="tablist">
-                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-lotes" type="button" role="tab">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-lotes" type="button" role="tab" id="pill-produtos">
                     <i class="bi bi-box-seam"></i> Produtos <span class="tab-badge" id="badge-tab-produtos">0</span>
                 </button>
-                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-produtores" type="button" role="tab">
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-reservas" type="button" role="tab" id="pill-reservas">
+                    <i class="bi bi-chat-left-dots"></i> Negociações <span class="tab-badge" id="badge-tab-reservas">0</span>
+                </button>
+                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-produtores" type="button" role="tab" id="pill-agricultores">
                     <i class="bi bi-person-workspace"></i> Agricultores <span class="tab-badge" id="badge-tab-agricultores">0</span>
                 </button>
-                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-utilizadores" type="button" role="tab">
+                <button class="nav-link admin-only" data-bs-toggle="pill" data-bs-target="#tab-utilizadores" type="button" role="tab" id="pill-utilizadores">
                     <i class="bi bi-people-fill"></i> Utilizadores <span class="tab-badge" id="badge-tab-utilizadores">0</span>
                 </button>
             </div>
@@ -1112,6 +1165,23 @@
                         <span class="chip-dot chip-dot-reservado"></span> Reservado
                     </button>
                 </div>
+                <div id="chips-filtro-reservas" class="gap-1 overflow-x-auto py-1 align-items-center" style="display: none !important;">
+                    <button type="button" class="btn btn-chip active" data-estado-reserva="" onclick="filtrarPorEstadoReserva(this, '')">
+                        <span class="chip-dot chip-dot-all"></span> Todas
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado-reserva="INICIADO" onclick="filtrarPorEstadoReserva(this, 'INICIADO')">
+                        <span class="chip-dot chip-dot-crescimento"></span> Iniciadas
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado-reserva="EM_NEGOCIACAO" onclick="filtrarPorEstadoReserva(this, 'EM_NEGOCIACAO')">
+                        <span class="chip-dot chip-dot-pronto"></span> Em Negociação
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado-reserva="CONCLUIDO" onclick="filtrarPorEstadoReserva(this, 'CONCLUIDO')">
+                        <span class="chip-dot chip-dot-pronto"></span> Concluídas
+                    </button>
+                    <button type="button" class="btn btn-chip" data-estado-reserva="CANCELADO" onclick="filtrarPorEstadoReserva(this, 'CANCELADO')">
+                        <span class="chip-dot chip-dot-reservado"></span> Canceladas
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1131,6 +1201,23 @@
                         </div>
                     </div>
                     <nav id="lotes-paginacao" class="paginacao-container" aria-label="Paginação de produtos agrícolas"></nav>
+                </div>
+            </div>
+
+            <!-- ABA NEGOCIAÇÕES E INTENÇÕES DE COMPRA (RF05) -->
+            <div class="tab-pane fade" id="tab-reservas" role="tabpanel">
+                <div class="card-section p-3 p-md-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-chat-left-dots text-success me-2"></i>Negociações e Intenções de Compra</h6>
+                        <span class="text-muted small" id="reservas-count-label" role="status" aria-live="polite"></span>
+                    </div>
+                    <div id="reservas-lista">
+                        <div class="empty-state">
+                            <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                            <p class="mt-2 mb-0">A carregar negociações...</p>
+                        </div>
+                    </div>
+                    <nav id="reservas-paginacao" class="paginacao-container" aria-label="Paginação de negociações"></nav>
                 </div>
             </div>
 
@@ -1471,6 +1558,7 @@
             await App.init();
             await Promise.all([
                 carregarLotes(),
+                carregarReservas(),
                 isAdmin ? App.carregarProdutoresDashboard() : Promise.resolve(),
                 isAdmin ? carregarUtilizadores() : Promise.resolve()
             ]);
@@ -1490,16 +1578,24 @@
                     const target = e.target.getAttribute('data-bs-target').replace('#', '');
                     abaAtiva = target;
                     const inputPesquisa = document.getElementById('pesquisa-unificada');
-                    const chipsContainer = document.getElementById('chips-filtro-produtos');
+                    const chipsProdutos = document.getElementById('chips-filtro-produtos');
+                    const chipsReservas = document.getElementById('chips-filtro-reservas');
 
                     if (target === 'tab-lotes') {
-                        if (chipsContainer) chipsContainer.style.setProperty('display', 'flex', 'important');
+                        if (chipsProdutos) chipsProdutos.style.setProperty('display', 'flex', 'important');
+                        if (chipsReservas) chipsReservas.style.setProperty('display', 'none', 'important');
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar produtos agrícolas por nome, agricultor ou localização...';
+                    } else if (target === 'tab-reservas') {
+                        if (chipsProdutos) chipsProdutos.style.setProperty('display', 'none', 'important');
+                        if (chipsReservas) chipsReservas.style.setProperty('display', 'flex', 'important');
+                        if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar negociações por produto, comprador ou agricultor...';
                     } else if (target === 'tab-produtores') {
-                        if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
+                        if (chipsProdutos) chipsProdutos.style.setProperty('display', 'none', 'important');
+                        if (chipsReservas) chipsReservas.style.setProperty('display', 'none', 'important');
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar agricultores por nome, telemóvel ou localização...';
                     } else if (target === 'tab-utilizadores') {
-                        if (chipsContainer) chipsContainer.style.setProperty('display', 'none', 'important');
+                        if (chipsProdutos) chipsProdutos.style.setProperty('display', 'none', 'important');
+                        if (chipsReservas) chipsReservas.style.setProperty('display', 'none', 'important');
                         if (inputPesquisa) inputPesquisa.placeholder = 'Pesquisar utilizadores por nome, telemóvel, perfil ou distrito...';
                     }
 
@@ -1515,12 +1611,21 @@
             executarPesquisaUnificada(document.getElementById('pesquisa-unificada')?.value || '');
         }
 
+        function filtrarPorEstadoReserva(btn, estado) {
+            document.querySelectorAll('#chips-filtro-reservas .btn-chip').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            filtroEstadoReservaAtivo = estado;
+            executarPesquisaUnificada(document.getElementById('pesquisa-unificada')?.value || '');
+        }
+
         function executarPesquisaUnificada(termo) {
             const btnLimpar = document.getElementById('btn-limpar-busca');
             if (btnLimpar) btnLimpar.style.display = termo ? 'block' : 'none';
 
             if (abaAtiva === 'tab-lotes') {
                 filtrarProdutos(termo, filtroEstadoAtivo);
+            } else if (abaAtiva === 'tab-reservas') {
+                filtrarReservas(termo, filtroEstadoReservaAtivo);
             } else if (abaAtiva === 'tab-produtores') {
                 filtrarCards('produtores-lista', termo);
             } else if (abaAtiva === 'tab-utilizadores') {
@@ -1540,8 +1645,9 @@
         // ---- KPIS E CONTAGENS ----
         async function atualizarKPIs() {
             try {
-                const [lotes, produtores, culturas] = await Promise.all([
+                const [lotes, reservas, produtores, culturas] = await Promise.all([
                     Api.getLotes().catch(() => []),
+                    Api.getReservas().catch(() => []),
                     isAdmin ? Api.getProdutores().catch(() => []) : Promise.resolve([]),
                     Api.getCulturas().catch(() => [])
                 ]);
@@ -1549,6 +1655,8 @@
                 // Atualizar KPI Valores
                 document.getElementById('kpi-lotes').textContent = lotes.length;
                 document.getElementById('badge-tab-produtos').textContent = lotes.length;
+                const badgeReservas = document.getElementById('badge-tab-reservas');
+                if (badgeReservas) badgeReservas.textContent = reservas.length;
 
                 const souAgricultor = Api.user?.perfil === 'PRODUTOR';
                 if (souAgricultor) {
@@ -1879,6 +1987,250 @@
                 }
             };
             modal.show();
+        }
+
+        // ---- NEGOCIAÇÕES E INTENÇÕES DE COMPRA (RF05) ----
+        let cacheReservas = [];
+        let paginaAtualReservas = 1;
+        const reservasPorPagina = 8;
+        let filtroEstadoReservaAtivo = '';
+
+        function mudarPaginaReservas(novaPagina) {
+            paginaAtualReservas = novaPagina;
+            renderizarReservasPaginadas();
+            const el = document.getElementById('tab-reservas');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function filtrarReservas(termo, estado = filtroEstadoReservaAtivo) {
+            paginaAtualReservas = 1;
+            renderizarReservasPaginadas();
+        }
+
+        async function alterarEstadoReserva(id, novoEstado) {
+            try {
+                await Api.atualizarEstadoReserva(id, novoEstado);
+                showToast('Estado da negociação atualizado com sucesso!', 'sucesso');
+                await carregarReservas();
+                await atualizarKPIs();
+            } catch (e) {
+                showToast('Erro ao atualizar estado: ' + (e.message || 'Tente novamente.'), 'erro');
+            }
+        }
+
+        async function carregarReservas() {
+            const lista = document.getElementById('reservas-lista');
+            const badge = document.getElementById('badge-tab-reservas');
+            if (!lista) return;
+
+            try {
+                cacheReservas = await Api.getReservas() || [];
+                if (badge) badge.textContent = cacheReservas.length;
+            } catch (e) {
+                console.warn('Erro ao carregar negociações:', e);
+                cacheReservas = [];
+                lista.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-arrow-clockwise fs-1 text-muted"></i>
+                        <p class="mt-2 mb-3">Não foi possível carregar as negociações de momento.</p>
+                        <button type="button" class="btn btn-sm btn-outline-success" onclick="carregarReservas()">
+                            <i class="bi bi-arrow-clockwise me-1"></i>Tentar novamente
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            renderizarReservasPaginadas();
+        }
+
+        function renderizarReservasPaginadas() {
+            const lista = document.getElementById('reservas-lista');
+            const contador = document.getElementById('reservas-count-label');
+            const paginacao = document.getElementById('reservas-paginacao');
+            const badge = document.getElementById('badge-tab-reservas');
+            if (!lista) return;
+
+            if (badge) badge.textContent = cacheReservas.length;
+
+            if (!cacheReservas || cacheReservas.length === 0) {
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-chat-left-dots"></i><p class="mb-0">Ainda não há negociações ou intenções de compra registadas.</p></div>';
+                if (contador) contador.textContent = '0 negociação(ões)';
+                if (paginacao) paginacao.innerHTML = '';
+                return;
+            }
+
+            const t = normalizarBusca(document.getElementById('pesquisa-unificada')?.value || '');
+            const estado = filtroEstadoReservaAtivo;
+
+            const filtradas = cacheReservas.filter(r => {
+                const estadoAtual = r.estadoNegocio || r.estado || 'INICIADO';
+                const textoCompleto = `${r.culturaNome || ''} ${r.produtorNome || ''} ${r.compradorNome || ''} ${r.produtorTelemovel || ''} ${r.compradorTelemovel || ''} ${r.localidade || ''} ${r.notas || ''}`;
+                const matchTexto = !t || normalizarBusca(textoCompleto).includes(t);
+                const matchEstado = !estado || estadoAtual === estado;
+                return matchTexto && matchEstado;
+            });
+
+            const total = filtradas.length;
+            const totalPaginas = Math.max(1, Math.ceil(total / reservasPorPagina));
+            paginaAtualReservas = Math.max(1, Math.min(paginaAtualReservas, totalPaginas));
+
+            if (total === 0) {
+                lista.innerHTML = '<div class="empty-state"><i class="bi bi-search"></i><p class="mb-0">Nenhuma negociação encontrada com os critérios indicados.</p></div>';
+                if (contador) contador.textContent = (t || estado) ? `0 de ${cacheReservas.length} negociação(ões)` : '0 negociação(ões)';
+                if (paginacao) paginacao.innerHTML = '';
+                return;
+            }
+
+            const inicio = (paginaAtualReservas - 1) * reservasPorPagina;
+            const fim = Math.min(inicio + reservasPorPagina, total);
+            const paginaReservas = filtradas.slice(inicio, fim);
+
+            if (contador) {
+                contador.textContent = (t || estado)
+                    ? `A apresentar ${inicio + 1} a ${fim} de ${total} (total: ${cacheReservas.length})`
+                    : `A apresentar ${inicio + 1} a ${fim} de ${total} negociação(ões)`;
+            }
+
+            const rotuloEstado = {
+                INICIADO: 'Iniciado',
+                EM_NEGOCIACAO: 'Em Negociação',
+                CONCLUIDO: 'Concluído',
+                CANCELADO: 'Cancelado'
+            };
+
+            // 1. Tabela Desktop / Tablet
+            let htmlTable = `<div class="d-none d-md-block table-responsive">
+                <table class="table table-agri table-hover" id="tabela-reservas">
+                <thead><tr>
+                    <th><i class="bi bi-box-seam me-1"></i> Produto</th>
+                    <th><i class="bi bi-person me-1"></i> Comprador</th>
+                    <th><i class="bi bi-person-workspace me-1"></i> Agricultor</th>
+                    <th><i class="bi bi-calendar3 me-1"></i> Data de Contacto</th>
+                    <th>Estado</th>
+                    <th class="text-end">Contacto Direto</th>
+                </tr></thead><tbody>`;
+
+            // 2. Cartões Mobile
+            let htmlCards = `<div class="d-md-none" id="cards-reservas">`;
+
+            paginaReservas.forEach(r => {
+                const estadoAtual = r.estadoNegocio || r.estado || 'INICIADO';
+                const preco = r.precoPorUnidade ? Number.parseFloat(r.precoPorUnidade).toLocaleString('pt-MZ') + ' MT/' + (App.escapeHtml(r.unidadeMedida) || 'KG') : '-';
+                const qty = r.quantidadeEstimada ? Number.parseFloat(r.quantidadeEstimada).toLocaleString('pt-MZ') + ' ' + (App.escapeHtml(r.unidadeMedida) || 'KG') : '';
+                const culturaNomeEsc = App.escapeHtml(r.culturaNome || 'Produto agrícola');
+                const compradorNomeEsc = App.escapeHtml(r.compradorNome || 'Comprador');
+                const produtorNomeEsc = App.escapeHtml(r.produtorNome || 'Agricultor');
+                const localidadeEsc = App.escapeHtml(r.localidade || '');
+                const dataFormatada = r.dataContacto
+                    ? new Date(r.dataContacto).toLocaleDateString('pt-MZ', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                    : '-';
+
+                const souProdutor = Api.user?.perfil === 'PRODUTOR';
+                const telemovelAlvo = souProdutor ? r.compradorTelemovel : (r.produtorTelemovel || r.compradorTelemovel);
+                const nomeAlvoPlano = souProdutor ? (r.compradorNome || 'Comprador') : (r.produtorNome || r.compradorNome || 'Agricultor');
+                const nomeAlvoEsc = souProdutor ? compradorNomeEsc : (produtorNomeEsc || compradorNomeEsc);
+
+                const numLimpo = (telemovelAlvo || '').replaceAll('+', '').replaceAll(' ', '').trim();
+                const waNumero = numLimpo.startsWith('258') ? numLimpo : (numLimpo.length === 9 ? '258' + numLimpo : numLimpo);
+                const msgWa = encodeURIComponent('Olá ' + nomeAlvoPlano + ', estou a entrar em contacto sobre a negociação do produto ' + (r.culturaNome || '') + ' na plataforma AgreTech.');
+
+                let botoesContacto = '';
+                if (numLimpo) {
+                    botoesContacto = `
+                        <div class="d-flex justify-content-end gap-1">
+                            <a href="https://wa.me/${waNumero}?text=${msgWa}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1" title="Conversar no WhatsApp" aria-label="Conversar no WhatsApp com ${nomeAlvoEsc}">
+                                <i class="bi bi-whatsapp text-success"></i> WhatsApp
+                            </a>
+                            <a href="tel:${telemovelAlvo}" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1" title="Ligar diretamente" aria-label="Ligar para ${nomeAlvoEsc}">
+                                <i class="bi bi-telephone"></i> Ligar
+                            </a>
+                        </div>`;
+                } else {
+                    botoesContacto = '<span class="text-muted small">Sem contacto</span>';
+                }
+
+                const selectEstado = `
+                    <select class="form-select form-select-sm select-estado-negocio" onchange="alterarEstadoReserva(${r.id}, this.value)" aria-label="Alterar estado da negociação">
+                        <option value="INICIADO" ${estadoAtual === 'INICIADO' ? 'selected' : ''}>Iniciado</option>
+                        <option value="EM_NEGOCIACAO" ${estadoAtual === 'EM_NEGOCIACAO' ? 'selected' : ''}>Em Negociação</option>
+                        <option value="CONCLUIDO" ${estadoAtual === 'CONCLUIDO' ? 'selected' : ''}>Concluído</option>
+                        <option value="CANCELADO" ${estadoAtual === 'CANCELADO' ? 'selected' : ''}>Cancelado</option>
+                    </select>`;
+
+                // Linha Desktop
+                htmlTable += `<tr>
+                    <td>
+                        <div class="fw-bold text-dark">${culturaNomeEsc}</div>
+                        ${qty ? '<small class="text-muted">' + qty + (preco !== '-' ? ' · ' + preco : '') + '</small>' : ''}
+                    </td>
+                    <td>
+                        <div class="fw-semibold">${compradorNomeEsc}</div>
+                        ${r.compradorTelemovel ? '<small class="text-muted"><i class="bi bi-telephone text-success me-1"></i>' + App.escapeHtml(r.compradorTelemovel) + '</small>' : ''}
+                    </td>
+                    <td>
+                        <div class="fw-semibold">${produtorNomeEsc}</div>
+                        ${localidadeEsc ? '<small class="text-muted"><i class="bi bi-geo-alt me-1"></i>' + localidadeEsc + '</small>' : ''}
+                    </td>
+                    <td><small class="text-muted">${dataFormatada}</small></td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge-estado badge-negocio-${estadoAtual}">${rotuloEstado[estadoAtual] || estadoAtual}</span>
+                            ${selectEstado}
+                        </div>
+                    </td>
+                    <td class="text-end">${botoesContacto}</td>
+                </tr>`;
+
+                // Cartão Mobile
+                htmlCards += `<div class="mobile-produto-card" data-estado-negocio="${estadoAtual}">
+                    <div class="card-top">
+                        <div>
+                            <div class="prod-nome">${culturaNomeEsc}</div>
+                            <div class="prod-meta"><i class="bi bi-person text-success"></i> Comprador: <strong>${compradorNomeEsc}</strong></div>
+                            <div class="prod-meta"><i class="bi bi-person-workspace text-muted"></i> Agricultor: ${produtorNomeEsc}${localidadeEsc ? ' · ' + localidadeEsc : ''}</div>
+                        </div>
+                        <span class="badge-estado badge-negocio-${estadoAtual}">${rotuloEstado[estadoAtual] || estadoAtual}</span>
+                    </div>
+                    <div class="prod-details-grid my-2">
+                        <div class="prod-detail-item">
+                            <div class="label">Quantidade</div>
+                            <div class="value">${qty || '-'}</div>
+                        </div>
+                        <div class="prod-detail-item">
+                            <div class="label">Preço/unid.</div>
+                            <div class="value">${preco}</div>
+                        </div>
+                        <div class="prod-detail-item">
+                            <div class="label">Data</div>
+                            <div class="value">${dataFormatada}</div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column gap-2 pt-2 border-top">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="small fw-semibold text-muted">Alterar estado:</span>
+                            <div style="max-width: 170px;">${selectEstado}</div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-1">
+                            ${numLimpo ? `
+                                <a href="https://wa.me/${waNumero}?text=${msgWa}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1">
+                                    <i class="bi bi-whatsapp"></i> WhatsApp
+                                </a>
+                                <a href="tel:${telemovelAlvo}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1">
+                                    <i class="bi bi-telephone"></i> Ligar
+                                </a>` : '<span class="text-muted small">Sem contacto disponível</span>'}
+                        </div>
+                    </div>
+                </div>`;
+            });
+
+            htmlTable += '</tbody></table></div>';
+            htmlCards += '</div>';
+
+            lista.innerHTML = htmlTable + htmlCards;
+
+            if (paginacao) {
+                paginacao.innerHTML = App.gerarHtmlPaginacao(totalPaginas, paginaAtualReservas, total, 'mudarPaginaReservas');
+            }
         }
 
         // ---- UTILIZADORES (ADMIN) ----

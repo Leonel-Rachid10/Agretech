@@ -100,8 +100,10 @@ const Api = {
     atualizarEstadoLote(id, estado) { return this.patch('/lotes/' + id + '/estado?novoEstado=' + estado); },
     removerLote(id) { return this.del('/lotes/' + id); },
 
-    // Reservas
+    // Reservas e Negociações (RF05)
+    getReservas() { return this.get('/reservas'); },
     registarContacto(data) { return this.post('/reservas', data); },
+    atualizarEstadoReserva(id, estado) { return this.patch('/reservas/' + id + '/estado?novoEstado=' + estado); },
 
     // Relatório PDF
     async downloadRelatorioPdf() {

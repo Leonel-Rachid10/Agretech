@@ -1,7 +1,9 @@
 package com.agritech.dondo.dto;
 
+import com.agritech.dondo.model.EstadoLote;
 import com.agritech.dondo.model.EstadoNegocio;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ReservaContactoDTO {
@@ -12,6 +14,12 @@ public class ReservaContactoDTO {
     private Long loteId;
 
     private String culturaNome;
+    private BigDecimal quantidadeEstimada;
+    private String unidadeMedida;
+    private BigDecimal precoPorUnidade;
+    private EstadoLote loteEstado;
+    private String localidade;
+
     private String produtorNome;
     private String produtorTelemovel;
 
@@ -33,6 +41,21 @@ public class ReservaContactoDTO {
     public String getCulturaNome() { return culturaNome; }
     public void setCulturaNome(String culturaNome) { this.culturaNome = culturaNome; }
 
+    public BigDecimal getQuantidadeEstimada() { return quantidadeEstimada; }
+    public void setQuantidadeEstimada(BigDecimal quantidadeEstimada) { this.quantidadeEstimada = quantidadeEstimada; }
+
+    public String getUnidadeMedida() { return unidadeMedida; }
+    public void setUnidadeMedida(String unidadeMedida) { this.unidadeMedida = unidadeMedida; }
+
+    public BigDecimal getPrecoPorUnidade() { return precoPorUnidade; }
+    public void setPrecoPorUnidade(BigDecimal precoPorUnidade) { this.precoPorUnidade = precoPorUnidade; }
+
+    public EstadoLote getLoteEstado() { return loteEstado; }
+    public void setLoteEstado(EstadoLote loteEstado) { this.loteEstado = loteEstado; }
+
+    public String getLocalidade() { return localidade; }
+    public void setLocalidade(String localidade) { this.localidade = localidade; }
+
     public String getProdutorNome() { return produtorNome; }
     public void setProdutorNome(String produtorNome) { this.produtorNome = produtorNome; }
 
@@ -53,4 +76,7 @@ public class ReservaContactoDTO {
 
     public EstadoNegocio getEstadoNegocio() { return estadoNegocio; }
     public void setEstadoNegocio(EstadoNegocio estadoNegocio) { this.estadoNegocio = estadoNegocio; }
+
+    public EstadoNegocio getEstado() { return estadoNegocio; }
+    public void setEstado(EstadoNegocio estado) { this.estadoNegocio = estado; }
 }
