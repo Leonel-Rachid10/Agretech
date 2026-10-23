@@ -96,13 +96,17 @@ const App = {
         this.catalogoLotes = listaFiltrada;
 
         if (!this.catalogoLotes || this.catalogoLotes.length === 0) {
-            lista.innerHTML = '<div class="empty-state"><div class="icone"></div><p>Nenhum produto disponível com os filtros selecionados.<br>Tente ajustar ou limpar os filtros para ver mais produtos.</p></div>';
+            const temFiltroAtivo = !!(filtroCultura || filtroProvincia || filtroLocalidade || filtroBairro || filtroEstado || filtroQuantidade || termoBusca);
+            const mensagem = temFiltroAtivo
+                ? 'Nenhum produto encontrado com os filtros selecionados.<br>Tente ajustar ou limpar os filtros para ver mais produtos.'
+                : 'Nenhum produto disponível no catálogo de momento.<br>Aguarde novas publicações de agricultores.';
+            lista.innerHTML = `<div class="empty-state"><div class="icone"></div><p>${mensagem}</p></div>`;
             if (kpiTotal) kpiTotal.textContent = '0';
             if (kpiQuantidade) kpiQuantidade.textContent = '0';
             if (kpiProntos) kpiProntos.textContent = '0';
             if (containerPaginacao) containerPaginacao.innerHTML = '';
             const res = document.getElementById('catalogo-resultados');
-            if (res) res.textContent = 'Nenhum resultado encontrado.';
+            if (res) res.textContent = temFiltroAtivo ? 'Nenhum resultado encontrado.' : '';
             return;
         }
 
